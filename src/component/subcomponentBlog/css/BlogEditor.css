@@ -1,0 +1,70 @@
+/* BlogEditor.css */
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--light);
+}
+
+input[type="text"],
+textarea {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-top: 8px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+button {
+  padding: 8px 14px;
+  background-color: var(--light);
+  color: var(--primary-hover);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  margin-bottom: 10px;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+  color: var(--light);
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--light);
+  font-weight: bold;
+}
+
+img,
+video {
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+button + button {
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  input[type="text"],
+  textarea {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 7px 12px;
+  }
+}

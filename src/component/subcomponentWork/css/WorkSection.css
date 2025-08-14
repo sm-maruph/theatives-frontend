@@ -1,0 +1,244 @@
+@import url("https://fonts.cdnfonts.com/css/ica-rubrik-black");
+@import url("https://fonts.cdnfonts.com/css/poppins");
+
+.banner {
+  margin-top: 2vh;
+  width: 80%;
+  height: 80vh;
+  text-align: center;
+  overflow: visible; /* changed from hidden */
+  position: relative;
+  z-index: 1; /* make sure banner is on top */
+}
+
+.slider {
+  position: absolute;
+  width: 144px;
+  height: 256px;; /* Increased */
+  top: 10%;
+  left: 70%;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  animation: autoRun 30s linear infinite;
+  /* center slider horizontally */
+  transform-origin: center center;
+  transform-box: fill-box;
+  z-index: 10; /* increase so carousel is on top */
+  /* half width to center */
+  margin-left: -100px;
+  cursor: pointer;
+}
+.slider.paused {
+  animation-play-state: paused;
+}
+
+@keyframes autoRun {
+  from {
+    transform: perspective(1000px) rotateX(-10deg) rotateY(0deg);
+  }
+  to {
+    transform: perspective(1000px) rotateX(-10deg) rotateY(360deg);
+  }
+}
+
+/* Animate glow effect for rotating items 
+@keyframes pulseShadow {
+  0% {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1), 0 0 24px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.3), 0 0 32px rgba(0, 0, 0, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1), 0 0 24px rgba(0, 0, 0, 0.3);
+  }
+}*/
+.banner .slider:hover {
+  animation-play-state: paused;
+}
+
+.item.active {
+  box-shadow: 0 0 20px 4px rgb(255, 12, 12);
+  pointer-events: auto;
+}
+.item {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(var(--angle)) translateZ(400px);
+  transition: transform 0.5s ease;
+
+}
+
+.item iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(246, 238, 238, 0.3);
+  pointer-events: none;
+}
+
+/* Enable pointer events only on active video so user can interact */
+.item.active iframe {
+  pointer-events: auto !important;
+}
+.item h3 {
+  color: var(--primary-hover);
+  font-size: 1rem;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 400;
+  text-shadow: 1px solid rgb(255, 250, 250);
+}
+
+
+.model {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* center */
+  width: 50vw;
+  height: 50vh;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("../../../assets/images/theatives_logo.png");
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 12px;
+  /*box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);*/
+  object-fit: fill;
+}
+
+/* Responsive tweaks*/
+@media screen and (max-width: 1023px) {
+  .banner .slider {
+    width: 135px;
+    height: 240px;
+    margin-left: -80px;
+  }
+
+ .item {
+    position: absolute;
+  inset: 0;
+  transform: rotateY(var(--angle)) translateZ(350px);
+  transition: transform 0.5s ease;
+  }
+
+  .banner .content h1 {
+    font-size: 7em;
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 10px 20px #000;
+  }
+
+  .banner .content .author {
+    color: #fff;
+    padding: 20px;
+    text-shadow: 0 10px 20px #000;
+    z-index: 2;
+    max-width: unset;
+    width: 100%;
+    text-align: center;
+    padding: 0 30px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .banner .slider {
+    width: 90px;
+    height: 160px;
+    margin-left: -50px;
+  }
+
+  .item {
+    position: absolute;
+  inset: 0;
+  transform: rotateY(var(--angle)) translateZ(200px);
+  transition: transform 0.5s ease;
+  }
+
+  .banner .content h1 {
+    font-size: 5em;
+  }
+}
+@media screen and (max-width: 415px) {
+  .banner .slider {
+    width: 91px;
+    height: 142px;
+    margin-left: -50px;
+  }
+
+  .item {
+    position: absolute;
+  inset: 0;
+  transform: rotateY(var(--angle)) translateZ(150px);
+  transition: transform 0.5s ease;
+  }
+
+  .banner .content h1 {
+    font-size: 5em;
+  }
+}
+
+.youtube-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(246, 238, 238, 0.3);
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.video-thumbnail {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2rem;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.item:hover .play-icon {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.loading, .error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}

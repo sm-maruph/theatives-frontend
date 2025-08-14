@@ -1,0 +1,158 @@
+/* General Services Section */
+.microService-section {
+  padding: 10px 20px;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.microService-section h2 {
+  margin-bottom: 2rem;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  color: #9f8f8f;
+}
+
+.microService-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.microService-title::before,
+.microService-title::after {
+  content: '';
+  display: inline-block;
+  width: clamp(30px, 15vw, 100px);
+  height: 1px;
+  background: #ccc;
+  margin: 0 10px;
+}
+
+/* Cards Container - Now fits 5+ per row */
+.microCards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px; /* Reduced gap for tighter spacing */
+}
+
+/* Card Styling - Smaller & Compact */
+.microService-card {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+  background-color: var(--light);
+  border-radius: 10px; /* Slightly smaller radius */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+  padding: 25px; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  transition: transform 0.3s ease;
+  max-height: 300px;
+  width: 260px; /* Fixed width instead of max-width */
+  height: 300px; /* Fixed height for consistency */
+}
+
+.microService-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('../../../assets/images/theatives_logo.jpeg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  border-radius: 10px;
+}
+
+.microService-card:hover::before {
+  opacity: 0.1;
+}
+
+.microService-card:hover {
+  transform: translateY(-4px); /* Smaller hover effect */
+}
+
+/* Icon - Consistent size and margin */
+.microIcon {
+  height: 50px; /* Fixed height */
+  width: 50px; /* Fixed width */
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.microIcon img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain; /* Changed to contain to prevent stretching */
+}
+
+/* Title - Fixed height and consistent styling */
+.microCard-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-hover);
+  text-align: center;
+  margin-bottom: 12px;
+  height: 36px; /* Fixed height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Full width */
+}
+
+/* Description - Consistent layout */
+.microCard-description {
+  font-size: 0.7rem;
+  color: var(--dark);
+  text-align: center;
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 4; /* Limit to 4 lines */
+  -webkit-box-orient: vertical;
+  width: 100%; /* Full width */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 920px) {
+  .microService-card {
+    width: 200px; /* Smaller width on tablets */
+    height: 260px; /* Adjust height proportionally */
+  }
+}
+
+@media (max-width: 480px) {
+  .microService-section {
+    padding: 20px 12px; /* Tighter padding */
+  }
+
+  .microService-card {
+    width: 160px; /* Even smaller on mobile */
+    height: 220px;
+    padding: 15px;
+  }
+
+  .microIcon {
+    height: 40px;
+    width: 40px;
+    margin-bottom: 15px;
+  }
+
+  .microCard-title {
+    font-size: 14px;
+    height: 32px;
+    margin-bottom: 8px;
+  }
+
+  .microCard-description {
+    font-size: 0.65rem;
+    line-clamp: 3; /* Show fewer lines on mobile */
+  }
+}

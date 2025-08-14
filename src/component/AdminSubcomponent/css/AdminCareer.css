@@ -1,0 +1,256 @@
+/* Main Wrapper */
+.admin-career-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 70vh;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* Container */
+.career-container {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 70vh;
+
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: rgba(214, 214, 216, 0.106) 0px 1px 0px, rgba(255, 255, 255, 0.1) 0px 0px 8px;
+
+}
+
+/* Row Layout */
+.career-row {
+  display: flex;
+  gap: 2rem;
+  height: calc(80vh - 80px); /* Adjust based on your title height */
+  min-height: 0;
+  box-shadow: rgba(214, 214, 216, 0.106) 0px 1px 0px, rgba(255, 255, 255, 0.1) 0px 0px 8px;
+  width: 100%;
+}
+
+/* Card */
+.career-card {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+  background-color: transparent;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+  min-height: 320px;
+  flex: 1 1 300px;
+}
+
+.career-card::before {
+  content: '';
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  background-image: url('../../../assets/images/theatives_logo.jpeg'); /* put your image URL here */
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1; /* Behind the content */
+  border-radius: 12px; /* Same as card */
+}
+
+.career-card:hover::before {
+  opacity: 0.1; /* adjust for subtlety */
+}
+.career-card:hover {
+transform: translateY(-8px);
+  transition: transform 0.3s ease;
+}
+
+.career-card h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: white;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+/* Form Card Specific Styles */
+.form-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Listings Card Specific Styles */
+.listings-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable Content Areas */
+.career-form {
+  flex: 1;
+  overflow-y: auto; /* Make form content scrollable */
+  padding-right: 5px; /* Prevent content from touching scrollbar */
+}
+
+.career-list-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto; /* Make list content scrollable */
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.form-group select{
+  background-color: rgba(26, 34, 53, 0.75);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Action Buttons */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-shrink: 0; /* Keep buttons at bottom */
+}
+
+.career-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #E94560;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #6c757d !important;
+}
+
+/* Career List */
+.career-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.career-list-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.career-position {
+  font-weight: 600;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.career-details {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.career-status {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.career-status.active {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+}
+
+.career-status.closed {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+}
+
+/* Actions */
+.career-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.career-edit, .career-close {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.career-edit:hover, .career-close:hover {
+  opacity: 1;
+}
+
+.career-edit {
+  background-color: rgba(13, 110, 253, 0.2);
+  color: #0d6efd;
+}
+
+.career-close {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+}
+.career-delete {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .career-content {
+    flex-direction: column;
+  }
+
+  .career-card {
+    min-height: 300px;
+  }
+}

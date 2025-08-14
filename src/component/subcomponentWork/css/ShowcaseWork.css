@@ -1,0 +1,297 @@
+/* Blog Categories */
+.section_showcase {
+  padding: 2rem 1rem;
+  background: var(--white);
+  color: var(--dark);
+  text-align: center;
+  width: 100%;
+}
+/* Updated Showcase Container for Responsive Grid */
+.showcase-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Base card width */
+  gap: 20px;
+  padding: 1rem;
+  max-width: 2080px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  animation: fadeInUp 0.5s forwards;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.showcase-media-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.showcase-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+}
+
+.showcase-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.showcase-home:hover .video-play-icon {
+  opacity: 1;
+}
+
+
+/* Responsive Breakpoints with Fixed Card Count */
+@media (min-width: 1800px) {
+  .showcase-container {
+    grid-template-columns: repeat(5, 1fr); /* 5 cards in extra large screens */
+  }
+}
+
+@media (min-width: 1400px) and (max-width: 1799px) {
+  .showcase-container {
+    grid-template-columns: repeat(4, 1fr); /* 4 cards */
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .showcase-container {
+    grid-template-columns: repeat(3, 1fr); /* 3 cards */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .showcase-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards */
+  }
+}
+
+@media (max-width: 767px) {
+  .showcase-container {
+    grid-template-columns: 1fr; /* 1 card on mobile */
+  }
+}
+
+/* Individual Showcase Card - Fixed Aspect Ratio */
+.showcase-home {
+  background: var(--light);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.5s forwards;
+  width: 100%;
+  aspect-ratio: 1/1.2; /* Maintain consistent aspect ratio */
+}
+
+.showcase-image {
+  width: 100%;
+  height: 70%; /* Take 70% of card height */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Card Title */
+.title {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-hover);
+  background-color: var(--light);
+  height: 30%; /* Take remaining 30% of card height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Blog Modal Styles */
+.blog-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--white) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.blog-modal {
+  background: var(--light);
+  color: var(--light);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.blog-modal-image {
+  width: 100%;
+  height: 250px;
+  background-size: contain;
+  background-position: center;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  background-repeat: no-repeat;
+}
+
+.blog-modal-content {
+  padding: 2rem;
+}
+
+.blog-modal-header h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-hover);
+  text-align: left;
+}
+
+.blog-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.blog-modal-category {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background: var(--primary-hover);
+  color: var(--light);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(67, 97, 238, 0.3);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.blog-modal-body p {
+  line-height: 1.7;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.blog-modal-body ol {
+  margin-left: 1rem;
+}
+
+.blog-modal-body ul,
+.blog-modal-body li {
+  margin-left: 2rem;
+  color: var(--gray);
+}
+
+.blog-modal-body h3 {
+  color: var(--primary-hover);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.blog-modal-footer {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+.back-button {
+  background: none;
+  border: 1px solid var(--primary-hover);
+  color: var(--primary-hover);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  color: var(--primary-hover);
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+    z-index: 1001; /* Higher than modal content */
+
+}
+
+.close-modal:hover {
+  background: var(--primary-hover);
+  color: var(--light);
+}
+
+@media (max-width: 768px) {
+  .blog-modal-content {
+    padding: 1.2rem;
+  }
+
+  .blog-modal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .blog-modal-body h3 {
+    font-size: 1.1rem;
+  }
+}
