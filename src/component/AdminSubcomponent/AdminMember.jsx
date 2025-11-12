@@ -7,6 +7,8 @@ import {
   deleteMember,
 } from "../../adminServices/AdminMembersApi";
 import { getFullUrl } from '../../utils/apiUrl';
+import imageCompression from "browser-image-compression";
+import { supabase } from './supabaseClient'; // your supabase.js
 
 const AdminMember = () => {
   const [members, setMembers] = useState([]);
@@ -28,9 +30,7 @@ const AdminMember = () => {
 
   useEffect(() => {
     return () => {
-      if (previewImage) {
-        URL.revokeObjectURL(previewImage);
-      }
+      if (previewImage) URL.revokeObjectURL(previewImage);
     };
   }, [previewImage]);
 
@@ -51,40 +51,74 @@ const AdminMember = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setFileInput(file);
-      const previewUrl = URL.createObjectURL(file);
-      setPreviewImage(previewUrl);
-      setFormData((prev) => ({
-        ...prev,
-        member_image: file.name,
-      }));
+    if (!file) return;
+
+    // Preview
+    setPreviewImage(URL.createObjectURL(file));
+    setFileInput(file);
+
+    // Optional: just keep name for now
+    setFormData((prev) => ({ ...prev, member_image: file.name }));
+  };
+
+  const uploadToSupabase = async (file) => {
+    try {
+      // Compress image
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 500,
+        useWebWorker: true,
+        fileType: "image/webp",
+      });
+
+      const fileName = `members/${Date.now()}_${compressedFile.name.split('.')[0]}.webp`;
+
+      const { data, error } = await supabase.storage
+        .from("your-bucket-name") // replace with your bucket
+        .upload(fileName, compressedFile, { contentType: "image/webp" });
+
+      if (error) throw error;
+
+      const { publicUrl } = supabase.storage
+        .from("your-bucket-name")
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (err) {
+      console.error("Supabase upload error:", err);
+      throw err;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("nickname", formData.nickname);
-    form.append("position", formData.position);
-    if (fileInput) {
-      form.append("member_image", fileInput);
-    }
 
     try {
-      if (editingMember) {
-        await updateMember(editingMember.id, form);
-      } else {
-        await createMember(form);
+      let imageUrl = formData.member_image;
+
+      if (fileInput) {
+        imageUrl = await uploadToSupabase(fileInput);
       }
+
+      const payload = {
+        ...formData,
+        member_image: imageUrl,
+      };
+
+      if (editingMember) {
+        await updateMember(editingMember.id, payload);
+      } else {
+        await createMember(payload);
+      }
+
       loadMembers();
       resetForm();
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError("Failed to upload member. " + err.message);
     } finally {
       setLoading(false);
     }
@@ -98,6 +132,7 @@ const AdminMember = () => {
       position: member.position || "",
       member_image: member.member_image || "",
     });
+    setPreviewImage(member.member_image || null);
   };
 
   const handleDelete = async (id) => {
@@ -109,18 +144,11 @@ const AdminMember = () => {
     }
   };
 
-  const handleCancelEdit = () => {
-    resetForm();
-  };
+  const handleCancelEdit = () => resetForm();
 
   const resetForm = () => {
     setEditingMember(null);
-    setFormData({
-      name: "",
-      nickname: "",
-      position: "",
-      member_image: "",
-    });
+    setFormData({ name: "", nickname: "", position: "", member_image: "" });
     setFileInput(null);
     setPreviewImage(null);
   };
@@ -189,18 +217,6 @@ const AdminMember = () => {
                           <img src={previewImage} alt="Preview" />
                           <span className="change-image-text">Click to change image</span>
                         </div>
-                      ) : formData.member_image && editingMember ? (
-                        <div className="image-preview">
-                          <img
-                            src={getFullUrl(formData.member_image)}
-                            alt="Current"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "/assets/images/default-member.png";
-                            }}
-                          />
-                          <span className="change-image-text">Click to change image</span>
-                        </div>
                       ) : (
                         <>
                           <span>Drag & drop image here or click to browse</span>
@@ -255,12 +271,10 @@ const AdminMember = () => {
                           </div>
                         )}
                         <div className="member-details">
-                          <div className="member-name">
-                            {member.name}
-                          </div>
+                          <div className="member-name">{member.name}</div>
                           {member.nickname && (
-                              <span className="member-nickname">({member.nickname})</span>
-                            )}
+                            <span className="member-nickname">({member.nickname})</span>
+                          )}
                           {member.position && (
                             <div className="member-position">{member.position}</div>
                           )}

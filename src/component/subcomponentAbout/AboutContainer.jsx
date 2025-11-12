@@ -44,10 +44,15 @@ const AboutContainer = () => {
         </div>
         <div className="details">
           <p>
-            We are a creative powerhouse specializing in social media marketing,
-            content creation, and high-quality CGI advertisements. At Theatives,
-            we help brands tell their stories with visually striking content and
-            innovative campaigns that captivate audiences and drive results.
+            Theatives is a next-generation multimedia design agency that blends
+            creativity, technology, and storytelling to deliver innovative
+            digital experiences. Our core services are divided into three
+            studios: Creative, Tech, and Game. We specialize in CGI advertising,
+            3D animation, product visualization, web and app development, and
+            immersive game design. By combining artistic vision with advanced
+            technology, we help brands and businesses stand out through
+            high-quality visuals, engaging interactive experiences, and
+            cutting-edge digital innovation.
           </p>
         </div>
       </div>
