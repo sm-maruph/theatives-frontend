@@ -1,0 +1,116 @@
+/*section four*/
+.sectionAboutFour {
+  background-color: var(--light);
+  padding: 2rem 1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sectionAboutFour h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 4vw, 1.8rem); /* Fluid font scaling */
+  color: var(--gray);
+  padding: 0 1rem; /* Prevents text from touching edges on mobile */
+}
+
+.client-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-hover);
+}
+
+.client-title::before,
+.client-title::after {
+  content: "";
+  display: inline-block;
+  width: clamp(30px, 15vw, 100px); /* Fluid width scaling */
+  height: 1px;
+  background: var(--primary-hover);
+  margin: 0 10px;
+  flex-shrink: 1;
+}
+
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+  justify-items: center;
+  padding: 1rem 1rem;
+}
+
+.client-logo img {
+  max-width: 400px;
+  max-height: 100px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  background-color: var(--white);
+  padding: 0.4rem 0.4rem;
+}
+
+.client-logo img:hover {
+  transform: scale(1.1);
+}
+.client-logo p{
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--primary-hover);
+}
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .sectionAboutFour {
+    padding: 3rem 1.5rem;
+  }
+
+  .sectionAboutFour h2 {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .client-title::before,
+  .client-title::after {
+    width: 60px;
+    margin: 0 15px;
+  }
+
+  .clients-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+  }
+
+  .client-logo img {
+    max-width: 160px;
+    max-height: 90px;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 600px) {
+  .sectionAboutFour {
+    padding: 4rem 2rem;
+  }
+
+  .client-title::before,
+  .client-title::after {
+    width: 80px;
+    margin: 0 15px;
+  }
+
+  .clients-grid {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  }
+
+  .client-logo img {
+    max-width: 200px;
+    max-height: 100px;
+  }
+}

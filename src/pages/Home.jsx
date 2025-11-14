@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../src/app.css";
 import { FaTimes } from "react-icons/fa";
 import About from "../component/About";
@@ -14,27 +14,49 @@ import worksBg from "../assets/images/work.png";
 import contactBg from "../assets/images/blog.png";
 import logo from "../assets/images/theatives_logo.png";
 import logoHover from '../assets/images/logo_hover.png'; // or any hover logo
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 function Home() {
   const [activeSection, setActiveSection] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
+const location = useLocation();
+const navigate = useNavigate();
 
+useEffect(() => {
+  const path = location.pathname.replace("/", ""); // "about"
+  const validSections = ["about", "service", "works", "contact"];
+
+  if (validSections.includes(path)) {
+    setActiveSection(path); // show that section
+  }
+}, [location.pathname]);
 
   const handleSectionClick = (section) => {
-    if (isAnimating || activeSection) return;
-    setIsAnimating(true);
-    setActiveSection(section);
-    setTimeout(() => setIsAnimating(false), 1000);
-  };
+  if (isAnimating || activeSection) return;
+
+  setIsAnimating(true);
+  setActiveSection(section);
+
+  // Update URL
+  navigate(`/${section}`);
+
+  setTimeout(() => setIsAnimating(false), 1000);
+};
+
 
   const handleClose = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setActiveSection(null);
-    setTimeout(() => setIsAnimating(false), 1000);
-  };
+  if (isAnimating) return;
+
+  setIsAnimating(true);
+  setActiveSection(null);
+
+  // Reset URL back to home
+  navigate("/");
+
+  setTimeout(() => setIsAnimating(false), 1000);
+};
 
   const getPushDirection = (section) => {
     if (!activeSection) return "";

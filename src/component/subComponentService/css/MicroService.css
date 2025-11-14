@@ -1,17 +1,12 @@
 /* General Services Section */
 .microService-section {
-  padding: 10px 20px;
-  max-width: 1200px;
+  padding: 50px 10px;
+  max-width: 100%;
   margin: auto;
   text-align: center;
+  background-color: var(--light);
 }
 
-.microService-section h2 {
-  margin-bottom: 2rem;
-  font-weight: 500;
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  color: #9f8f8f;
-}
 
 .microService-title {
   display: flex;
@@ -32,6 +27,7 @@
 
 /* Cards Container - Now fits 5+ per row */
 .microCards-container {
+  
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -50,10 +46,11 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* Center content horizontally */
+  justify-content: space-between;
   transition: transform 0.3s ease;
-  max-height: 300px;
+  max-height: 350px;
   width: 260px; /* Fixed width instead of max-width */
-  height: 300px; /* Fixed height for consistency */
+  height: 500px; /* Fixed height for consistency */
 }
 
 .microService-card::before {
@@ -108,15 +105,13 @@
 }
 
 /* Description - Consistent layout */
-.microCard-description {
-  font-size: 0.7rem;
+.microService-card .microCard-description {
+  font-size: 0.85rem;
   color: var(--dark);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.2;
   overflow: hidden;
-  display: -webkit-box;
-  line-clamp: 4; /* Limit to 4 lines */
-  -webkit-box-orient: vertical;
+  line-clamp: 6; /* Limit to 4 lines */
   width: 100%; /* Full width */
 }
 
@@ -124,35 +119,39 @@
 @media (max-width: 920px) {
   .microService-card {
     width: 200px; /* Smaller width on tablets */
-    height: 260px; /* Adjust height proportionally */
+    height: 300px; /* Adjust height proportionally */
   }
 }
 
 @media (max-width: 480px) {
-  .microService-section {
-    padding: 20px 12px; /* Tighter padding */
+  
+  .microCards-container {
+    justify-content: space-between; /* Spread cards for 2 per row */
+    gap: 10px;
   }
 
   .microService-card {
-    width: 160px; /* Even smaller on mobile */
-    height: 220px;
-    padding: 15px;
+    width: calc(50% - 10px); /* Two cards per row */
+    height: 300; /* Let height adjust naturally */
+    padding: 4px;
+    margin-bottom: 15px;
   }
 
   .microIcon {
     height: 40px;
     width: 40px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
   .microCard-title {
     font-size: 14px;
-    height: 32px;
-    margin-bottom: 8px;
+    height: auto; /* Let title height adjust */
+    margin-bottom: 6px;
   }
 
   .microCard-description {
-    font-size: 0.65rem;
-    line-clamp: 3; /* Show fewer lines on mobile */
+    font-size: 0.4rem; /* Smaller font */
+    line-clamp: 3; /* Limit lines */
+    line-height: 1.3;
   }
 }

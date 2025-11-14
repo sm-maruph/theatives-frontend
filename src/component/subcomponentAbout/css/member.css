@@ -1,0 +1,447 @@
+/* Base Styles */
+.secondAboutsection {
+  padding: 30px 0; /* Increased padding */
+}
+
+.container {
+  max-width: 1400px; /* Wider container */
+  margin: 0 0;
+  
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: var(--primary-hover);
+  margin-bottom: 2vh;
+}
+
+.sectionTitle::before,
+.sectionTitle::after {
+  content: "";
+  display: inline-block;
+  width: clamp(20px, 15vw, 10px); /* Fluid width scaling */
+  height: 1px;
+  background: var(--primary-hover);
+  margin: 0 10px;
+  flex-shrink: 1; /* Allows lines to shrink on small screens */
+}
+
+
+
+
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Default: 3 cards for laptop */
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.team-member {
+  background-color: var(--light);
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px,
+              rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+    justify-content: space-between;  /* Packs content at top, button at bottom */
+
+  padding: 10px;
+  height: 400px;
+  width: 250px;
+}
+
+.team-member:hover {
+  transform: translateY(-12px);
+  box-shadow: var(--primary-hover) 0px 1px 3px,
+              var(--primary-hover) 0px 0px 0px 1px;
+}
+
+.member-image {
+  width: 100%;
+  max-width: 220px;
+  max-height: 220px;       /* Fixed height for consistent image placement */
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.member-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.team-member:hover .member-image img {
+  transform: scale(1.05);
+}
+
+.team-member .member-name {
+  margin: 20px 0 8px;
+  color: var(--primary-hover);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: normal;         /* Allow line breaks */
+  overflow: visible;           /* Let content expand */
+  text-overflow: unset;        /* Remove ellipsis */
+  word-break: break-word;      /* Break long words if needed */
+  text-align: center;
+  text-wrap: nowrap;
+}
+
+.team-member .member-nickname {
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  font-weight: 200;
+}
+
+.team-member .member-position {
+  color: var(--dark);
+  font-size: 0.85rem;
+  font-weight: 200;
+}
+.member-button{
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: 1px solid var(--primary-hover);
+  background-color: #ffffff;
+  color: var(--primary-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+.member-button:hover {
+  background-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+
+
+
+
+ @media (max-width: 990px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .member-image {
+    max-width: 240px;
+    height: 240px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.75rem;
+      text-wrap: nowrap;
+
+
+  }
+}
+
+/* ✅ Tablet: max-width 968px — show 2 cards */
+@media (max-width: 948px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+.team-member {
+    max-height: 320px;
+    padding: 0;
+  }
+  .member-image {
+    max-width: 200px;
+    height: 200px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.95rem;
+
+  }
+}
+
+/* ✅ Mobile: max-width 415px — show 2 smaller cards */
+@media (max-width: 650px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .team-member {
+    padding: 10px;
+  max-height: 300px;
+  }
+
+  .member-image {
+    max-width: 180px;
+    height: 180px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.85rem;
+      text-wrap: wrap;
+
+  }
+}
+/* ✅ Mobile: max-width 415px — show 2 smaller cards */
+@media (max-width: 600px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .team-member {
+    padding: 8px;
+    max-height: 340px;
+    width: 250px;
+  }
+
+  .member-image {
+    max-width: 180px;
+    height: 180px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.95rem;
+      text-wrap: wrap;
+
+  }
+}
+/* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 535px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 300px;
+    width: 150px;
+  }
+  .member-image {
+    max-width: 125px;
+    height: 130px;
+  }
+ .team-member .member-name {
+    font-size: 0.7rem;
+      text-wrap: nowrap;
+
+  }
+  
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.9rem;
+      text-wrap: wrap;
+
+  }
+  }
+
+/* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 545px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 300px;
+    width: 220px;
+  }
+  .member-image {
+    max-width: 125px;
+    height: 130px;
+  }
+ .team-member .member-name {
+    font-size: 0.9rem;
+      text-wrap: wrap;
+
+  }
+  
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.3rem;
+      text-wrap: wrap;
+
+  }
+  }
+  /* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 490px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 300px;
+    width: 200px;
+  }
+  .member-image {
+    max-width: 140px;
+    height: 140px;
+  }
+ .team-member .member-name {
+    font-size: 0.9rem;
+      text-wrap: wrap;
+
+  }
+  
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.3rem;
+      text-wrap: wrap;
+
+  }
+  }
+/* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 450px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 300px;
+    width: 180px;
+  }
+  .team-member .member-image {
+    max-width: 125px;
+    height: 130px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.7rem;
+      text-wrap: wrap;
+
+  }
+  }
+/* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 400px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 280px;
+    width: 150px;
+  }
+  .member-image {
+    max-width: 140px;
+    height: 140px;
+  }
+
+  .member-name,
+  .member-nickname,
+  .member-position {
+    font-size: 0.7rem;
+          text-wrap: wrap;
+
+  }
+  }
+  /* ✅ Extra small mobile: max-width 382px — show 1 card */
+@media (max-width: 392px) {
+  
+.team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+.team-member {
+    padding: 8px;
+    max-height: 340px;
+    width: 140px;
+  }
+  .member-image {
+    max-width: 140px;
+    height: 140px;
+  }
+
+  .team-member .member-name,
+  .team-member .member-nickname,
+  .team-member .member-position {
+    font-size: 0.7rem;
+      text-wrap: wrap;
+
+  }
+  } 
+
+  /* Skeleton Loader Animation */
+@keyframes shimmer {
+  0% { background-position: -500px 0; }
+  100% { background-position: 500px 0; }
+}
+
+.skeleton-card .skeleton-box,
+.skeleton-text,
+.skeleton-button {
+  background: #e2e2e2;
+  background-image: linear-gradient(
+    90deg,
+    #e2e2e2 0px,
+    #f5f5f5 40px,
+    #e2e2e2 80px
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+/* Image placeholder */
+.skeleton-card .member-image {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+}
+
+/* Text placeholders */
+.skeleton-text {
+  width: 80%;
+  height: 18px;
+  margin: 12px auto;
+}
+
+.skeleton-text.small {
+  width: 50%;
+  height: 14px;
+}
+
+/* Button placeholder */
+.skeleton-button {
+  width: 60%;
+  height: 36px;
+  margin: 20px auto 0;
+  border-radius: 6px;
+}
+
+/* Make the whole card look disabled */
+.skeleton-card {
+  pointer-events: none;
+}

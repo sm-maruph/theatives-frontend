@@ -1,0 +1,191 @@
+
+.thirdAboutsection {
+  height: 60vh;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Responsive Heading (h2) */
+.thirdsection h2 {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 4vw, 1.8rem); /* Fluid font scaling */
+  color: var(--primary-hover);
+  padding: 0 1rem; /* Prevents text from touching edges on mobile */
+}
+
+/* Section Title Styling (with Responsive Pseudo-Elements) */
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: var(--primary-hover);
+}
+
+.section-title::before,
+.section-title::after {
+  content: "";
+  display: inline-block;
+  width: clamp(30px, 15vw, 100px); /* Fluid width scaling */
+  height: 1px;
+  background: var(--gray);
+  margin: 0 10px;
+  flex-shrink: 1; /* Allows lines to shrink on small screens */
+}
+
+
+
+.testimonial-slide {
+  display: flex !important;
+  height: 350px;
+  min-height: 400px;
+  width: 90%;
+  margin: auto;
+  border-radius: 8px;
+  overflow: hidden;
+  
+}
+
+.left-panel {
+  flex: 70%;
+  background-color: var(--primary-hover); /* red */
+  color: var(--white);
+  position: center;
+  font-size: 1.3rem;
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.quote-mark {
+  font-size: 1rem;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 0.2rem;
+}
+.quote-mark-bottom {
+  font-size: 1rem;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  padding-right: 0.5rem;
+}
+.left-panel p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.right-panel {
+  flex: 30%;
+  background-color: var(--light);
+  text-align: center;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 2px solid var(--primary-hover);
+  min-height: 175px;
+  height: 400px;
+}
+
+.reviewer-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 5%;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+}
+
+.right-panel h4 {
+  margin: 0.5rem 0;
+  font-size: small;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--primary-hover);
+}
+
+.right-panel p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* Slick dots customization (optional) */
+.slick-dots li button:before {
+  font-size: 12px;
+  color: var(--primary-hover);
+}
+
+.slick-dots li.slick-active button:before {
+  color: var(--primary-hover);
+}
+
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .thirdAboutsection {
+    height: auto; /* Adjust height for content */
+    padding: 3rem 1rem; /* More padding on mobile */
+  }
+
+  .thirdAboutsection h2 {
+    font-size: 1.4rem; /* Slightly larger for readability */
+    margin-bottom: 1rem;
+  }
+
+  .section-title::before,
+  .section-title::after {
+    width: 50px; /* Shorter lines on mobile */
+    margin: 0 8px; /* Tighter spacing */
+  }
+  .left-panel p {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 0.75rem;
+}
+
+.reviewer-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 5%;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+}
+.right-panel h4 {
+  margin: 0.2rem 0;
+  font-size: small;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--primary-hover);
+}
+}
+
+/* Small Mobile (e.g., < 480px) */
+@media (max-width: 480px) {
+  .thirdsection h2 {
+    font-size: 1rem;
+  }
+
+  .section-title::before,
+  .section-title::after {
+    width: 30px; /* Very short lines on tiny screens */
+    margin: 0 5px;
+  }
+}

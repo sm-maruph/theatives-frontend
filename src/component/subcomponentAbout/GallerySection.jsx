@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getAllGallerys } from "../../adminServices/GalleryServices";
 import { getFullUrl } from "../../utils/apiUrl";
 import "./Gallery.css"; // Assuming you add styles here
-import '../css/About.css'
+import './css/client.css'
 
 function GallerySection() {
   const [gallerys, setGallerys] = useState([]);

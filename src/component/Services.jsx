@@ -5,13 +5,13 @@ import ServicesSection from "./subComponentService/ServiceSection";
 import MicroserviceSection from "./subComponentService/MicroserviceSection";
 const Services = () => (
   <div className="content-wrapper">
-    <div className="firstsection">
+    <div >
       <ServiceContainer />
     </div>
-    <div className="secondsection">
+    <div >
       <ServicesSection />
     </div>
-    <div className="thirdsection">
+    <div >
       <MicroserviceSection />
     </div>
   </div>

@@ -362,11 +362,14 @@ html {
   width: 100vw;
   height: 100vh;
   overflow-y: auto;
-  padding: 5rem;
+  padding: 5rem 0.5rem;
   background: var(--white);
   border-radius: 10px;
   box-shadow: 0 0 30px var(--dark);
   color: var(--dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .content-container h2 {
