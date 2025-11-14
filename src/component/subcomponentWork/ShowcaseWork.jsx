@@ -104,7 +104,7 @@ export default function ShowcaseWork() {
 
               const isVideo = (url) => /\.(mp4|webm|ogg)$/i.test(url);
               const mediaUrl = mediaSection
-                ? getFullUrl(mediaSection.content)
+                ? mediaSection.content
                 : "";
 
               return (
@@ -172,9 +172,9 @@ export default function ShowcaseWork() {
                   <div
                     className="blog-modal-image"
                     style={{
-                      backgroundImage: `url(${getFullUrl(
+                      backgroundImage: `url(${
                         mediaSection.content
-                      )})`,
+                      })`,
                     }}
                   ></div>
                 );
@@ -184,7 +184,7 @@ export default function ShowcaseWork() {
                 return (
                   <video
                     className="blog-modal-video"
-                    src={getFullUrl(mediaSection.content)}
+                    src={mediaSection.content}
                     controls
                     style={{
                       width: "100%",
@@ -231,7 +231,7 @@ export default function ShowcaseWork() {
                       return (
                         <img
                           key={idx}
-                          src={getFullUrl(section.content)}
+                          src={section.content}
                           alt="Blog"
                           style={{ maxWidth: "100%", margin: "15px 0" }}
                         />
@@ -240,7 +240,7 @@ export default function ShowcaseWork() {
                       return (
                         <video
                           key={idx}
-                          src={getFullUrl(section.content)}
+                          src={section.content}
                           controls
                           style={{ maxWidth: "100%", margin: "15px 0" }}
                         />

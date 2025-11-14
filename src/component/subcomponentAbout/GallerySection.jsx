@@ -44,11 +44,11 @@ function GallerySection() {
           >
             {isVideo(gallery.media) ? (
               <video className="gallery-media" muted>
-                <source src={getFullUrl(gallery.media)} type="video/mp4" />
+                <source src={gallery.media} type="video/mp4" />
               </video>
             ) : (
               <img
-                src={getFullUrl(gallery.media)}
+                src={gallery.media}
                 alt={gallery.title}
                 className="gallery-media"
               />
@@ -68,11 +68,11 @@ function GallerySection() {
             <p>{selectedItem.description}</p>
             {isVideo(selectedItem.media) ? (
               <video controls className="modal-media">
-                <source src={getFullUrl(selectedItem.media)} type="video/mp4" />
+                <source src={selectedItem.media} type="video/mp4" />
               </video>
             ) : (
               <img
-                src={getFullUrl(selectedItem.media)}
+                src={selectedItem.media}
                 alt={selectedItem.title}
                 className="modal-media"
               />

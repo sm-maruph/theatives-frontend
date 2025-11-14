@@ -31,7 +31,7 @@ const ServicesSection = () => {
         {services.map((service, index) => (
           <div className="servicePage-card" key={index}>
             <div className="icon"><img
-                src={getFullUrl(service.image_path)}
+                src={service.image_path}
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = "/assets/images/theatives_logo.jpeg";

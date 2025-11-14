@@ -50,7 +50,7 @@ function TestimonialSlider() {
               <p>{review.review_text}</p>
             </div>
             <div className="right-panel">
-              <img src={getFullUrl(review.reviewer_image)} alt={review.reviewer_name} className="reviewer-img" />
+              <img src={review.reviewer_image} alt={review.reviewer_name} className="reviewer-img" />
               <h4>- {review.reviewer_name.toUpperCase()} -</h4>
               <p>{review.reviewer_position}</p>
               <p>{review.reviewer_company}</p>

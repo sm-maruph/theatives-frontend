@@ -29,17 +29,18 @@ const MemberSection = () =>
           }
         };
   return (
-    <div className="container">
-    <h3 className='sectionTitle'>Meet Our Team</h3>
+    <div className="secondSection">
+    <h4 className='sectionTitle'>Meet Our Team</h4>
     <div className="team-grid">
       {members.map(member => (
         <div className="team-member" key={member.id}>
           <div className="member-image">
-            <img src={getFullUrl(member.member_image)} alt={member.altText} />
+            <img src={member.member_image} alt={member.altText} />
           </div>
           <h6 className="member-name">{member.name}</h6>
-          <p className="member-nickname">" { member.nickname} "</p>
+          <p className="">" { member.nickname} "</p>
           <p className="member-position">{member.position}</p>
+          <button className='member-button'>Portfolio</button>
         </div>
       ))}
     </div>

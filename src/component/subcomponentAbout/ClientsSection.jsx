@@ -31,7 +31,7 @@ function ClientsSection() {
       <div className="clients-grid">
         {clients.map((client) => (
           <div key={client.id} className="client-logo">
-            <img src={getFullUrl(client.client_logo) } alt={client.client_name } />
+            <img src={client.client_logo} alt={client.client_name } />
           </div>
         ))}
       </div>

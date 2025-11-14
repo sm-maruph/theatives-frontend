@@ -33,7 +33,7 @@ const MicroserviceSection = () => {
           <div className="microService-card" key={index}>
             <div className="microIcon">
               <img
-                src={getFullUrl(service.image_path)}
+                src={service.image_path}
                 alt="Current"
                 onError={(e) => {
                   e.target.onerror = null;

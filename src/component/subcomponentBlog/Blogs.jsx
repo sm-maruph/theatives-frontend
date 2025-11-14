@@ -104,7 +104,7 @@ export default function Blogs() {
               );
 
               const thumbnail = mediaSection
-                ? getFullUrl(mediaSection.content)
+                ? mediaSection.content
                 : "";
 
               return (
@@ -176,7 +176,7 @@ export default function Blogs() {
                   <div
                     className="blog-modal-image"
                     style={{
-                      backgroundImage:  `url(${getFullUrl(mediaSection.content)})`,
+                      backgroundImage:  `url(${mediaSection.content})`,
                     }}
                   ></div>
                 );
@@ -186,7 +186,7 @@ export default function Blogs() {
                 return (
                   <video
                     className="blog-modal-video"
-                    src={getFullUrl(mediaSection.content)}
+                    src={mediaSection.content}
                     controls
                     style={{
                       width: "100%",
@@ -235,7 +235,7 @@ export default function Blogs() {
                       return (
                         <img
                           key={idx}
-                          src={getFullUrl(section.content)}
+                          src={section.content}
                           alt="Blog"
                           style={{ maxWidth: "100%", margin: "15px 0" }}
                         />
@@ -244,7 +244,7 @@ export default function Blogs() {
                       return (
                         <video
                           key={idx}
-                          src={getFullUrl(section.content)}
+                          src={section.content}
                           controls
                           style={{ maxWidth: "100%", margin: "15px 0" }}
                         />
