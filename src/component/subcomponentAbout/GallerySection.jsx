@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getAllGallerys } from "../../adminServices/GalleryServices";
 import { getFullUrl } from "../../utils/apiUrl";
 import "./Gallery.css"; // Assuming you add styles here
-import './css/client.css'
+import "./css/client.css";
+import ParticlesComponent from "../animationSubcomponent/ParticlesComponent";
 
 function GallerySection() {
   const [gallerys, setGallerys] = useState([]);
@@ -60,12 +61,15 @@ function GallerySection() {
       {/* Modal */}
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
+          {/* ⭐ Add this line — Particle Background */}
+          <ParticlesComponent theme="dark" />
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close-button" onClick={() => setSelectedItem(null)}>
+            <span
+              className="close-button"
+              onClick={() => setSelectedItem(null)}
+            >
               &times;
             </span>
-            <h2>{selectedItem.title}</h2>
-            <p>{selectedItem.description}</p>
             {isVideo(selectedItem.media) ? (
               <video controls className="modal-media">
                 <source src={selectedItem.media} type="video/mp4" />
@@ -77,6 +81,9 @@ function GallerySection() {
                 className="modal-media"
               />
             )}
+            <h2>{selectedItem.title}</h2>
+            <p>{selectedItem.description}</p>
+            
           </div>
         </div>
       )}

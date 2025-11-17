@@ -47,7 +47,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--light);
+  /* background-color: var(--light); */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,24 +56,45 @@
 }
 
 .modal-content {
-  background: var(--primary-hover) !important;
+  /* Base modal style */
+  background: linear-gradient(145deg, #ffffff, #f0f0f0); /* glossy gradient */
   padding: 2rem;
   border-radius: 16px;
-  max-width: 600px;
-  width: 90%;
+  max-width: 800px;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   animation: slideIn 0.3s ease-in-out;
   position: relative;
   text-align: center;
+
+  /* Shadow & depth */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px); /* subtle blur for gloss */
+}
+
+/* Optional: glossy highlight */
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10%; /* top half */
+  background: rgba(255, 255, 255, 0.3); /* light shine */
+  border-radius: 16px 16px 0 0;
+  pointer-events: none; /* doesn’t block interaction */
 }
 .modal-content h2 {
-  color: var(--light);
+  color: var(--dark);
   font-size: 2rem;
+  margin-top: 2rem;
 }
 .modal-content p {
-  color: var(--light);
+  color: var(--dark);
   font-size: 1 rem;
+  text-align: left;
+
 }
 
 .modal-media {
@@ -86,12 +107,12 @@
 
 .close-button {
   position: absolute;
-  right: 16px;
-  top: 10px;
+  right: 30px;
+  top: 26px;
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
-  color: white;
+  color: var(--primary-hover);
 }
 
 /* Animations */
