@@ -10,6 +10,8 @@ import {
   FiSettings,
   FiBriefcase,
   FiUsers,
+  FiFolder,
+
 } from "react-icons/fi";
 import "./css/AdminDashboard.css";
 import AdminService from "../component/AdminSubcomponent/AdminService";
@@ -23,6 +25,7 @@ import AdminNews from "../component/AdminSubcomponent/AdminNews";
 import AdminMicroService from "../component/AdminSubcomponent/AdminMicroService";
 import AdminShowcase from "../component/AdminSubcomponent/AdminShowcase";
 import AdminMember from "../component/AdminSubcomponent/AdminMember";
+import AdminProjects from "../component/AdminSubcomponent/AdminProjects";
 function AdminDashboard() {
   const navigate = useNavigate();
   const [activeComponent, setActiveComponent] = useState("dashboard");
@@ -100,8 +103,10 @@ function AdminDashboard() {
         return <AdminNews />;
       case "showcase":
         return <AdminShowcase />;
-        case "member":
+      case "member":
         return <AdminMember />;
+      case "projects":
+        return <AdminProjects />;
 
       default:
         return (
@@ -112,6 +117,15 @@ function AdminDashboard() {
             </p>
 
             <div className="card-grid">
+              <DashboardCard
+                icon={<FiFolder size={24} color="white" />}
+                title="Projects"
+                description="Track projects, renewals & contracts"
+                onClick={() => setActiveComponent("projects")}
+                color="#6366f1"
+                titleColor="#ffffff"
+                descriptionColor="#e0e0e0"
+              />
               <DashboardCard
                 icon={<FiSettings size={24} color="white" />}
                 title="Services"
@@ -175,7 +189,7 @@ function AdminDashboard() {
                 titleColor="#ffffff" // White title
                 descriptionColor="#e0e0e0" // Light gray description
               />
-              <DashboardCard
+              {/* <DashboardCard
                 icon={<FiUsers size={24} color="white" />}
                 title="Blog"
                 description="Manage blog postings"
@@ -183,7 +197,7 @@ function AdminDashboard() {
                 color="#6366f1" // Background and default text color
                 titleColor="#ffffff" // White title
                 descriptionColor="#e0e0e0" // Light gray description
-              />
+              /> */}
               <DashboardCard
                 icon={<FiUsers size={24} color="white" />}
                 title="Showcase"
@@ -271,11 +285,18 @@ function AdminDashboard() {
         <div className="sidebar-container">
           <nav className="sidebar-nav">
             <nav className="sidebar-nav">
+
               <NavItem
                 icon={<FiGrid />}
                 label="Dashboard"
                 active={activeComponent === "dashboard"}
                 onClick={() => setActiveComponent("dashboard")}
+              />
+              <NavItem
+                icon={<FiFolder />}
+                label="Projects"
+                active={activeComponent === "projects"}
+                onClick={() => setActiveComponent("projects")}
               />
               <NavItem
                 icon={<FiSettings />}
@@ -319,12 +340,12 @@ function AdminDashboard() {
                 active={activeComponent === "gallery"}
                 onClick={() => setActiveComponent("gallery")}
               />
-              <NavItem
+              {/* <NavItem
                 icon={<FiUsers />}
                 label="Blog"
                 active={activeComponent === "blog"}
                 onClick={() => setActiveComponent("blog")}
-              />
+              /> */}
               <NavItem
                 icon={<FiUsers />}
                 label="Showcase"

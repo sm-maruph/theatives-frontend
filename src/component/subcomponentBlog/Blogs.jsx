@@ -1,9 +1,62 @@
-// src/components/BlogHome.js
+// src/components/Blogs.js
 import React, { useState, useEffect } from "react";
 import "./css/BlogList.css";
-import { getBlogs, incrementBlogView } from "../../adminServices/AdminBlog";
-import { getFullUrl } from "../../utils/apiUrl"; // adjust relative path
+// import { getBlogs, incrementBlogView } from "../../adminServices/AdminBlog";
+// import { getFullUrl } from "../../utils/apiUrl";
 
+// ---- DUMMY DATA (remove when backend is ready) ----
+// Shape: { id, title, category, created_at, views, sections: [...] }
+// Section types: heading | paragraph | list (array content) | image | video
+const DUMMY_BLOGS = [
+  {
+    id: 1,
+    title: "Design Trends 2025: What's Next",
+    category: "Design",
+    created_at: "2025-06-10T09:00:00Z",
+    views: 1240,
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/2b2d42/ffffff?text=Design+Trends" },
+      { type: "paragraph", content: "The design world is shifting fast this year. From bold typography to immersive motion, here's what we're seeing shape brands in 2025 and beyond." },
+      { type: "heading", content: "Bold & Expressive" },
+      { type: "list", content: ["Oversized type", "Kinetic layouts", "Rich gradients"] },
+    ],
+  },
+  {
+    id: 2,
+    title: "Building for Speed: Web Performance",
+    category: "Development",
+    created_at: "2025-06-22T15:30:00Z",
+    views: 856,
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/ef233c/ffffff?text=Web+Performance" },
+      { type: "paragraph", content: "A fast site is a successful site. We break down the techniques that keep load times low and users engaged across devices." },
+      { type: "heading", content: "Core Web Vitals" },
+    ],
+  },
+  {
+    id: 3,
+    title: "The Art of Storytelling in Video",
+    category: "Video",
+    created_at: "2025-07-01T11:15:00Z",
+    views: 432,
+    sections: [
+      { type: "video", content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+      { type: "paragraph", content: "Great video isn't about production value alone; it's about story. Here's how we approach narrative in every project we shoot." },
+    ],
+  },
+  {
+    id: 4,
+    title: "Branding on a Budget",
+    category: "Design",
+    created_at: "2025-07-05T08:45:00Z",
+    views: 178,
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/8d99ae/ffffff?text=Branding" },
+      { type: "paragraph", content: "You don't need a huge budget to build a memorable brand. These practical tips help small businesses punch above their weight." },
+    ],
+  },
+];
+// ---------------------------------------------------
 
 export default function Blogs() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -13,8 +66,12 @@ export default function Blogs() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const data = await getBlogs();
-        setBlogs(data);
+        // ---- REAL BACKEND (uncomment when ready) ----
+        // const data = await getBlogs();
+        // setBlogs(data);
+
+        // ---- DUMMY (delete this line when backend is ready) ----
+        setBlogs(DUMMY_BLOGS);
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       }
@@ -35,7 +92,8 @@ export default function Blogs() {
 
   const handleReadMore = async (blog) => {
     try {
-      await incrementBlogView(blog.id); // update view count
+      // ---- REAL BACKEND (uncomment when ready) ----
+      // await incrementBlogView(blog.id); // update view count
     } catch (error) {
       // optional: toast or silently fail
     }
@@ -103,9 +161,7 @@ export default function Blogs() {
                   section.type === "image" || section.type === "video"
               );
 
-              const thumbnail = mediaSection
-                ? mediaSection.content
-                : "";
+              const thumbnail = mediaSection ? mediaSection.content : "";
 
               return (
                 <div
@@ -130,7 +186,7 @@ export default function Blogs() {
                           ⏱︎ {timeAgo(blog.created_at)}
                         </p>
                         <p className="blog-date">
-                          👁 {(blog.views)} times
+                          👁 {blog.views} times
                         </p>
                       </p>
                       <p className="blog-summary">
@@ -176,7 +232,7 @@ export default function Blogs() {
                   <div
                     className="blog-modal-image"
                     style={{
-                      backgroundImage:  `url(${mediaSection.content})`,
+                      backgroundImage: `url(${mediaSection.content})`,
                     }}
                   ></div>
                 );

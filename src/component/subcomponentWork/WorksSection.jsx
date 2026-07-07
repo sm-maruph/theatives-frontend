@@ -1,6 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./css/WorkSection.css";
-import { getAllWorks } from "../../adminServices/workServices";
+// import { getAllWorks } from "../../adminServices/workServices";
+
+// ---- DUMMY DATA (remove when backend is ready) ----
+// NOTE: `description` holds the YouTube video ID (your code builds the
+// thumbnail + player from it). Swap these IDs for your real ones later.
+const DUMMY_WORKS = [
+  { id: 1, title: "Brand Film",       description: "dQw4w9WgXcQ" },
+  { id: 2, title: "Product Launch",   description: "3JZ_D3ELwOQ" },
+  { id: 3, title: "Explainer Video",  description: "L_jWHffIx5E" },
+  { id: 4, title: "Ad Campaign",      description: "e-ORhEE9VVg" },
+  { id: 5, title: "Motion Reel",      description: "kJQP7kiw5Fk" },
+  { id: 6, title: "Case Study",       description: "fLexgOxsZu0" },
+];
+// ---------------------------------------------------
 
 const WorksSection = () => {
   const [works, setWorks] = useState([]);
@@ -19,8 +32,12 @@ const WorksSection = () => {
   const fetchWorks = async () => {
     setLoading(true);
     try {
-      const works = await getAllWorks();
-      setWorks(works);
+      // ---- REAL BACKEND (uncomment when ready) ----
+      // const works = await getAllWorks();
+      // setWorks(works);
+
+      // ---- DUMMY (delete this line when backend is ready) ----
+      setWorks(DUMMY_WORKS);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -148,7 +165,7 @@ const WorksSection = () => {
         {works.map((work, i) => {
           const angle = (360 / works.length) * i;
           const isActive = activeIndex === i;
-          
+
           return (
             <div
               key={i}

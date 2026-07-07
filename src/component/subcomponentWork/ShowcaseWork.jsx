@@ -1,8 +1,59 @@
-// src/components/BlogHome.js
+// src/components/ShowcaseWork.js
 import React, { useState, useEffect } from "react";
 import "./css/ShowcaseWork.css";
-import { getBlogs, incrementBlogView } from "../../adminServices/AdminShowcase";
-import { getFullUrl } from "../../utils/apiUrl"; // adjust relative path
+// import { getBlogs, incrementBlogView } from "../../adminServices/AdminShowcase";
+// import { getFullUrl } from "../../utils/apiUrl";
+
+// ---- DUMMY DATA (remove when backend is ready) ----
+// Mirrors your real shape: { id, title, category, created_at, sections: [...] }
+// Section types: heading | paragraph | list (content is an array) | image | video
+const DUMMY_BLOGS = [
+  {
+    id: 1,
+    title: "Rebranding Nimbus Studio",
+    category: "Branding",
+    created_at: "2025-05-20T10:00:00Z",
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/2b2d42/ffffff?text=Nimbus+Rebrand" },
+      { type: "heading", content: "A Fresh Identity" },
+      { type: "paragraph", content: "We reimagined Nimbus Studio's brand from the ground up, delivering a cohesive visual system." },
+      { type: "list", content: ["New logo suite", "Brand guidelines", "Social templates"] },
+    ],
+  },
+  {
+    id: 2,
+    title: "Product Launch Film",
+    category: "Video",
+    created_at: "2025-06-02T14:30:00Z",
+    sections: [
+      { type: "video", content: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+      { type: "heading", content: "Bringing the Story to Life" },
+      { type: "paragraph", content: "A 60-second launch film that captured the essence of the product." },
+    ],
+  },
+  {
+    id: 3,
+    title: "E-commerce Redesign",
+    category: "Web Design",
+    created_at: "2025-06-18T09:15:00Z",
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/8d99ae/ffffff?text=Ecommerce+Redesign" },
+      { type: "paragraph", content: "A conversion-focused redesign that lifted checkout completion by 34%." },
+    ],
+  },
+  {
+    id: 4,
+    title: "Campaign Microsite",
+    category: "Web Design",
+    created_at: "2025-07-01T16:45:00Z",
+    sections: [
+      { type: "image", content: "https://placehold.co/800x450/ef233c/ffffff?text=Campaign+Microsite" },
+      { type: "heading", content: "Interactive & Playful" },
+      { type: "paragraph", content: "A scroll-driven microsite built for a seasonal marketing push." },
+    ],
+  },
+];
+// ---------------------------------------------------
 
 export default function ShowcaseWork() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -12,8 +63,12 @@ export default function ShowcaseWork() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const data = await getBlogs();
-        setBlogs(data);
+        // ---- REAL BACKEND (uncomment when ready) ----
+        // const data = await getBlogs();
+        // setBlogs(data);
+
+        // ---- DUMMY (delete this line when backend is ready) ----
+        setBlogs(DUMMY_BLOGS);
       } catch (error) {
         console.error("Failed to fetch blogs:", error);
       }
@@ -34,7 +89,8 @@ export default function ShowcaseWork() {
 
   const handleReadMore = async (blog) => {
     try {
-      await incrementBlogView(blog.id); // update view count
+      // ---- REAL BACKEND (uncomment when ready) ----
+      // await incrementBlogView(blog.id); // update view count
     } catch (error) {
       // optional: toast or silently fail
     }
@@ -102,10 +158,7 @@ export default function ShowcaseWork() {
                   section.type === "image" || section.type === "video"
               );
 
-              const isVideo = (url) => /\.(mp4|webm|ogg)$/i.test(url);
-              const mediaUrl = mediaSection
-                ? mediaSection.content
-                : "";
+              const mediaUrl = mediaSection ? mediaSection.content : "";
 
               return (
                 <div
@@ -172,9 +225,7 @@ export default function ShowcaseWork() {
                   <div
                     className="blog-modal-image"
                     style={{
-                      backgroundImage: `url(${
-                        mediaSection.content
-                      })`,
+                      backgroundImage: `url(${mediaSection.content})`,
                     }}
                   ></div>
                 );
@@ -206,7 +257,7 @@ export default function ShowcaseWork() {
                   <span className="blog-date">
                     ⏱︎ {timeAgo(selectedBlog.created_at)}
                   </span>
-                  
+
                   <span className="blog-modal-category">
                     {selectedBlog.category}
                   </span>

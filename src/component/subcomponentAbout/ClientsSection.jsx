@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { fetchClients } from "../../adminServices/AdminClientsApi";
+// import { fetchClients } from "../../adminServices/AdminClientsApi";
 import "../css/About.css";
 import ParticlesComponent from "../animationSubcomponent/ParticlesComponent";
+
+// ---- DUMMY DATA (remove when backend is ready) ----
+const DUMMY_CLIENTS = [
+  { id: 1, client_name: "Nimbus Studio", client_logo: "https://placehold.co/200x120/2b2d42/ffffff?text=Nimbus", service_type: "Brand Identity", service_description: "Full brand identity design including logo, guidelines, and collateral.", company_url: "https://example.com" },
+  { id: 2, client_name: "BrightPixel",   client_logo: "https://placehold.co/200x120/ef233c/ffffff?text=BrightPixel", service_type: "Web Design", service_description: "End-to-end website design and development for their product launch.", company_url: "https://example.com" },
+  { id: 3, client_name: "Cloudline",     client_logo: "https://placehold.co/200x120/8d99ae/ffffff?text=Cloudline", service_type: "Motion Graphics", service_description: "Animated explainer videos and social media motion assets.", company_url: "" },
+  { id: 4, client_name: "Verdant Co.",   client_logo: "https://placehold.co/200x120/edf2f4/2b2d42?text=Verdant", service_type: "UI/UX", service_description: "Mobile app UX research and interface design.", company_url: "https://example.com" },
+];
+// ---------------------------------------------------
 
 function ClientsSection() {
   const [clients, setClients] = useState([]);
@@ -16,9 +25,12 @@ function ClientsSection() {
   const loadClients = async () => {
     setLoading(true);
     try {
-      const data = await fetchClients();
-      console.log("Clients data:", data); // debug
-      setClients(data);
+      // ---- REAL BACKEND (uncomment when ready) ----
+      // const data = await fetchClients();
+      // setClients(data);
+
+      // ---- DUMMY (delete this line when backend is ready) ----
+      setClients(DUMMY_CLIENTS);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,49 +59,44 @@ function ClientsSection() {
 
       {/* Client Modal */}
       {selectedClient && (
-  <div className="modal-overlay" onClick={() => setSelectedClient(null)}>
-    <ParticlesComponent theme="light" />
-    <div
-      className="modal-content scrollable-modal"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Sticky Back Button */}
-      <button
-        className="modal-sticky-btn"
-        onClick={() => setSelectedClient(null)}
-      >
-        Back
-      </button>
+        <div className="modal-overlay" onClick={() => setSelectedClient(null)}>
+          <ParticlesComponent theme="light" />
+          <div
+            className="modal-content scrollable-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="modal-sticky-btn"
+              onClick={() => setSelectedClient(null)}
+            >
+              Back
+            </button>
 
-      {/* Logo */}
-      <img
-        src={selectedClient.client_logo}
-        alt={selectedClient.client_name}
-        className="modal-logo"
-      />
+            <img
+              src={selectedClient.client_logo}
+              alt={selectedClient.client_name}
+              className="modal-logo"
+            />
 
-      {/* Client Info */}
-      <h2 className="modal-client-name">{selectedClient.client_name}</h2>
-      <h4 className="modal-service-type">
-        <strong>Service Type:</strong> {selectedClient.service_type}
-      </h4>
-      <p className="modal-description">{selectedClient.service_description}</p>
+            <h2 className="modal-client-name">{selectedClient.client_name}</h2>
+            <h4 className="modal-service-type">
+              <strong>Service Type:</strong> {selectedClient.service_type}
+            </h4>
+            <p className="modal-description">{selectedClient.service_description}</p>
 
-      {/* Sticky Visit Button */}
-      {selectedClient.company_url && (
-        <a
-          href={selectedClient.company_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="visit-company-btn sticky-btn"
-        >
-          Visit {selectedClient.client_name}
-        </a>
+            {selectedClient.company_url && (
+              <a
+                href={selectedClient.company_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="visit-company-btn sticky-btn"
+              >
+                Visit {selectedClient.client_name}
+              </a>
+            )}
+          </div>
+        </div>
       )}
-    </div>
-  </div>
-)}
-
     </div>
   );
 }

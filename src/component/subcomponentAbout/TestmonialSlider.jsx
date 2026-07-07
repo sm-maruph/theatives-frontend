@@ -2,16 +2,44 @@ import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { fetchReviews } from "../../adminServices/AdminReviewsApi";
-import { getFullUrl } from "../../utils/apiUrl";
+// import { fetchReviews } from "../../adminServices/AdminReviewsApi";
+// import { getFullUrl } from "../../utils/apiUrl";
 import "./css/testmonial.css";
+
+// ---- DUMMY DATA (remove when backend is ready) ----
+const DUMMY_REVIEWS = [
+  {
+    id: 1,
+    review_text: "Theatives transformed our brand from the ground up. The team's creativity and attention to detail exceeded every expectation.",
+    reviewer_name: "Sarah Ahmed",
+    reviewer_position: "Marketing Head",
+    reviewer_company: "BrightPixel Ltd.",
+    reviewer_image: "https://placehold.co/200x200/2b2d42/ffffff?text=SA",
+  },
+  {
+    id: 2,
+    review_text: "Working with this team was seamless. They delivered a stunning product on time and were a joy to collaborate with.",
+    reviewer_name: "David Chen",
+    reviewer_position: "Founder & CEO",
+    reviewer_company: "Nimbus Studio",
+    reviewer_image: "https://placehold.co/200x200/ef233c/ffffff?text=DC",
+  },
+  {
+    id: 3,
+    review_text: "Professional, responsive, and genuinely talented. Our engagement metrics doubled after the redesign.",
+    reviewer_name: "Priya Nair",
+    reviewer_position: "Product Manager",
+    reviewer_company: "Cloudline",
+    reviewer_image: "https://placehold.co/200x200/8d99ae/ffffff?text=PN",
+  },
+];
+// ---------------------------------------------------
 
 function TestimonialSlider() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch services on mount
   useEffect(() => {
     loadReviews();
   }, []);
@@ -19,8 +47,12 @@ function TestimonialSlider() {
   const loadReviews = async () => {
     setLoading(true);
     try {
-      const data = await fetchReviews();
-      setReviews(data);
+      // ---- REAL BACKEND (uncomment when ready) ----
+      // const data = await fetchReviews();
+      // setReviews(data);
+
+      // ---- DUMMY (delete this line when backend is ready) ----
+      setReviews(DUMMY_REVIEWS);
     } catch (err) {
       setError(err.message);
     } finally {
