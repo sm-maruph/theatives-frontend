@@ -6,13 +6,12 @@ import "./css/client.css";
 import ParticlesComponent from "../animationSubcomponent/ParticlesComponent";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
-// Includes one video item so you can test the isVideo() branch.
 const DUMMY_GALLERY = [
-  { id: 1, title: "Team Offsite 2024",  description: "Our annual creative retreat in the hills.", media: "https://placehold.co/600x400/2b2d42/ffffff?text=Offsite" },
-  { id: 2, title: "Studio Life",        description: "A glimpse into a regular day at Theatives.", media: "https://placehold.co/600x400/ef233c/ffffff?text=Studio" },
-  { id: 3, title: "Behind The Scenes",  description: "Shooting our latest campaign.", media: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
-  { id: 4, title: "Brainstorm Session", description: "Where the big ideas start.", media: "https://placehold.co/600x400/8d99ae/ffffff?text=Brainstorm" },
-  { id: 5, title: "Launch Party",       description: "Celebrating a successful product launch.", media: "https://placehold.co/600x400/edf2f4/2b2d42?text=Launch" },
+  { id: 1, title: "Team Offsite 2024",  description: "Our annual creative retreat in the hills.", media: "https://graphicsfamily.com/wp-content/uploads/edd/2022/01/Professional-website-banner-with-yellow-shapes-1180x627.jpg" },
+  { id: 2, title: "Studio Life",        description: "A glimpse into a regular day at Theatives.", media: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHEkowoBRF9d0u7B1A1g0MCHz0-eZG_aYXl8RVhw27e8HDTFSyCF6XAf8o&s=10" },
+  { id: 3, title: "Behind The Scenes",  description: "Shooting our latest campaign.", media: "https://graphicsfamily.com/wp-content/uploads/edd/2023/04/Business-Website-Banner-Design-with-White-and-Green-scaled.jpg" },
+  { id: 4, title: "Brainstorm Session", description: "Where the big ideas start.", media: "https://graphicsfamily.com/wp-content/uploads/edd/2023/04/Business-Website-Banner-Design-with-White-and-Green-scaled.jpg" },
+  { id: 5, title: "Launch Party",       description: "Celebrating a successful product launch.", media: "https://img.magnific.com/free-vector/professional-website-banner-with-abstract-red-shapes_1361-1812.jpg?semt=ais_hybrid&w=740&q=80" },
 ];
 // ---------------------------------------------------
 
@@ -59,21 +58,31 @@ function GallerySection() {
             onClick={() => setSelectedItem(gallery)}
           >
             {isVideo(gallery.media) ? (
-              <video className="gallery-media" muted>
-                <source src={gallery.media} type="video/mp4" />
-              </video>
+              <>
+                <video className="gallery-media" muted playsInline preload="metadata">
+                  <source src={gallery.media} type="video/mp4" />
+                </video>
+                <span className="gallery-play">▶</span>
+              </>
             ) : (
               <img
                 src={gallery.media}
                 alt={gallery.title}
                 className="gallery-media"
+                loading="lazy"
               />
             )}
+
+            {/* caption rises on hover; hidden behind the scrim at rest */}
+            <div className="gallery-caption">
+              <h3>{gallery.title}</h3>
+              <p>{gallery.description}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Modal — unchanged */}
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
           <ParticlesComponent theme="dark" />

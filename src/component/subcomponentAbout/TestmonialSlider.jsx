@@ -14,7 +14,7 @@ const DUMMY_REVIEWS = [
     reviewer_name: "Sarah Ahmed",
     reviewer_position: "Marketing Head",
     reviewer_company: "BrightPixel Ltd.",
-    reviewer_image: "https://placehold.co/200x200/2b2d42/ffffff?text=SA",
+    reviewer_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyraoft-szrzbrjUcZe7YldxLW9zTSbl31C1nPqOU6RqUQm0b_moQjEH73&s=10",
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const DUMMY_REVIEWS = [
     reviewer_name: "David Chen",
     reviewer_position: "Founder & CEO",
     reviewer_company: "Nimbus Studio",
-    reviewer_image: "https://placehold.co/200x200/ef233c/ffffff?text=DC",
+    reviewer_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyraoft-szrzbrjUcZe7YldxLW9zTSbl31C1nPqOU6RqUQm0b_moQjEH73&s=10",
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const DUMMY_REVIEWS = [
     reviewer_name: "Priya Nair",
     reviewer_position: "Product Manager",
     reviewer_company: "Cloudline",
-    reviewer_image: "https://placehold.co/200x200/8d99ae/ffffff?text=PN",
+    reviewer_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyraoft-szrzbrjUcZe7YldxLW9zTSbl31C1nPqOU6RqUQm0b_moQjEH73&s=10",
   },
 ];
 // ---------------------------------------------------

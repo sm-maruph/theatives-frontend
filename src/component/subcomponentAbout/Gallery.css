@@ -1,7 +1,13 @@
-/*section four*/
+/* ============================================================
+   Life At Theatives — gallery section
+   An editorial mosaic: varied tile sizes, images that bloom
+   from muted to full colour, captions that rise on hover.
+   Modal + particle background behaviour left intact.
+   ============================================================ */
+
 .sectionAboutFour {
-  background-color: var(--light);
-  padding: 2rem 1rem;
+  /* background-color: var(--light); */
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 3vw, 2rem);
   text-align: center;
   border-radius: 20px;
   display: flex;
@@ -15,32 +21,205 @@
   color: var(--primary-hover);
 }
 
+/* ---------- Mosaic grid ----------
+   Fixed 4 columns + row spans give the wall its rhythm.
+   grid-auto-flow: dense backfills any gaps the spans create. */
 .gallery-grid {
   display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 11rem;
+  grid-auto-flow: dense;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
+/* The rhythm: every 5th tile goes wide, every 3rd goes tall.
+   Change these nth-child rules to re-compose the wall.        */
+.gallery-card:nth-child(5n + 1) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gallery-card:nth-child(5n + 3) {
+  grid-row: span 2;
+}
+
+.gallery-card:nth-child(5n + 4) {
+  grid-column: span 2;
+}
+
+/* ---------- Tile ---------- */
 .gallery-card {
+  position: relative;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-.gallery-card:hover {
-  transform: scale(1.6);
-  transform: translateY(-12px); /* Slightly larger hover effect */
-  box-shadow: var(--primary-hover) 0px 3px 6px, var(--primary-hover) 0px 3px 6px;  
+  background: #dfe3e8;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  isolation: isolate;
+
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* staggered entrance */
+  opacity: 0;
+  animation: tileRise 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+.gallery-card:nth-child(1) { animation-delay: 0.05s; }
+.gallery-card:nth-child(2) { animation-delay: 0.13s; }
+.gallery-card:nth-child(3) { animation-delay: 0.21s; }
+.gallery-card:nth-child(4) { animation-delay: 0.29s; }
+.gallery-card:nth-child(5) { animation-delay: 0.37s; }
+.gallery-card:nth-child(6) { animation-delay: 0.45s; }
+.gallery-card:nth-child(7) { animation-delay: 0.53s; }
+.gallery-card:nth-child(8) { animation-delay: 0.61s; }
+
+@keyframes tileRise {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.gallery-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 22px 42px -14px rgba(0, 0, 0, 0.35),
+    0 0 0 1px var(--primary-hover);
+  z-index: 3;
+}
+
+/* ---------- Media ----------
+   Rests slightly muted; blooms to full colour on hover.       */
 .gallery-media {
   width: 100%;
-  height: 10rem;
+  height: 100%;
   object-fit: cover;
+  display: block;
+  filter: saturate(0.72) brightness(0.94);
+  transform: scale(1.02);
+  transition:
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease;
 }
 
-/* Modal Styles */
+.gallery-card:hover .gallery-media {
+  filter: saturate(1.06) brightness(1);
+  transform: scale(1.09);
+}
+
+/* gradient scrim so caption text stays legible over any photo */
+.gallery-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 14, 26, 0.82) 0%,
+    rgba(10, 14, 26, 0.28) 38%,
+    rgba(10, 14, 26, 0) 65%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gallery-card:hover::after {
+  opacity: 1;
+}
+
+/* ---------- Caption ----------
+   Requires the small JSX addition (see note) — degrades
+   harmlessly to nothing if the markup isn't present.          */
+.gallery-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  z-index: 2;
+  transform: translateY(12px);
+  opacity: 0;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.gallery-card:hover .gallery-caption {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.gallery-caption h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.gallery-caption p {
+  margin: 0.35rem 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* thin accent rule that draws itself under the caption */
+.gallery-caption::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--primary-hover);
+  margin-bottom: 0.6rem;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+}
+
+.gallery-card:hover .gallery-caption::before {
+  transform: scaleX(1);
+}
+
+/* play badge for video tiles */
+.gallery-card video.gallery-media + .gallery-play,
+.gallery-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary-hover);
+  font-size: 1.1rem;
+  z-index: 2;
+  opacity: 0.85;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.gallery-card:hover .gallery-play {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* ============================================================
+   Modal — structure & particle background unchanged
+   ============================================================ */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -56,8 +235,7 @@
 }
 
 .modal-content {
-  /* Base modal style */
-  background: linear-gradient(145deg, #ffffff, #f0f0f0); /* glossy gradient */
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
   padding: 2rem;
   border-radius: 16px;
   max-width: 800px;
@@ -67,34 +245,33 @@
   animation: slideIn 0.3s ease-in-out;
   position: relative;
   text-align: center;
-
-  /* Shadow & depth */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(4px); /* subtle blur for gloss */
+  backdrop-filter: blur(4px);
 }
 
-/* Optional: glossy highlight */
 .modal-content::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 10%; /* top half */
-  background: rgba(255, 255, 255, 0.3); /* light shine */
+  height: 10%;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 16px 16px 0 0;
-  pointer-events: none; /* doesn’t block interaction */
+  pointer-events: none;
 }
+
 .modal-content h2 {
   color: var(--dark);
   font-size: 2rem;
   margin-top: 2rem;
 }
+
 .modal-content p {
   color: var(--dark);
-  font-size: 1 rem;
+  font-size: 1rem; /* was "1 rem" — invalid, so this never applied */
   text-align: left;
-
+  line-height: 1.65;
 }
 
 .modal-media {
@@ -113,54 +290,114 @@
   font-weight: bold;
   cursor: pointer;
   color: var(--primary-hover);
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.close-button:hover {
+  transform: rotate(90deg);
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+/* Laptop: 3 columns, keep the mosaic rhythm */
+@media (max-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 10rem;
   }
 }
-/* MOBILE RESPONSIVE */
-@media (max-width: 600px) {
+
+/* Tablet: 2 columns — only the hero tile stays large */
+@media (max-width: 768px) {
   .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 9rem;
+    gap: 0.85rem;
   }
+  .gallery-card:nth-child(5n + 3),
+  .gallery-card:nth-child(5n + 4) {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .gallery-card:nth-child(5n + 1) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
 
+/* Phone: 2 even columns, taller tiles, captions always visible */
+@media (max-width: 560px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 8.5rem;
+    gap: 0.7rem;
+  }
   .gallery-card {
-    border-radius: 8px;
+    border-radius: 10px;
+  }
+  .gallery-card:nth-child(5n + 1) {
+    grid-column: span 2;
+    grid-row: span 1;
   }
 
+  /* no hover on touch — reveal the caption permanently */
+  .gallery-card::after,
+  .gallery-caption {
+    opacity: 1;
+  }
+  .gallery-caption {
+    transform: translateY(0);
+    padding: 0.7rem 0.8rem;
+  }
+  .gallery-caption::before {
+    transform: scaleX(1);
+  }
+  .gallery-caption p {
+    display: none; /* title only — descriptions crowd small tiles */
+  }
   .gallery-media {
-    height: 4rem; /* smaller image on mobile */
+    filter: saturate(1) brightness(1);
+    transform: scale(1);
   }
-
-  /* Disable large hover zoom effect on mobile */
   .gallery-card:hover {
     transform: none;
-    box-shadow: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   }
 
-  .client-title {
-    font-size: 1.5rem;
-  }
+  .client-title { font-size: 1.5rem; }
+  .sectionAboutFour { padding: 1.5rem 0.75rem; }
+  .modal-content { padding: 1.25rem; }
+  .close-button { right: 18px; top: 16px; }
+}
 
-  .sectionAboutFour {
-    padding: 1.5rem 0.5rem;
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-card {
+    opacity: 1;
+    animation: none;
   }
+  .gallery-card,
+  .gallery-media,
+  .gallery-card::after,
+  .gallery-caption,
+  .gallery-caption::before,
+  .close-button {
+    transition: none;
+  }
+  .gallery-card:hover { transform: none; }
+  .gallery-card:hover .gallery-media { transform: scale(1); }
 }

@@ -5,10 +5,10 @@ import React, { useState, useEffect } from "react";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_MEMBERS = [
-  { id: 1, name: "Ayesha Rahman",  nickname: "Ash",   position: "Creative Director", member_image: "https://placehold.co/400x400/2b2d42/ffffff?text=Ayesha", altText: "Ayesha Rahman" },
-  { id: 2, name: "Tanvir Hasan",   nickname: "Tanu",  position: "Lead Developer",    member_image: "https://placehold.co/400x400/8d99ae/ffffff?text=Tanvir", altText: "Tanvir Hasan" },
-  { id: 3, name: "Nabila Karim",   nickname: "Nab",   position: "UI/UX Designer",    member_image: "https://placehold.co/400x400/ef233c/ffffff?text=Nabila", altText: "Nabila Karim" },
-  { id: 4, name: "Rafiq Islam",    nickname: "Raf",   position: "Motion Artist",     member_image: "https://placehold.co/400x400/edf2f4/2b2d42?text=Rafiq",  altText: "Rafiq Islam" },
+  { id: 1, name: "Ayesha Rahman",  nickname: "Ash",   position: "Creative Director", member_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0PmcW6QpVxtWXOhqIIs8Cdwmjvyf79fPD9Y33Vxxe1A&s=10", altText: "Ayesha Rahman" },
+  { id: 2, name: "Tanvir Hasan",   nickname: "Tanu",  position: "Lead Developer",    member_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMEGFU1RlKqIt9lA8LeLPR9llHVXbDQ4uhTdu41yu9cA&s=10", altText: "Tanvir Hasan" },
+  { id: 3, name: "Nabila Karim",   nickname: "Nab",   position: "UI/UX Designer",    member_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScTocYHdA8h8VTE7PGNqZXoyRY7iZOkcx9B6PLQPSxHA&s=10", altText: "Nabila Karim" },
+  { id: 4, name: "Rafiq Islam",    nickname: "Raf",   position: "Motion Artist",     member_image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB3Mc3i8udKnJ0DyvWO6TpEmAxfNm0XFt-YigS5qJEfw&s=10",  altText: "Rafiq Islam" },
 ];
 // ---------------------------------------------------
 

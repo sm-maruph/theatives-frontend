@@ -1,12 +1,11 @@
-/* Base Styles */
-.secondAboutsection {
-  padding: 30px 0; /* Increased padding */
-}
+/* ============================================================
+   Member / Team Section
+   Fluid grid — cards size themselves, no breakpoint stacking.
+   Palette: --primary-hover, --light, --text, --dark
+   ============================================================ */
 
-.container {
-  max-width: 1400px; /* Wider container */
-  margin: 0 0;
-  
+.secondSection {
+  padding: 40px 0;
 }
 
 .sectionTitle {
@@ -15,388 +14,295 @@
   justify-content: center;
   width: 100%;
   color: var(--primary-hover);
-  margin-bottom: 2vh;
+  margin-bottom: 3vh;
 }
 
 .sectionTitle::before,
 .sectionTitle::after {
   content: "";
   display: inline-block;
-  width: clamp(20px, 15vw, 10px); /* Fluid width scaling */
+  width: clamp(20px, 15vw, 100px);
   height: 1px;
   background: var(--primary-hover);
   margin: 0 10px;
-  flex-shrink: 1; /* Allows lines to shrink on small screens */
+  flex-shrink: 1;
 }
 
-
-
-
-
+/* ---------- Grid ----------
+   auto-fit + minmax handles every screen size on its own.
+   Cards are centred and never stretch awkwardly.               */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Default: 3 cards for laptop */
-  justify-content: center;
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(16px, 3vw, 36px);
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  justify-items: center;
 }
 
+/* ---------- Card ---------- */
 .team-member {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
   background-color: var(--light);
-  border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px,
-              rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px;
+  padding: 16px 16px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-    justify-content: space-between;  /* Packs content at top, button at bottom */
+  overflow: hidden;
+  isolation: isolate;
 
-  padding: 10px;
-  height: 400px;
-  width: 250px;
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 0px 1px 3px,
+    rgba(27, 31, 35, 0.12) 0px 0px 0px 1px;
+
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* staggered entrance — see @keyframes riseIn below */
+  opacity: 0;
+  animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* stagger each card so the row cascades in */
+.team-member:nth-child(1) { animation-delay: 0.05s; }
+.team-member:nth-child(2) { animation-delay: 0.15s; }
+.team-member:nth-child(3) { animation-delay: 0.25s; }
+.team-member:nth-child(4) { animation-delay: 0.35s; }
+.team-member:nth-child(5) { animation-delay: 0.45s; }
+.team-member:nth-child(6) { animation-delay: 0.55s; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* accent bar that wipes across the top on hover */
+.team-member::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--primary-hover);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 2;
 }
 
 .team-member:hover {
-  transform: translateY(-12px);
-  box-shadow: var(--primary-hover) 0px 1px 3px,
-              var(--primary-hover) 0px 0px 0px 1px;
+  transform: translateY(-10px);
+  box-shadow:
+    rgba(0, 0, 0, 0.10) 0px 20px 40px -12px,
+    var(--primary-hover) 0px 0px 0px 1px;
 }
 
+.team-member:hover::before {
+  transform: scaleX(1);
+}
+
+/* ---------- Image ----------
+   aspect-ratio keeps every photo identically framed
+   regardless of the source image's dimensions.                */
 .member-image {
+  position: relative;
   width: 100%;
-  max-width: 220px;
-  max-height: 220px;       /* Fixed height for consistent image placement */
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 12px;
+  background: #eceff3;
+  flex-shrink: 0;
 }
-
 
 .member-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  display: block;
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s ease;
+}
+
+/* soft gradient veil that fades up on hover */
+.member-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 55%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
 }
 
 .team-member:hover .member-image img {
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
+.team-member:hover .member-image::after {
+  opacity: 1;
+}
+
+/* ---------- Text ---------- */
 .team-member .member-name {
-  margin: 20px 0 8px;
+  margin: 18px 0 4px;
   color: var(--primary-hover);
-  font-size: 0.9rem;
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
   font-weight: 600;
-  white-space: normal;         /* Allow line breaks */
-  overflow: visible;           /* Let content expand */
-  text-overflow: unset;        /* Remove ellipsis */
-  word-break: break-word;      /* Break long words if needed */
-  text-align: center;
-  text-wrap: nowrap;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
 .team-member .member-nickname {
   color: var(--text);
   font-style: italic;
-  margin-bottom: 10px;
-  font-size: 0.8rem;
-  font-weight: 200;
+  font-size: clamp(0.75rem, 1.1vw, 0.85rem);
+  font-weight: 300;
+  margin: 0 0 6px;
+  opacity: 0.85;
 }
 
 .team-member .member-position {
   color: var(--dark);
-  font-size: 0.85rem;
-  font-weight: 200;
+  font-size: clamp(0.78rem, 1.1vw, 0.88rem);
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.01em;
 }
-.member-button{
-  margin-top: 12px;
-  padding: 8px 16px;
+
+/* pushes the button to the bottom so cards align
+   even when names wrap to two lines               */
+.team-member .member-position {
+  margin-bottom: auto;
+}
+
+/* ---------- Button ---------- */
+.member-button {
+  position: relative;
+  margin-top: 16px;
+  padding: 9px 22px;
   border: 1px solid var(--primary-hover);
-  background-color: #ffffff;
+  background-color: transparent;
   color: var(--primary-hover);
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  letter-spacing: 0.03em;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.35s ease;
+  flex-shrink: 0;
 }
+
+/* fill sweeps in from the bottom rather than a flat colour swap */
+.member-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--primary-hover);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
+}
+
 .member-button:hover {
-  background-color: var(--primary-hover);
   color: #ffffff;
 }
 
-
-
-
-
- @media (max-width: 990px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .member-image {
-    max-width: 240px;
-    height: 240px;
-  }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.75rem;
-      text-wrap: nowrap;
-
-
-  }
+.member-button:hover::before {
+  transform: scaleY(1);
 }
 
-/* ✅ Tablet: max-width 968px — show 2 cards */
-@media (max-width: 948px) {
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-.team-member {
-    max-height: 320px;
-    padding: 0;
-  }
-  .member-image {
-    max-width: 200px;
-    height: 200px;
-  }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.95rem;
-
-  }
+.member-button:focus-visible {
+  outline: 2px solid var(--primary-hover);
+  outline-offset: 3px;
 }
 
-/* ✅ Mobile: max-width 415px — show 2 smaller cards */
-@media (max-width: 650px) {
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
+/* ============================================================
+   Breakpoints — only two needed now.
+   ============================================================ */
 
+/* Tablet: slightly tighter cards */
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: 16px;
+  }
   .team-member {
-    padding: 10px;
-  max-height: 300px;
-  }
-
-  .member-image {
-    max-width: 180px;
-    height: 180px;
-  }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.85rem;
-      text-wrap: wrap;
-
+    max-width: 220px;
+    padding: 14px 14px 18px;
   }
 }
-/* ✅ Mobile: max-width 415px — show 2 smaller cards */
-@media (max-width: 600px) {
+
+/* Phone: guarantee exactly 2 columns, never 1 lonely card */
+@media (max-width: 520px) {
   .team-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 14px;
+    padding: 12px;
   }
-
   .team-member {
-    padding: 8px;
-    max-height: 340px;
-    width: 250px;
+    max-width: 100%;
+    padding: 10px 10px 14px;
+    border-radius: 12px;
   }
-
   .member-image {
-    max-width: 180px;
-    height: 180px;
+    border-radius: 9px;
   }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.95rem;
-      text-wrap: wrap;
-
+  .team-member .member-name {
+    margin-top: 12px;
+  }
+  .member-button {
+    padding: 8px 14px;
+    font-size: 0.7rem;
+    width: 100%;
   }
 }
-/* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 535px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 300px;
-    width: 150px;
-  }
-  .member-image {
-    max-width: 125px;
-    height: 130px;
-  }
- .team-member .member-name {
-    font-size: 0.7rem;
-      text-wrap: nowrap;
 
+/* Respect users who ask for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .team-member {
+    opacity: 1;
+    animation: none;
   }
-  
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.9rem;
-      text-wrap: wrap;
+  .team-member,
+  .team-member::before,
+  .member-image img,
+  .member-image::after,
+  .member-button,
+  .member-button::before {
+    transition: none;
+  }
+  .team-member:hover {
+    transform: none;
+  }
+  .team-member:hover .member-image img {
+    transform: none;
+  }
+}
 
-  }
-  }
-
-/* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 545px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 300px;
-    width: 220px;
-  }
-  .member-image {
-    max-width: 125px;
-    height: 130px;
-  }
- .team-member .member-name {
-    font-size: 0.9rem;
-      text-wrap: wrap;
-
-  }
-  
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.3rem;
-      text-wrap: wrap;
-
-  }
-  }
-  /* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 490px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 300px;
-    width: 200px;
-  }
-  .member-image {
-    max-width: 140px;
-    height: 140px;
-  }
- .team-member .member-name {
-    font-size: 0.9rem;
-      text-wrap: wrap;
-
-  }
-  
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.3rem;
-      text-wrap: wrap;
-
-  }
-  }
-/* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 450px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 300px;
-    width: 180px;
-  }
-  .team-member .member-image {
-    max-width: 125px;
-    height: 130px;
-  }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.7rem;
-      text-wrap: wrap;
-
-  }
-  }
-/* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 400px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 280px;
-    width: 150px;
-  }
-  .member-image {
-    max-width: 140px;
-    height: 140px;
-  }
-
-  .member-name,
-  .member-nickname,
-  .member-position {
-    font-size: 0.7rem;
-          text-wrap: wrap;
-
-  }
-  }
-  /* ✅ Extra small mobile: max-width 382px — show 1 card */
-@media (max-width: 392px) {
-  
-.team-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-.team-member {
-    padding: 8px;
-    max-height: 340px;
-    width: 140px;
-  }
-  .member-image {
-    max-width: 140px;
-    height: 140px;
-  }
-
-  .team-member .member-name,
-  .team-member .member-nickname,
-  .team-member .member-position {
-    font-size: 0.7rem;
-      text-wrap: wrap;
-
-  }
-  } 
-
-  /* Skeleton Loader Animation */
+/* ============================================================
+   Skeleton loader — matches the real card's shape exactly
+   ============================================================ */
 @keyframes shimmer {
-  0% { background-position: -500px 0; }
-  100% { background-position: 500px 0; }
+  0%   { background-position: -500px 0; }
+  100% { background-position:  500px 0; }
+}
+
+.skeleton-card {
+  pointer-events: none;
+  opacity: 1;
+  animation: none; /* don't run riseIn on skeletons */
 }
 
 .skeleton-card .skeleton-box,
@@ -414,34 +320,30 @@
   border-radius: 8px;
 }
 
-/* Image placeholder */
+/* matches .member-image aspect-ratio so there's no layout shift
+   when the real image swaps in */
 .skeleton-card .member-image {
   width: 100%;
-  height: 280px;
-  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 12px;
 }
 
-/* Text placeholders */
 .skeleton-text {
   width: 80%;
-  height: 18px;
-  margin: 12px auto;
+  height: 16px;
+  margin: 12px auto 8px;
 }
 
 .skeleton-text.small {
   width: 50%;
-  height: 14px;
+  height: 12px;
+  margin: 6px auto;
 }
 
-/* Button placeholder */
 .skeleton-button {
-  width: 60%;
-  height: 36px;
-  margin: 20px auto 0;
+  width: 65%;
+  height: 34px;
+  margin: 16px auto 0;
   border-radius: 6px;
-}
-
-/* Make the whole card look disabled */
-.skeleton-card {
-  pointer-events: none;
 }

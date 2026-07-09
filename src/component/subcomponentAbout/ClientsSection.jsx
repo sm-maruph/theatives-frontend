@@ -57,16 +57,13 @@ function ClientsSection() {
         ))}
       </div>
 
-      {/* Client Modal */}
+      {/* Modal — namespaced ab-* so Gallery.css can't override it */}
       {selectedClient && (
-        <div className="modal-overlay" onClick={() => setSelectedClient(null)}>
+        <div className="ab-modal-overlay" onClick={() => setSelectedClient(null)}>
           <ParticlesComponent theme="light" />
-          <div
-            className="modal-content scrollable-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="ab-modal" onClick={(e) => e.stopPropagation()}>
             <button
-              className="modal-sticky-btn"
+              className="ab-modal-back"
               onClick={() => setSelectedClient(null)}
             >
               Back
@@ -75,21 +72,21 @@ function ClientsSection() {
             <img
               src={selectedClient.client_logo}
               alt={selectedClient.client_name}
-              className="modal-logo"
+              className="ab-modal-logo"
             />
 
-            <h2 className="modal-client-name">{selectedClient.client_name}</h2>
-            <h4 className="modal-service-type">
+            <h2 className="ab-modal-name">{selectedClient.client_name}</h2>
+            <h4 className="ab-modal-service">
               <strong>Service Type:</strong> {selectedClient.service_type}
             </h4>
-            <p className="modal-description">{selectedClient.service_description}</p>
+            <p className="ab-modal-desc">{selectedClient.service_description}</p>
 
             {selectedClient.company_url && (
               <a
                 href={selectedClient.company_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="visit-company-btn sticky-btn"
+                className="ab-modal-visit"
               >
                 Visit {selectedClient.client_name}
               </a>
