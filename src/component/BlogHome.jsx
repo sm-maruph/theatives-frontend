@@ -1,6 +1,6 @@
 // src/components/BlogHome.jsx
 import React from "react";
-import "./css/BlogHome.css";
+import "./css/blogHome.css";
 import SectionJobs from "./subcomponentBlog/SectionJobs";
 import Blogs from "./subcomponentBlog/Blogs";
 import BlogContainer from "./subcomponentBlog/BlogContainer";
