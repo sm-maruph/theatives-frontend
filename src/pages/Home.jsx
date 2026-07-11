@@ -13,134 +13,74 @@ import serviceBg from "../assets/images/service.png";
 import worksBg from "../assets/images/work.png";
 import contactBg from "../assets/images/blog.png";
 import logo from "../assets/images/theatives_logo.png";
-import logoHover from '../assets/images/logo_hover.png'; // or any hover logo
+import logoHover from "../assets/images/logo_hover.png";
 import { useNavigate, useLocation } from "react-router-dom";
-
 
 function Home() {
   const [activeSection, setActiveSection] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
-const location = useLocation();
-const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-useEffect(() => {
-  const path = location.pathname.replace("/", ""); // "about"
-  const validSections = ["about", "service", "works", "contact"];
-
-  if (validSections.includes(path)) {
-    setActiveSection(path); // show that section
-  }
-}, [location.pathname]);
+  useEffect(() => {
+    const path = location.pathname.replace("/", "");
+    const validSections = ["about", "service", "works", "contact"];
+    if (validSections.includes(path)) {
+      setActiveSection(path);
+    }
+  }, [location.pathname]);
 
   const handleSectionClick = (section) => {
-  if (isAnimating || activeSection) return;
-
-  setIsAnimating(true);
-  setActiveSection(section);
-
-  // Update URL
-  navigate(`/${section}`);
-
-  setTimeout(() => setIsAnimating(false), 1000);
-};
-
+    if (isAnimating || activeSection) return;
+    setIsAnimating(true);
+    setActiveSection(section);
+    navigate(`/${section}`);
+    setTimeout(() => setIsAnimating(false), 1000);
+  };
 
   const handleClose = () => {
-  if (isAnimating) return;
-
-  setIsAnimating(true);
-  setActiveSection(null);
-
-  // Reset URL back to home
-  navigate("/");
-
-  setTimeout(() => setIsAnimating(false), 1000);
-};
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setActiveSection(null);
+    navigate("/");
+    setTimeout(() => setIsAnimating(false), 1000);
+  };
 
   const getPushDirection = (section) => {
     if (!activeSection) return "";
-
     const pushMap = {
-      about: {
-        service: "push-top-right",
-        works: "push-bottom-left",
-        contact: "push-bottom-right",
-        diamond: "push-bottom-right",
-      },
-      service: {
-        about: "push-top-left",
-        works: "push-bottom-left",
-        contact: "push-bottom-right",
-        diamond: "push-bottom-left",
-      },
-      works: {
-        about: "push-top-left",
-        service: "push-top-right",
-        contact: "push-bottom-right",
-        diamond: "push-top-right",
-      },
-      contact: {
-        about: "push-top-left",
-        service: "push-top-right",
-        works: "push-bottom-left",
-        diamond: "push-top-left",
-      },
+      about:   { service: "push-top-right", works: "push-bottom-left", contact: "push-bottom-right", diamond: "push-bottom-right" },
+      service: { about: "push-top-left", works: "push-bottom-left", contact: "push-bottom-right", diamond: "push-bottom-left" },
+      works:   { about: "push-top-left", service: "push-top-right", contact: "push-bottom-right", diamond: "push-top-right" },
+      contact: { about: "push-top-left", service: "push-top-right", works: "push-bottom-left", diamond: "push-top-left" },
     };
-
     return pushMap[activeSection][section] || "";
   };
+
+  const tiles = [
+    { key: "about",   bg: aboutBg,   label: "About" },
+    { key: "service", bg: serviceBg, label: "Services" },
+    { key: "works",   bg: worksBg,   label: "Works" },
+    { key: "contact", bg: contactBg, label: "Blog" },
+  ];
 
   return (
     <div className="app-container">
       {/* Background Sections */}
-      <div
-        className={`section about ${
-          activeSection === "about" ? "active" : ""
-        } ${getPushDirection("about")}`}
-        onClick={() => handleSectionClick("about")}
-      >
+      {tiles.map((t) => (
         <div
-          className="image-container"
-          style={{ backgroundImage: `url(${aboutBg})` }}
-        ></div>
-      </div>
-
-      <div
-        className={`section service ${
-          activeSection === "service" ? "active" : ""
-        } ${getPushDirection("service")}`}
-        onClick={() => handleSectionClick("service")}
-      >
-        <div
-          className="image-container"
-          style={{ backgroundImage: `url(${serviceBg})` }}
-        ></div>
-      </div>
-
-      <div
-        className={`section works ${
-          activeSection === "works" ? "active" : ""
-        } ${getPushDirection("works")}`}
-        onClick={() => handleSectionClick("works")}
-      >
-        <div
-          className="image-container"
-          style={{ backgroundImage: `url(${worksBg})` }}
-        ></div>
-      </div>
-
-      <div
-        className={`section contact ${
-          activeSection === "contact" ? "active" : ""
-        } ${getPushDirection("contact")}`}
-        onClick={() => handleSectionClick("contact")}
-      >
-        <div
-          className="image-container"
-          style={{ backgroundImage: `url(${contactBg})` }}
-        ></div>
-      </div>
+          key={t.key}
+          className={`section ${t.key} ${activeSection === t.key ? "active" : ""} ${getPushDirection(t.key)}`}
+          onClick={() => handleSectionClick(t.key)}
+        >
+          <div
+            className="image-container"
+            data-label={t.label}
+            style={{ backgroundImage: `url(${t.bg})` }}
+          ></div>
+        </div>
+      ))}
 
       {/* Diamond Logo */}
       <div className={`center-diamond ${getPushDirection("diamond")}`}>
@@ -150,7 +90,7 @@ useEffect(() => {
             onMouseEnter={() => setIsLogoHovered(true)}
             onMouseLeave={() => setIsLogoHovered(false)}
           >
-            <img src={isLogoHovered ? logoHover : logo} alt="Logo" />
+            <img src={isLogoHovered ? logoHover : logo} alt="Theatives" />
           </div>
         </div>
       </div>
@@ -158,10 +98,9 @@ useEffect(() => {
       {/* Active Content Overlay */}
       {activeSection && (
         <div className="content-overlay">
-          <button className="close-btn" onClick={handleClose}>
+          <button className="close-btn" onClick={handleClose} aria-label="Close">
             <FaTimes />
           </button>
-
           <div className="content-container">
             {activeSection === "about" && <About />}
             {activeSection === "service" && <Services />}
@@ -171,8 +110,7 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Bottom Contact Button - Only shown when no section is active */}
-      {<BottomContact />}
+      <BottomContact />
     </div>
   );
 }

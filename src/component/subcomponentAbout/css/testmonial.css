@@ -1,191 +1,164 @@
+/* ============================================================
+   TESTIMONIALS — maroon / rose / gold theme
+   Same class names, so TestimonialSlider.jsx needs no changes.
+   ============================================================ */
 
-.thirdAboutsection {
-  height: 60vh;
-  background-color: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
+.thirdsection {
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
 }
 
-/* Responsive Heading (h2) */
-.thirdsection h2 {
-  text-align: center;
-  margin-bottom: 2.5rem;
-  position: relative;
-  font-weight: 500;
-  font-size: clamp(1.2rem, 4vw, 1.8rem); /* Fluid font scaling */
-  color: var(--primary-hover);
-  padding: 0 1rem; /* Prevents text from touching edges on mobile */
-}
-
-/* Section Title Styling (with Responsive Pseudo-Elements) */
-.section-title {
+/* ---------- Section title — identical to .secondSection .sectionTitle ---------- */
+.thirdsection .sectionTitle {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: var(--primary-hover);
+  color: #ff5c72;
+  margin-bottom: 3vh;
 }
 
-.section-title::before,
-.section-title::after {
+.thirdsection .sectionTitle::before,
+.thirdsection .sectionTitle::after {
   content: "";
   display: inline-block;
-  width: clamp(30px, 15vw, 100px); /* Fluid width scaling */
+  width: clamp(20px, 15vw, 100px);
   height: 1px;
-  background: var(--gray);
+  background: linear-gradient(90deg, transparent, #ff5c72, transparent);
   margin: 0 10px;
-  flex-shrink: 1; /* Allows lines to shrink on small screens */
+  flex-shrink: 1;
 }
 
-
-
+/* ---------- Slide ---------- */
 .testimonial-slide {
   display: flex !important;
-  height: 350px;
-  min-height: 400px;
-  width: 90%;
-  margin: auto;
-  border-radius: 8px;
+  min-height: 380px;
+  width: min(92%, 1000px);
+  margin: 0 auto;
+  border-radius: 16px;
   overflow: hidden;
-  
+  box-shadow: 0 24px 60px -26px rgba(0, 0, 0, 0.7);
 }
 
+/* ---------- Left: the quote ---------- */
 .left-panel {
-  flex: 70%;
-  background-color: var(--primary-hover); /* red */
-  color: var(--white);
-  position: center;
-  font-size: 1.3rem;
-  padding-left: 1rem;
-  padding-right: 0.5rem;
+  flex: 1 1 65%;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 400px;
+  gap: 0.5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  color: #f5f2f2;
+  background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.quote-mark {
-  font-size: 1rem;
-  line-height: 1;
-  margin-bottom: 0.2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  padding-left: 0.2rem;
+/* faint CRT scan bars */
+.left-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: repeating-linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.028) 0px, rgba(255, 255, 255, 0.028) 1px,
+    transparent 1px, transparent 4px);
+  pointer-events: none;
 }
-.quote-mark-bottom {
-  font-size: 1rem;
-  line-height: 1;
-  margin-bottom: 0.2rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  padding-right: 0.5rem;
-}
+
+.left-panel > * { position: relative; z-index: 1; }
+
 .left-panel p {
   margin: 0;
-  line-height: 1.6;
-  font-size: 1rem;
+  line-height: 1.75;
+  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  font-weight: 300;
 }
 
+.quote-mark,
+.quote-mark-bottom {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: bold;
+  color: #ffc46b;
+  text-shadow: 0 0 16px rgba(255, 196, 107, 0.5);
+  display: flex;
+}
+
+.quote-mark { justify-content: flex-start; }
+.quote-mark-bottom { justify-content: flex-end; }
+
+/* ---------- Right: the reviewer ---------- */
 .right-panel {
-  flex: 30%;
-  background-color: var(--light);
-  text-align: center;
-  padding: 2rem 1rem;
+  flex: 1 1 35%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 2px solid var(--primary-hover);
-  min-height: 175px;
-  height: 400px;
+  text-align: center;
+  padding: clamp(1.5rem, 4vw, 2rem) 1rem;
+  color: #f5f2f2;
+  background:
+    linear-gradient(150deg, rgba(92, 20, 26, 0.92), rgba(43, 13, 16, 0.96));
+  border-left: 2px solid rgba(255, 196, 107, 0.35);
 }
 
 .reviewer-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 5%;
+  width: clamp(80px, 12vw, 120px);
+  height: clamp(80px, 12vw, 120px);
+  border-radius: 12px;
   object-fit: cover;
   margin: 0 auto 1rem;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#5c141a, #5c141a) padding-box,
+    linear-gradient(135deg, #ff5c72, #ffc46b) border-box;
+  box-shadow: 0 10px 26px -10px rgba(255, 92, 114, 0.6);
 }
 
 .right-panel h4 {
-  margin: 0.5rem 0;
-  font-size: small;
-  font-weight: bold;
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
   letter-spacing: 1px;
-  color: var(--primary-hover);
+  color: #ff5c72;
 }
 
 .right-panel p {
   margin: 0;
-  color: var(--text);
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
-/* Slick dots customization (optional) */
+/* ---------- Slick dots ---------- */
 .slick-dots li button:before {
-  font-size: 12px;
-  color: var(--primary-hover);
+  font-size: 10px;
+  color: #ff5c72;
+  opacity: 0.35;
 }
 
 .slick-dots li.slick-active button:before {
-  color: var(--primary-hover);
+  color: #ffc46b;
+  opacity: 1;
 }
 
-
-/* Mobile Adjustments */
+/* ---------- Responsive: stack on mobile ---------- */
 @media (max-width: 768px) {
-  .thirdAboutsection {
-    height: auto; /* Adjust height for content */
-    padding: 3rem 1rem; /* More padding on mobile */
+  .testimonial-slide {
+    flex-direction: column;
+    min-height: 0;
+    width: 94%;
   }
-
-  .thirdAboutsection h2 {
-    font-size: 1.4rem; /* Slightly larger for readability */
-    margin-bottom: 1rem;
+  .left-panel { flex: none; padding: 1.5rem 1.25rem; }
+  .left-panel p { font-size: 0.95rem; }
+  .right-panel {
+    flex: none;
+    border-left: none;
+    border-top: 2px solid rgba(255, 196, 107, 0.35);
+    padding: 1.5rem 1rem;
   }
-
-  .section-title::before,
-  .section-title::after {
-    width: 50px; /* Shorter lines on mobile */
-    margin: 0 8px; /* Tighter spacing */
-  }
-  .left-panel p {
-  margin: 0;
-  line-height: 1.6;
-  font-size: 0.75rem;
 }
 
-.reviewer-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 5%;
-  object-fit: cover;
-  margin: 0 auto 1rem;
-}
-.right-panel h4 {
-  margin: 0.2rem 0;
-  font-size: small;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: var(--primary-hover);
-}
-}
-
-/* Small Mobile (e.g., < 480px) */
-@media (max-width: 480px) {
-  .thirdsection h2 {
-    font-size: 1rem;
-  }
-
-  .section-title::before,
-  .section-title::after {
-    width: 30px; /* Very short lines on tiny screens */
-    margin: 0 5px;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .left-panel::after { display: none; }
 }

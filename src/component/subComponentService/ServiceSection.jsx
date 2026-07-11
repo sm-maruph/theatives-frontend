@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "../css/Services.css"; // Link to external CSS
+import "../css/Services.css";
+import ServiceInquiryModal from "./ServiceInquiryModal";
 // import { fetchServices } from "../../adminServices/AdminServices";
-// import { getFullUrl } from "../../utils/apiUrl";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_SERVICES = [
-  { id: 1, title: "Brand Identity",   description: "Logos, guidelines, and complete visual systems that make brands unforgettable.", image_path: "https://placehold.co/120x120/2b2d42/ffffff?text=Brand" },
-  { id: 2, title: "Web Design",       description: "Responsive, high-converting websites designed and built end to end.",             image_path: "https://placehold.co/120x120/ef233c/ffffff?text=Web" },
-  { id: 3, title: "Motion Graphics",  description: "Animated explainers, ads, and social content that grab attention.",              image_path: "https://placehold.co/120x120/8d99ae/ffffff?text=Motion" },
-  { id: 4, title: "UI/UX Design",     description: "Research-driven interface design for web and mobile products.",                    image_path: "https://placehold.co/120x120/edf2f4/2b2d42?text=UIUX" },
+  { id: 1, title: "Web Development",  description: "Responsive, high-converting websites designed and built end to end.", image_path: "https://placehold.co/120x120/871f27/ffc46b?text=Web" },
+  { id: 2, title: "Graphics Design",  description: "Logos, guidelines, and complete visual systems that make brands unforgettable.", image_path: "https://placehold.co/120x120/871f27/ff5c72?text=Design" },
+  { id: 3, title: "Game Development", description: "Immersive game worlds, mechanics, and interactive experiences.", image_path: "https://placehold.co/120x120/871f27/ffc46b?text=Game" },
+  { id: 4, title: "App Development",  description: "Native and cross-platform apps built for performance and scale.", image_path: "https://placehold.co/120x120/871f27/ff5c72?text=App" },
 ];
 // ---------------------------------------------------
 
@@ -16,6 +16,7 @@ const ServicesSection = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [inquiry, setInquiry] = useState(null); // the service being requested
 
   useEffect(() => {
     loadServices();
@@ -38,12 +39,13 @@ const ServicesSection = () => {
   };
 
   return (
-    <div className="servicesPage-section">
-      <h3 className="sectionTitle">Our Services</h3>
-      <div className="cards-container">
+    <section className="sv-section">
+      <h3 className="sv-title">Our Services</h3>
+
+      <div className="sv-cards">
         {services.map((service, index) => (
-          <div className="servicePage-card" key={index}>
-            <div className="icon">
+          <article className="sv-card" key={service.id || index}>
+            <div className="sv-card-icon">
               <img
                 src={service.image_path}
                 alt={service.title}
@@ -53,13 +55,28 @@ const ServicesSection = () => {
                 }}
               />
             </div>
-            <h3 className="card-title">{service.title}</h3>
-            <p className="card-description">{service.description}</p>
-            <button>Get Service</button>
-          </div>
+            <h3 className="sv-card-title">{service.title}</h3>
+            <p className="sv-card-desc">{service.description}</p>
+
+            {/* passes the whole service object — the modal locks it read-only */}
+            <button
+              className="sv-card-btn"
+              onClick={() => setInquiry(service)}
+            >
+              Get Service
+            </button>
+          </article>
         ))}
       </div>
-    </div>
+
+      {inquiry && (
+        <ServiceInquiryModal
+          service={inquiry}
+          kind="service"
+          onClose={() => setInquiry(null)}
+        />
+      )}
+    </section>
   );
 };
 

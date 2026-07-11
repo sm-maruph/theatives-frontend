@@ -1,36 +1,33 @@
 /* ============================================================
-   Member / Team Section
-   Fluid grid — cards size themselves, no breakpoint stacking.
-   Palette: --primary-hover, --light, --text, --dark
+   Member / Team Section — maroon / rose / gold (no white)
+   Fluid grid · fixed image ratio · staggered animation
    ============================================================ */
 
 .secondSection {
-  padding: 40px 0;
+  padding: clamp(2rem, 5vw, 3rem) 0;
 }
 
-.sectionTitle {
+.secondSection .sectionTitle {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  color: var(--primary-hover);
+  color: #ff5c72;
   margin-bottom: 3vh;
 }
 
-.sectionTitle::before,
-.sectionTitle::after {
+.secondSection .sectionTitle::before,
+.secondSection .sectionTitle::after {
   content: "";
   display: inline-block;
   width: clamp(20px, 15vw, 100px);
   height: 1px;
-  background: var(--primary-hover);
+  background: linear-gradient(90deg, transparent, #ff5c72, transparent);
   margin: 0 10px;
   flex-shrink: 1;
 }
 
-/* ---------- Grid ----------
-   auto-fit + minmax handles every screen size on its own.
-   Cards are centred and never stretch awkwardly.               */
+/* ---------- Grid ---------- */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -46,30 +43,28 @@
   position: relative;
   width: 100%;
   max-width: 260px;
-  background-color: var(--light);
-  border-radius: 16px;
-  padding: 16px 16px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 16px 16px 20px;
+  border-radius: 16px;
   overflow: hidden;
   isolation: isolate;
 
-  box-shadow:
-    rgba(0, 0, 0, 0.02) 0px 1px 3px,
-    rgba(27, 31, 35, 0.12) 0px 0px 0px 1px;
+  background: linear-gradient(150deg, rgba(163, 43, 52, 0.5), rgba(92, 20, 26, 0.64));
+  border: 1px solid rgba(255, 196, 107, 0.16);
+  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.75);
 
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease;
 
-  /* staggered entrance — see @keyframes riseIn below */
   opacity: 0;
   animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* stagger each card so the row cascades in */
 .team-member:nth-child(1) { animation-delay: 0.05s; }
 .team-member:nth-child(2) { animation-delay: 0.15s; }
 .team-member:nth-child(3) { animation-delay: 0.25s; }
@@ -82,40 +77,37 @@
   to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* accent bar that wipes across the top on hover */
+/* rose-gold accent bar wipes across the top on hover */
 .team-member::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
   height: 3px;
-  background: var(--primary-hover);
+  background: linear-gradient(90deg, #ff5c72, #ffc46b);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 2;
+  z-index: 3;
 }
 
 .team-member:hover {
   transform: translateY(-10px);
+  border-color: rgba(255, 196, 107, 0.5);
   box-shadow:
-    rgba(0, 0, 0, 0.10) 0px 20px 40px -12px,
-    var(--primary-hover) 0px 0px 0px 1px;
+    0 26px 46px -18px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 92, 114, 0.4);
 }
 
-.team-member:hover::before {
-  transform: scaleX(1);
-}
+.team-member:hover::before { transform: scaleX(1); }
 
-/* ---------- Image ----------
-   aspect-ratio keeps every photo identically framed
-   regardless of the source image's dimensions.                */
+/* ---------- Image ---------- */
 .member-image {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
-  background: #eceff3;
+  background: #2b0d10;         /* dark placeholder — no white flash */
   flex-shrink: 0;
 }
 
@@ -124,37 +116,33 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: saturate(0.9) brightness(0.96);
   transition:
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.45s ease;
 }
 
-/* soft gradient veil that fades up on hover */
+/* maroon veil fades up on hover */
 .member-image::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(0, 0, 0, 0) 55%
-  );
+  /* background: linear-gradient(to top, rgba(43, 13, 16, 0.55) 0%, rgba(43, 13, 16, 0) 55%); */
   opacity: 0;
   transition: opacity 0.45s ease;
 }
 
 .team-member:hover .member-image img {
   transform: scale(1.07);
+  filter: saturate(1.05) brightness(1);
 }
 
-.team-member:hover .member-image::after {
-  opacity: 1;
-}
+.team-member:hover .member-image::after { opacity: 1; }
 
 /* ---------- Text ---------- */
 .team-member .member-name {
   margin: 18px 0 4px;
-  color: var(--primary-hover);
+  color: #ffffff;
   font-size: clamp(0.9rem, 1.4vw, 1.05rem);
   font-weight: 600;
   line-height: 1.3;
@@ -162,26 +150,19 @@
 }
 
 .team-member .member-nickname {
-  color: var(--text);
+  color: #ffc46b;
   font-style: italic;
   font-size: clamp(0.75rem, 1.1vw, 0.85rem);
   font-weight: 300;
   margin: 0 0 6px;
-  opacity: 0.85;
 }
 
 .team-member .member-position {
-  color: var(--dark);
+  color: rgba(255, 255, 255, 0.72);
   font-size: clamp(0.78rem, 1.1vw, 0.88rem);
   font-weight: 400;
-  margin: 0;
+  margin: 0 0 auto;      /* pushes button to the bottom, aligns rows */
   letter-spacing: 0.01em;
-}
-
-/* pushes the button to the bottom so cards align
-   even when names wrap to two lines               */
-.team-member .member-position {
-  margin-bottom: auto;
 }
 
 /* ---------- Button ---------- */
@@ -189,62 +170,56 @@
   position: relative;
   margin-top: 16px;
   padding: 9px 22px;
-  border: 1px solid var(--primary-hover);
+  border: 1px solid rgba(255, 196, 107, 0.5);
   background-color: transparent;
-  color: var(--primary-hover);
-  border-radius: 6px;
+  color: #f5f2f2;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   overflow: hidden;
   z-index: 1;
-  transition: color 0.35s ease;
   flex-shrink: 0;
+  transition: color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* fill sweeps in from the bottom rather than a flat colour swap */
+/* rose-gold fill sweeps up from the bottom */
 .member-button::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--primary-hover);
+  z-index: -1;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
   transform: scaleY(0);
   transform-origin: bottom;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: -1;
 }
 
 .member-button:hover {
-  color: #ffffff;
+  color: #2b0d10;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -8px rgba(255, 92, 114, 0.7);
 }
 
-.member-button:hover::before {
-  transform: scaleY(1);
-}
+.member-button:hover::before { transform: scaleY(1); }
 
 .member-button:focus-visible {
-  outline: 2px solid var(--primary-hover);
+  outline: 2px solid #ffc46b;
   outline-offset: 3px;
 }
 
 /* ============================================================
-   Breakpoints — only two needed now.
+   Responsive
    ============================================================ */
-
-/* Tablet: slightly tighter cards */
 @media (max-width: 768px) {
   .team-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     padding: 16px;
   }
-  .team-member {
-    max-width: 220px;
-    padding: 14px 14px 18px;
-  }
+  .team-member { max-width: 220px; padding: 14px 14px 18px; }
 }
 
-/* Phone: guarantee exactly 2 columns, never 1 lonely card */
 @media (max-width: 520px) {
   .team-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -256,43 +231,25 @@
     padding: 10px 10px 14px;
     border-radius: 12px;
   }
-  .member-image {
-    border-radius: 9px;
-  }
-  .team-member .member-name {
-    margin-top: 12px;
-  }
-  .member-button {
-    padding: 8px 14px;
-    font-size: 0.7rem;
-    width: 100%;
-  }
+  .member-image { border-radius: 9px; }
+  .team-member .member-name { margin-top: 12px; }
+  .member-button { padding: 8px 14px; font-size: 0.7rem; width: 100%; }
 }
 
-/* Respect users who ask for reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .team-member {
-    opacity: 1;
-    animation: none;
-  }
+  .team-member { opacity: 1; animation: none; }
   .team-member,
   .team-member::before,
   .member-image img,
   .member-image::after,
   .member-button,
-  .member-button::before {
-    transition: none;
-  }
-  .team-member:hover {
-    transform: none;
-  }
-  .team-member:hover .member-image img {
-    transform: none;
-  }
+  .member-button::before { transition: none; }
+  .team-member:hover { transform: none; }
+  .team-member:hover .member-image img { transform: none; }
 }
 
 /* ============================================================
-   Skeleton loader — matches the real card's shape exactly
+   Skeleton loader — dark maroon, matches the card
    ============================================================ */
 @keyframes shimmer {
   0%   { background-position: -500px 0; }
@@ -302,26 +259,24 @@
 .skeleton-card {
   pointer-events: none;
   opacity: 1;
-  animation: none; /* don't run riseIn on skeletons */
+  animation: none;
 }
 
 .skeleton-card .skeleton-box,
 .skeleton-text,
 .skeleton-button {
-  background: #e2e2e2;
+  background: #3a1519;
   background-image: linear-gradient(
     90deg,
-    #e2e2e2 0px,
-    #f5f5f5 40px,
-    #e2e2e2 80px
+    #3a1519 0px,
+    #5c2129 40px,
+    #3a1519 80px
   );
   background-size: 600px 100%;
   animation: shimmer 1.4s infinite linear;
   border-radius: 8px;
 }
 
-/* matches .member-image aspect-ratio so there's no layout shift
-   when the real image swaps in */
 .skeleton-card .member-image {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -345,5 +300,5 @@
   width: 65%;
   height: 34px;
   margin: 16px auto 0;
-  border-radius: 6px;
+  border-radius: 8px;
 }

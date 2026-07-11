@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 // import { fetchClients } from "../../adminServices/AdminClientsApi";
 import "../css/About.css";
+import "./css/client.css";
 import ParticlesComponent from "../animationSubcomponent/ParticlesComponent";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_CLIENTS = [
-  { id: 1, client_name: "Nimbus Studio", client_logo: "https://placehold.co/200x120/2b2d42/ffffff?text=Nimbus", service_type: "Brand Identity", service_description: "Full brand identity design including logo, guidelines, and collateral.", company_url: "https://example.com" },
-  { id: 2, client_name: "BrightPixel",   client_logo: "https://placehold.co/200x120/ef233c/ffffff?text=BrightPixel", service_type: "Web Design", service_description: "End-to-end website design and development for their product launch.", company_url: "https://example.com" },
-  { id: 3, client_name: "Cloudline",     client_logo: "https://placehold.co/200x120/8d99ae/ffffff?text=Cloudline", service_type: "Motion Graphics", service_description: "Animated explainer videos and social media motion assets.", company_url: "" },
-  { id: 4, client_name: "Verdant Co.",   client_logo: "https://placehold.co/200x120/edf2f4/2b2d42?text=Verdant", service_type: "UI/UX", service_description: "Mobile app UX research and interface design.", company_url: "https://example.com" },
+  { id: 1, client_name: "Nimbus Studio", client_logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/1280px-LEGO_logo.svg.png", service_type: "Brand Identity", service_description: "Full brand identity design including logo, guidelines, and collateral.", company_url: "https://example.com" },
+  { id: 2, client_name: "BrightPixel",   client_logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYqt9BqsWp-4s9Wropt9zGPpAq8ZgQGuABhfwjlZo9Tg&s=10", service_type: "Web Design", service_description: "End-to-end website design and development for their product launch.", company_url: "https://example.com" },
+  { id: 3, client_name: "Cloudline",     client_logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_2a287vCm5npZAqmyqRUC16z0BR0C6zob-GXDBCVcaBMLZg_qcbYdOEs&s=10", service_type: "Motion Graphics", service_description: "Animated explainer videos and social media motion assets.", company_url: "" },
+  { id: 4, client_name: "Verdant Co.",   client_logo: "https://www.designfreelogoonline.com/wp-content/uploads/2021/07/3D-colorful-tech-logo-maker-e1626505840664.webp", service_type: "UI/UX", service_description: "Mobile app UX research and interface design.", company_url: "https://example.com" },
 ];
 // ---------------------------------------------------
 
@@ -39,7 +40,9 @@ function ClientsSection() {
   };
 
   return (
-    <div className="sectionFour">
+    /* renamed from .sectionFour / .sectionAboutFour — those collide with
+       Gallery.css; this section is now .clients-section */
+    <div className="clients-section">
       <h4 className="sectionTitle">Our Clients</h4>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}

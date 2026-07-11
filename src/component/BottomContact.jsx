@@ -1,37 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaTimes,
   FaEnvelope,
   FaPhone,
   FaMapMarkerAlt,
   FaClock,
-  FaFacebook,
+  FaFacebookF,
+  FaYoutube,
+  FaInstagram,
+  FaLinkedinIn,
 } from "react-icons/fa";
 
 const BottomContact = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const toggleExpand = () => setIsExpanded((v) => !v);
+
+  // Esc closes the drawer + lock scroll while open
+  useEffect(() => {
+    if (!isExpanded) return;
+    const onKey = (e) => e.key === "Escape" && setIsExpanded(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isExpanded]);
 
   const contactDetails = [
-    {
-      icon: <FaMapMarkerAlt />,
-      text: "House - 5, Road - 2, Block - J, Banani, Dhaka 1212",
-    },
-    {
-      icon: <FaClock />,
-      text: "We are open 24/7",
-    },
-    {
-      icon: <FaPhone />,
-      text: "+880 1521 112229",
-    },
-    {
-      icon: <FaEnvelope />,
-      text: "info@batterylowinteractive.com",
-    },
+    { icon: <FaMapMarkerAlt />, text: "House 5, Road 2, Block J, Banani, Dhaka 1212" },
+    { icon: <FaClock />,        text: "We are open 24/7" },
+    { icon: <FaPhone />,        text: "+880 1521 112229" },
+    { icon: <FaEnvelope />,     text: "info@theatives.com" },
+  ];
+
+  const socials = [
+    { icon: <FaFacebookF />,  url: "https://www.facebook.com/share/16tW4yPvKE/",              label: "Facebook" },
+    { icon: <FaYoutube />,    url: "https://youtube.com/@theatives?si=UexZU07WBFKmv1HW",       label: "Youtube" },
+    { icon: <FaInstagram />,  url: "https://www.instagram.com/theatives_?igsh=MXhwaTNid2gwYmxyaw==", label: "Instagram" },
+    { icon: <FaLinkedinIn />, url: "https://www.linkedin.com/company/theatives/posts/",        label: "LinkedIn" },
   ];
 
   return (
@@ -42,17 +46,19 @@ const BottomContact = () => {
         </button>
       ) : (
         <div className="contact-content">
-          <button className="close-contact" onClick={toggleExpand}>
+          <button className="close-contact" onClick={toggleExpand} aria-label="Close">
             <FaTimes />
           </button>
+
           <h3>Get in Touch</h3>
+
           <div className="contactMain">
             <div className="contact-form-container">
               <form className="contact-form">
                 <input type="text" placeholder="Your Name" required />
                 <input type="email" placeholder="Email Address" required />
-                <select>
-                  <option value="">Select Service</option>
+                <select defaultValue="">
+                  <option value="" disabled>Select Service</option>
                   <option value="web">Web Development</option>
                   <option value="mobile">Mobile App</option>
                   <option value="design">UI/UX Design</option>
@@ -70,42 +76,22 @@ const BottomContact = () => {
                     <p>{item.text}</p>
                   </div>
                 ))}
+
                 <div className="social-links">
-                  <h2>Connect with us</h2>
-                   <div className="social-icons">
-          <a
-            href="https://www.facebook.com/share/16tW4yPvKE/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-          >
-            <i className="fab fa-facebook-f"></i>
-          </a>
-          <a
-            href="https://youtube.com/@theatives?si=UexZU07WBFKmv1HW"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Youtube"
-          >
-            <i className="fab fa-youtube"></i>
-          </a>
-          <a
-            href="https://www.instagram.com/theatives_?igsh=MXhwaTNid2gwYmxyaw=="
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-          >
-            <i className="fab fa-instagram"></i>
-          </a>
-          <a
-            href="https://www.linkedin.com/company/theatives/posts/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-          >
-            <i className="fab fa-linkedin-in"></i>
-          </a>
-        </div>
+                  <p>Connect with us</p>
+                  <div className="social-icons">
+                    {socials.map((s, i) => (
+                      <a
+                        key={i}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={s.label}
+                      >
+                        {s.icon}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

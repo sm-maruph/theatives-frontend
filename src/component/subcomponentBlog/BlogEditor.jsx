@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./css/BlogEditor.css";
-import { getFullUrl } from '../../utils/apiUrl';
+import { getFullUrl } from "../../utils/apiUrl";
 const BASE_PATH = "/api/admin/dashboardservices/blogs";
 
 const BlogEditor = () => {
@@ -11,11 +11,12 @@ const BlogEditor = () => {
   const addSection = (type) => {
     const newSection = {
       type,
-      content: type === "list"
-        ? [""]
-        : type === "image" || type === "video"
-        ? { file: null, preview: "" }
-        : "",
+      content:
+        type === "list"
+          ? [""]
+          : type === "image" || type === "video"
+          ? { file: null, preview: "" }
+          : "",
     };
     setSections([...sections, newSection]);
   };
@@ -49,13 +50,12 @@ const BlogEditor = () => {
 
     sections.forEach((section) => {
       const { type, content } = section;
-
       if (type === "image" && content.file) {
         formData.append("images", content.file);
-        formattedSections.push({ type, content: null }); // File will be handled by backend
+        formattedSections.push({ type, content: null });
       } else if (type === "video" && content.file) {
         formData.append("videos", content.file);
-        formattedSections.push({ type, content: null }); // File will be handled by backend
+        formattedSections.push({ type, content: null });
       } else {
         formattedSections.push(section);
       }
@@ -67,7 +67,6 @@ const BlogEditor = () => {
       await axios.post(getFullUrl(BASE_PATH), formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       alert("Blog submitted!");
       setTitle("");
       setSections([]);
@@ -78,40 +77,34 @@ const BlogEditor = () => {
   };
 
   return (
-    <div className="container" style={{ maxWidth: "700px", margin: "auto" }}>
+    <div className="bl-editor">
       <h2>Create Blog</h2>
+
+      <label>Blog Title</label>
       <input
         type="text"
         placeholder="Blog Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "20px" }}
       />
 
-      <div style={{ marginBottom: "15px" }}>
+      <div className="bl-editor-toolbar" style={{ marginTop: "1rem" }}>
         {["heading", "paragraph", "list", "image", "video"].map((type) => (
-          <button
-            key={type}
-            onClick={() => addSection(type)}
-            style={{ marginRight: "10px" }}
-          >
+          <button key={type} onClick={() => addSection(type)}>
             + {type}
           </button>
         ))}
       </div>
 
       {sections.map((section, index) => (
-        <div key={index} style={{ marginBottom: "20px" }}>
-          <label>
-            <strong>{section.type.toUpperCase()}</strong>
-          </label>
+        <div key={index} className="bl-editor-section">
+          <label>{section.type.toUpperCase()}</label>
 
           {section.type === "heading" && (
             <input
               type="text"
               value={section.content}
               onChange={(e) => updateSection(index, e.target.value)}
-              style={{ width: "100%", padding: "8px" }}
             />
           )}
 
@@ -119,7 +112,6 @@ const BlogEditor = () => {
             <textarea
               value={section.content}
               onChange={(e) => updateSection(index, e.target.value)}
-              style={{ width: "100%", padding: "8px" }}
             />
           )}
 
@@ -132,10 +124,12 @@ const BlogEditor = () => {
                   value={item}
                   placeholder={`Item ${i + 1}`}
                   onChange={(e) => updateSection(index, e.target.value, i)}
-                  style={{ width: "100%", padding: "8px", marginBottom: "5px" }}
+                  style={{ marginBottom: "5px" }}
                 />
               ))}
-              <button onClick={() => addListItem(index)}>+ Add List Item</button>
+              <button onClick={() => addListItem(index)} style={{ marginTop: "5px" }}>
+                + Add List Item
+              </button>
             </div>
           )}
 
@@ -147,11 +141,7 @@ const BlogEditor = () => {
                 onChange={(e) => handleFileChange(index, e.target.files[0])}
               />
               {section.content.preview && (
-                <img
-                  src={section.content.preview}
-                  alt="preview"
-                  style={{ width: "100%", marginTop: "10px", maxHeight: "300px" }}
-                />
+                <img src={section.content.preview} alt="preview" style={{ width: "100%", maxHeight: "300px" }} />
               )}
             </div>
           )}
@@ -164,21 +154,14 @@ const BlogEditor = () => {
                 onChange={(e) => handleFileChange(index, e.target.files[0])}
               />
               {section.content.preview && (
-                <video
-                  src={section.content.preview}
-                  controls
-                  style={{ width: "100%", marginTop: "10px", maxHeight: "300px" }}
-                />
+                <video src={section.content.preview} controls style={{ width: "100%", maxHeight: "300px" }} />
               )}
             </div>
           )}
         </div>
       ))}
 
-      <button
-        onClick={handleSubmit}
-        style={{ marginTop: "20px", padding: "10px 20px" }}
-      >
+      <button className="bl-editor-submit" onClick={handleSubmit}>
         Submit Blog
       </button>
     </div>

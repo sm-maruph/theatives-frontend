@@ -1,12 +1,12 @@
-// src/components/ShowcaseWork.js
+// src/components/subcomponentWork/ShowcaseWork.jsx
 import React, { useState, useEffect } from "react";
 import "./css/ShowcaseWork.css";
+import ParticlesComponent from "../animationSubcomponent/ParticlesComponent";
 // import { getBlogs, incrementBlogView } from "../../adminServices/AdminShowcase";
 // import { getFullUrl } from "../../utils/apiUrl";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
-// Mirrors your real shape: { id, title, category, created_at, sections: [...] }
-// Section types: heading | paragraph | list (content is an array) | image | video
+// Section types: heading | paragraph | list (array) | image | video
 const DUMMY_BLOGS = [
   {
     id: 1,
@@ -14,7 +14,7 @@ const DUMMY_BLOGS = [
     category: "Branding",
     created_at: "2025-05-20T10:00:00Z",
     sections: [
-      { type: "image", content: "https://placehold.co/800x450/2b2d42/ffffff?text=Nimbus+Rebrand" },
+      { type: "image", content: "https://static.vecteezy.com/system/resources/thumbnails/027/575/466/small/business-horizontal-banner-template-design-it-is-suitable-for-social-media-advertising-fashion-brand-promotion-digital-marketing-etc-vector.jpg" },
       { type: "heading", content: "A Fresh Identity" },
       { type: "paragraph", content: "We reimagined Nimbus Studio's brand from the ground up, delivering a cohesive visual system." },
       { type: "list", content: ["New logo suite", "Brand guidelines", "Social templates"] },
@@ -37,7 +37,7 @@ const DUMMY_BLOGS = [
     category: "Web Design",
     created_at: "2025-06-18T09:15:00Z",
     sections: [
-      { type: "image", content: "https://placehold.co/800x450/8d99ae/ffffff?text=Ecommerce+Redesign" },
+      { type: "image", content: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvhxDIq64xas1hTDITsNeM1h8qg_AjpoJlLi2c9Gg_vU0ymetq8BSpJMzL&s=10" },
       { type: "paragraph", content: "A conversion-focused redesign that lifted checkout completion by 34%." },
     ],
   },
@@ -47,7 +47,7 @@ const DUMMY_BLOGS = [
     category: "Web Design",
     created_at: "2025-07-01T16:45:00Z",
     sections: [
-      { type: "image", content: "https://placehold.co/800x450/ef233c/ffffff?text=Campaign+Microsite" },
+      { type: "image", content: "https://static.vecteezy.com/system/resources/previews/017/764/762/non_2x/banner-for-sale-people-rush-to-shop-with-bags-the-girl-runs-to-the-supermarket-young-people-with-bags-vector.jpg" },
       { type: "heading", content: "Interactive & Playful" },
       { type: "paragraph", content: "A scroll-driven microsite built for a seasonal marketing push." },
     ],
@@ -77,6 +77,18 @@ export default function ShowcaseWork() {
     fetchBlogs();
   }, []);
 
+  // lock page scroll + Esc-to-close while the modal is open
+  useEffect(() => {
+    if (!selectedBlog) return;
+    const onKey = (e) => e.key === "Escape" && setSelectedBlog(null);
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [selectedBlog]);
+
   const categories = [
     "All",
     ...Array.from(new Set(blogs.map((blog) => blog.category))),
@@ -90,41 +102,29 @@ export default function ShowcaseWork() {
   const handleReadMore = async (blog) => {
     try {
       // ---- REAL BACKEND (uncomment when ready) ----
-      // await incrementBlogView(blog.id); // update view count
+      // await incrementBlogView(blog.id);
     } catch (error) {
       // optional: toast or silently fail
     }
     setSelectedBlog(blog);
   };
 
-  const closeModal = () => {
-    setSelectedBlog(null);
-  };
+  const closeModal = () => setSelectedBlog(null);
 
   function timeAgo(dateString) {
     const now = new Date();
     const createdDate = new Date(dateString);
     const diffInSeconds = Math.floor((now - createdDate) / 1000);
 
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds} seconds ago`;
-    }
+    if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
-    }
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
-    }
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 30) {
-      return `${diffInDays} day${diffInDays !== 1 ? "s" : ""} ago`;
-    }
+    if (diffInDays < 30) return `${diffInDays} day${diffInDays !== 1 ? "s" : ""} ago`;
     const diffInMonths = Math.floor(diffInDays / 30);
-    if (diffInMonths < 12) {
-      return `${diffInMonths} month${diffInMonths !== 1 ? "s" : ""} ago`;
-    }
+    if (diffInMonths < 12) return `${diffInMonths} month${diffInMonths !== 1 ? "s" : ""} ago`;
     const diffInYears = Math.floor(diffInMonths / 12);
     return `${diffInYears} year${diffInYears !== 1 ? "s" : ""} ago`;
   }
@@ -140,9 +140,7 @@ export default function ShowcaseWork() {
           {categories.map((category) => (
             <button
               key={category}
-              className={`category-btn ${
-                activeCategory === category ? "active" : ""
-              }`}
+              className={`category-btn ${activeCategory === category ? "active" : ""}`}
               onClick={() => setActiveCategory(category)}
             >
               {category}
@@ -154,10 +152,8 @@ export default function ShowcaseWork() {
           {filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog, index) => {
               const mediaSection = blog.sections.find(
-                (section) =>
-                  section.type === "image" || section.type === "video"
+                (section) => section.type === "image" || section.type === "video"
               );
-
               const mediaUrl = mediaSection ? mediaSection.content : "";
 
               return (
@@ -170,24 +166,12 @@ export default function ShowcaseWork() {
                   <div className="showcase-media-container">
                     {mediaSection?.type === "video" ? (
                       <>
-                        <video
-                          className="showcase-media"
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                        >
-                          <source
-                            src={mediaUrl}
-                            type={`video/${mediaUrl.split(".").pop()}`}
-                          />
+                        <video className="showcase-media" muted loop playsInline preload="metadata">
+                          <source src={mediaUrl} type={`video/${mediaUrl.split(".").pop()}`} />
                         </video>
                         <div className="video-play-icon">
                           <svg viewBox="0 0 24 24" width="48" height="48">
-                            <path
-                              fill="white"
-                              d="M8,5.14V19.14L19,12.14L8,5.14Z"
-                            />
+                            <path fill="white" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
                           </svg>
                         </div>
                       </>
@@ -210,11 +194,15 @@ export default function ShowcaseWork() {
 
       {/* Blog Detail Modal */}
       {selectedBlog && (
-        <div className="blog-modal-overlay">
-          <div className="blog-modal">
-            <button className="close-modal" onClick={closeModal}>
+        <div className="sw-modal-overlay" onClick={closeModal}>
+          {/* particle background behind the modal */}
+          <ParticlesComponent theme="dark" />
+
+          <div className="sw-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="sw-modal-close" onClick={closeModal}>
               &times;
             </button>
+
             {(() => {
               const mediaSection = selectedBlog.sections.find(
                 (s) => s.type === "image" || s.type === "video"
@@ -223,10 +211,8 @@ export default function ShowcaseWork() {
               if (mediaSection?.type === "image") {
                 return (
                   <div
-                    className="blog-modal-image"
-                    style={{
-                      backgroundImage: `url(${mediaSection.content})`,
-                    }}
+                    className="sw-modal-image"
+                    style={{ backgroundImage: `url(${mediaSection.content})` }}
                   ></div>
                 );
               }
@@ -234,14 +220,10 @@ export default function ShowcaseWork() {
               if (mediaSection?.type === "video") {
                 return (
                   <video
-                    className="blog-modal-video"
+                    className="sw-modal-video"
                     src={mediaSection.content}
                     controls
-                    style={{
-                      width: "100%",
-                      maxHeight: "400px",
-                      objectFit: "cover",
-                    }}
+                    style={{ width: "100%", maxHeight: "400px", objectFit: "cover" }}
                   />
                 );
               }
@@ -249,21 +231,17 @@ export default function ShowcaseWork() {
               return null;
             })()}
 
-            <div className="blog-modal-content">
-              <div className="blog-modal-header">
+            <div className="sw-modal-content">
+              <div className="sw-modal-header">
                 <h2>{selectedBlog.title}</h2>
-                <div className="blog-meta">
-                  <span className="blog-author">© By Theatives</span>
-                  <span className="blog-date">
-                    ⏱︎ {timeAgo(selectedBlog.created_at)}
-                  </span>
-
-                  <span className="blog-modal-category">
-                    {selectedBlog.category}
-                  </span>
+                <div className="sw-modal-meta">
+                  <span className="sw-modal-author">© By Theatives</span>
+                  <span className="sw-modal-date">⏱︎ {timeAgo(selectedBlog.created_at)}</span>
+                  <span className="sw-modal-category">{selectedBlog.category}</span>
                 </div>
               </div>
-              <div className="blog-modal-body">
+
+              <div className="sw-modal-body">
                 {selectedBlog.sections.map((section, idx) => {
                   switch (section.type) {
                     case "heading":
@@ -280,29 +258,22 @@ export default function ShowcaseWork() {
                       );
                     case "image":
                       return (
-                        <img
-                          key={idx}
-                          src={section.content}
-                          alt="Blog"
-                          style={{ maxWidth: "100%", margin: "15px 0" }}
-                        />
+                        <img key={idx} src={section.content} alt="Blog"
+                          style={{ maxWidth: "100%", margin: "15px 0" }} />
                       );
                     case "video":
                       return (
-                        <video
-                          key={idx}
-                          src={section.content}
-                          controls
-                          style={{ maxWidth: "100%", margin: "15px 0" }}
-                        />
+                        <video key={idx} src={section.content} controls
+                          style={{ maxWidth: "100%", margin: "15px 0" }} />
                       );
                     default:
                       return null;
                   }
                 })}
               </div>
-              <div className="blog-modal-footer">
-                <button className="back-button" onClick={closeModal}>
+
+              <div className="sw-modal-footer">
+                <button className="sw-modal-back" onClick={closeModal}>
                   ← Back to Showcase
                 </button>
               </div>

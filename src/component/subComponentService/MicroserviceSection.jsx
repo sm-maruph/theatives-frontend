@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../css/Services.css";
+import ServiceInquiryModal from "./ServiceInquiryModal";
 // import { fetchServices } from "../../adminServices/AdminMicroservices";
-// import { getFullUrl } from "../../utils/apiUrl";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_MICROSERVICES = [
@@ -18,6 +18,7 @@ const MicroserviceSection = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [inquiry, setInquiry] = useState(null);
 
   useEffect(() => {
     loadServices();
@@ -58,10 +59,24 @@ const MicroserviceSection = () => {
             </div>
             <h3 className="sv-card-title">{service.title}</h3>
             <p className="sv-card-desc">{service.description}</p>
-            <button className="sv-card-btn">Get Service</button>
+
+            <button
+              className="sv-card-btn"
+              onClick={() => setInquiry(service)}
+            >
+              Get Service
+            </button>
           </article>
         ))}
       </div>
+
+      {inquiry && (
+        <ServiceInquiryModal
+          service={inquiry}
+          kind="micro"
+          onClose={() => setInquiry(null)}
+        />
+      )}
     </section>
   );
 };

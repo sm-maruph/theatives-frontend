@@ -1,70 +1,141 @@
-/* BlogEditor.css */
+/* ============================================================
+   BLOG EDITOR (admin) — maroon / rose / gold, readable inputs
+   →  src/components/subcomponentBlog/css/BlogEditor.css
+   Scoped under .bl-editor so it can't restyle other buttons.
+   ============================================================ */
 
-h2 {
+.bl-editor {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: 16px;
+  color: #f5f2f2;
+  background: linear-gradient(150deg, #a32b34 0%, #871f27 52%, #5c141a 100%);
+  border: 1px solid rgba(255, 196, 107, 0.28);
+  box-shadow: 0 24px 70px -26px rgba(0, 0, 0, 0.8),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.bl-editor h2 {
   text-align: center;
-  margin-bottom: 30px;
-  color: var(--light);
+  margin: 0 0 1.5rem;
+  color: #ffffff;
+  font-weight: 700;
 }
 
-input[type="text"],
-textarea {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  margin-top: 8px;
-  transition: border-color 0.3s;
-}
-
-input[type="text"]:focus,
-textarea:focus {
-  border-color: #4a90e2;
-  outline: none;
-}
-
-button {
-  padding: 8px 14px;
-  background-color: var(--light);
-  color: var(--primary-hover);
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.25s;
-  margin-bottom: 10px;
-}
-
-button:hover {
-  background-color: var(--primary-hover);
-  color: var(--light);
-}
-
-label {
+.bl-editor label {
   display: block;
   margin-bottom: 6px;
-  color: var(--light);
-  font-weight: bold;
+  color: #ffc46b;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
 }
 
-img,
-video {
+.bl-editor input[type="text"],
+.bl-editor textarea {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5f2f2;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.bl-editor textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+
+.bl-editor input[type="text"]::placeholder,
+.bl-editor textarea::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+.bl-editor input[type="text"]:focus,
+.bl-editor textarea:focus {
+  border-color: #ffc46b;
+  background: rgba(0, 0, 0, 0.32);
+  box-shadow: 0 0 0 3px rgba(255, 196, 107, 0.18);
+}
+
+/* file inputs */
+.bl-editor input[type="file"] {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.bl-editor input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 196, 107, 0.45);
   border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f5f2f2;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.bl-editor input[type="file"]::file-selector-button:hover {
+  background: rgba(255, 196, 107, 0.18);
+}
+
+/* all buttons inside the editor */
+.bl-editor button {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid rgba(255, 196, 107, 0.45);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5f2f2;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bl-editor button:hover {
+  color: #2b0d10;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -8px rgba(255, 92, 114, 0.7);
+}
+
+/* the primary submit button (last button in the form) */
+.bl-editor .bl-editor-submit {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.8rem;
+  color: #2b0d10;
+  border-color: transparent;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
+  box-shadow: 0 10px 26px -10px rgba(255, 92, 114, 0.8);
+  font-weight: 700;
+}
+
+.bl-editor .bl-editor-section {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(20, 6, 9, 0.4);
+  border: 1px solid rgba(255, 196, 107, 0.14);
+}
+
+.bl-editor .bl-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.bl-editor img,
+.bl-editor video {
+  border-radius: 10px;
   margin-top: 10px;
+  border: 1px solid rgba(255, 196, 107, 0.2);
 }
 
-button + button {
-  margin-left: 10px;
-}
-
-@media screen and (max-width: 768px) {
-  .container {
-    padding: 20px 15px;
-  }
-
-  input[type="text"],
-  textarea {
-    font-size: 14px;
-  }
-
-  button {
-    padding: 7px 12px;
-  }
+@media (max-width: 768px) {
+  .bl-editor { padding: 1.25rem 1rem; }
+  .bl-editor input[type="text"],
+  .bl-editor textarea { font-size: 0.95rem; }
 }
