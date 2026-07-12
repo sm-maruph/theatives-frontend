@@ -499,7 +499,7 @@
   margin: 1rem 0 0.5rem;
   font-size: clamp(1.25rem, 4vw, 1.75rem);
   font-weight: 700;
-  color: var(--primary-light) !important;
+  color: var(--ab-light);
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
 }
 
@@ -654,4 +654,73 @@
   .ab-body::before { transition: none; }
 
   .ab-container:hover .ab-image img { transform: scale(1.01); }
+}
+
+/* ============================================================
+   PRODUCTION ANTI-FLICKER — layer isolation
+   Fixes text "blinking" in the built/deployed bundle. The
+   rotating conic rim + blurred aurora are heavy animated
+   layers; without explicit layer promotion the text gets
+   repainted every frame and flickers. These rules put the
+   animated backgrounds on their own GPU layers and the text
+   content on its own, so they stop repainting each other.
+   ============================================================ */
+
+/* promote the text columns to their own compositor layer */
+.ab-body,
+.ab-image {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* the text block sits above the container's rotating rim, isolated */
+.ab-details {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(0);
+}
+
+/* pin the animated background layers to their own layers so they
+   paint once and only transform (no per-frame repaint of siblings) */
+.ab-container::before,
+.ab-scene__aurora,
+.ab-scene__floor,
+.ab-scene__ceiling,
+.ab-scene__shards,
+.ab-shard {
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* the whole scene is its own isolated stacking/paint context */
+.ab-scene {
+  isolation: isolate;
+  contain: strict;
+  will-change: transform;
+}
+
+/* Safety net: once the entrance animation has run, guarantee the
+   text is visible even if the bundle re-orders / re-triggers it.
+   (The animation still plays; this just prevents a stuck-invisible
+   or flicker-to-zero state in production.) */
+.ab-details p {
+  animation-fill-mode: both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* keep as-is — animation runs */
+}
+
+/* If flicker persists on low-end GPUs, this static fallback keeps
+   the text solid by not starting it fully transparent. */
+@supports (contain: strict) {
+  .ab-details p { opacity: 0.94; }
+  .ab-details p { animation-name: ab-fadeUpSafe; }
+}
+
+@keyframes ab-fadeUpSafe {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 0.94; transform: translateY(0); }
 }
