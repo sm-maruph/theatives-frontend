@@ -63,7 +63,7 @@ function ClientsSection() {
       {/* Modal — namespaced ab-* so Gallery.css can't override it */}
       {selectedClient && (
         <div className="ab-modal-overlay" onClick={() => setSelectedClient(null)}>
-          {/* <ParticlesComponent theme="light" /> */}
+          <ParticlesComponent theme="light" />
           <div className="ab-modal" onClick={(e) => e.stopPropagation()}>
             <button
               className="ab-modal-back"

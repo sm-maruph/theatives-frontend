@@ -85,7 +85,7 @@ function GallerySection() {
       {/* Modal — unchanged */}
       {selectedItem && (
         <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
-          {/* <ParticlesComponent theme="dark" /> */}
+          <ParticlesComponent theme="dark" />
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <span
               className="close-button"

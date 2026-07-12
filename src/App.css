@@ -699,3 +699,58 @@ html, body {
   .contact-content h3 { margin-bottom: 1rem; }
   .contact-form { gap: 0.75rem; }
 }
+
+/* ============================================================
+   MOBILE FLICKER FIX  (append to your GLOBAL App.css / index.css)
+   ------------------------------------------------------------
+   Root cause: backdrop-filter: blur() on panels sitting over a
+   position:fixed animated 3D scene. On mobile the browser only
+   re-filters part of the region as the background moves → a hard
+   seam that flickers (visible in the screenshot as the split-tone
+   modal). Disabling backdrop-filter on touch / small screens
+   removes it. Panels are given a solid maroon fill so they still
+   look correct without the blur.
+   ============================================================ */
+@media (max-width: 900px), (pointer: coarse) {
+
+  /* every blurred surface in the app — overlays, modals, drawer,
+     cards, inputs. Turn OFF backdrop blur on mobile. */
+  .svm-overlay, .svm-modal,
+  .ab-modal-overlay, .ab-modal,
+  .bl-modal-overlay, .bl-modal,
+  .sw-modal-overlay, .sw-modal,
+  .work-modal-overlay, .work-modal,
+  .modal-overlay, .modal-content,
+  .bottom-contact.expanded,
+  .sv-card, .sv-card--micro,
+  .client-modal-overlay, .client-modal-content,
+  .ab-modal-logo, .contact-content,
+  .social-icons a, .ab-socials a {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* solid dark scrims to replace the lost blur on overlays */
+  .svm-overlay,
+  .ab-modal-overlay,
+  .bl-modal-overlay,
+  .sw-modal-overlay,
+  .work-modal-overlay,
+  .client-modal-overlay,
+  .modal-overlay {
+    background: rgba(16, 5, 8, 0.85) !important;
+  }
+
+  /* the inquiry modal panel: solid maroon (was translucent+blur) */
+  .svm-modal {
+    background: linear-gradient(150deg, #a32b34 0%, #871f27 52%, #5c141a 100%) !important;
+  }
+
+  /* service cards were translucent glass relying on blur — make solid */
+  .sv-card, .sv-card--micro {
+    background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%) !important;
+  }
+  .sv-card::after {
+    background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%) !important;
+  }
+}
