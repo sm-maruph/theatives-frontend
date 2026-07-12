@@ -711,46 +711,66 @@ html, body {
    removes it. Panels are given a solid maroon fill so they still
    look correct without the blur.
    ============================================================ */
+/* ============================================================
+   MOBILE PERFORMANCE FIX  (append to global App.css / index.css)
+   ------------------------------------------------------------
+   The fixed, full-viewport 3D scenes + blur(60px) + infinite
+   animations are too heavy for mobile GPUs → constant repaint =
+   flicker while scrolling / when the carousel or modal moves.
+   On phones we FREEZE the scenes: no animation, no heavy blur,
+   no 3D transforms, no backdrop-filter. Desktop is untouched.
+   ============================================================ */
 @media (max-width: 900px), (pointer: coarse) {
 
-  /* every blurred surface in the app — overlays, modals, drawer,
-     cards, inputs. Turn OFF backdrop blur on mobile. */
-  .svm-overlay, .svm-modal,
-  .ab-modal-overlay, .ab-modal,
-  .bl-modal-overlay, .bl-modal,
-  .sw-modal-overlay, .sw-modal,
-  .work-modal-overlay, .work-modal,
-  .modal-overlay, .modal-content,
-  .bottom-contact.expanded,
-  .sv-card, .sv-card--micro,
-  .client-modal-overlay, .client-modal-content,
-  .ab-modal-logo, .contact-content,
-  .social-icons a, .ab-socials a {
+  /* 1) Stop ALL animation on the fixed background scenes ------ */
+  .ab-scene, .ab-scene *,
+  .sv-scene, .sv-scene *,
+  .wk-scene, .wk-scene *,
+  .bl-scene, .bl-scene * {
+    animation: none !important;
+  }
+
+  /* 2) Kill the expensive full-screen blur layers ------------- */
+  .ab-scene__aurora,
+  .sv-scene__glow,
+  .wk-scene__glow,
+  .bl-scene__glow {
+    filter: none !important;
+    opacity: 0.5;               /* keep a soft glow, no blur cost */
+  }
+
+  /* 3) Remove 3D depth machinery (perspective/preserve-3d are
+        costly on mobile and cause the repaint seams) ---------- */
+  .ab-scene, .sv-scene, .wk-scene, .bl-scene {
+    perspective: none !important;
+    transform-style: flat !important;
+  }
+  .ab-scene *, .sv-scene *, .wk-scene *, .bl-scene * {
+    transform-style: flat !important;
+  }
+
+  /* 4) Hide the small floating 3D solids entirely on phones
+        (they add repaint work for little visual payoff) ------- */
+  .ab-shard, .sv-cube, .sv-pillar,
+  .wk-gyro, .wk-frame,
+  .bl-col, .bl-chip,
+  .ab-scene__floor, .ab-scene__ceiling,
+  .bl-scene__grid {
+    display: none !important;
+  }
+
+  /* 5) No backdrop-filter anywhere on mobile (repaint seams) -- */
+  * {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
 
-  /* solid dark scrims to replace the lost blur on overlays */
-  .svm-overlay,
-  .ab-modal-overlay,
-  .bl-modal-overlay,
-  .sw-modal-overlay,
-  .work-modal-overlay,
-  .client-modal-overlay,
-  .modal-overlay {
-    background: rgba(16, 5, 8, 0.85) !important;
-  }
+  /* 6) The scene keeps only its static maroon radial gradient
+        (that's already on .X-scene background) + vignette, so
+        pages still have the themed dark backdrop, just calm. */
+}
 
-  /* the inquiry modal panel: solid maroon (was translucent+blur) */
-  .svm-modal {
-    background: linear-gradient(150deg, #a32b34 0%, #871f27 52%, #5c141a 100%) !important;
-  }
-
-  /* service cards were translucent glass relying on blur — make solid */
-  .sv-card, .sv-card--micro {
-    background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%) !important;
-  }
-  .sv-card::after {
-    background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%) !important;
-  }
+/* Extra safety for users who ask for reduced motion, any device */
+@media (prefers-reduced-motion: reduce) {
+  .ab-scene *, .sv-scene *, .wk-scene *, .bl-scene * { animation: none !important; }
 }
