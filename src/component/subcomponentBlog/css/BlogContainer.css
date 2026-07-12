@@ -221,3 +221,16 @@
   .bl-container, .bl-image img, .bl-image::before, .bl-body::before, .bl-details p::before { transition: none; }
   .bl-container:hover .bl-image img { transform: scale(1.01); }
 }
+
+/* ============================================================
+   FLICKER FIX — static gradient border instead of rotating rim
+   ============================================================ */
+.bl-container::before,
+.bl-container::after { display: none !important; }
+
+.bl-container {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
+    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
+}

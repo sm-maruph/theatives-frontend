@@ -406,3 +406,16 @@
   .wk-image::before, .wk-body::before { transition: none; }
   .wk-container:hover .wk-image img { transform: scale(1.01); }
 }
+
+/* ============================================================
+   FLICKER FIX — static gradient border instead of rotating rim
+   ============================================================ */
+.wk-container::before,
+.wk-container::after { display: none !important; }
+
+.wk-container {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
+    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
+}

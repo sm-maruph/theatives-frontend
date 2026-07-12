@@ -724,3 +724,18 @@
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 0.94; transform: translateY(0); }
 }
+
+/* ============================================================
+   FLICKER FIX — replace the rotating conic rim with a static
+   gradient border (Services has no rotating rim and doesn't
+   blink; this makes About behave the same).
+   ============================================================ */
+.ab-container::before,
+.ab-container::after { display: none !important; }
+
+.ab-container {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
+    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
+}
