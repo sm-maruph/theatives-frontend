@@ -270,6 +270,8 @@
   align-items: center;
   justify-content: center;
   padding: clamp(1.5rem, 3vw, 3rem);
+    background: linear-gradient(140deg,
+    var(--sv-maroon-lift) 0%, var(--sv-maroon) 45%, var(--sv-maroon-deep) 100%);
 }
 
 .sv-body::after {
