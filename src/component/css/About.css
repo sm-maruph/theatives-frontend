@@ -739,3 +739,12 @@
     linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
     linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
 }
+
+/* ============================================================
+   FLICKER FIX v2 — stop the animated scanline over the hero
+   image and drop backdrop-filter from the scene layer.
+   (Services has neither near its hero and stays stable.)
+   ============================================================ */
+.ab-image::after { animation: none !important; display: none !important; }
+.ab-shard { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.ab-scene__aurora { animation: none !important; }   /* keep the glow, stop the blurred layer moving */

@@ -234,3 +234,21 @@
     linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
     linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
 }
+
+/* ============================================================
+   FLICKER FIX v2 — stop the animated scanline over the hero
+   ============================================================ */
+.bl-image::after { animation: none !important; display: none !important; }
+
+/* ============================================================
+   FLICKER FIX v3 — layer isolation for the blog hero
+   ============================================================ */
+.bl-body,
+.bl-image,
+.bl-details {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.bl-details { position: relative; z-index: 2; }
