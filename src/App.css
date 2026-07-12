@@ -7,6 +7,7 @@
    a few theme vars of its own, scoped where needed.
    ============================================================ */
 
+
 :root {
   --t-rose: #ff5c72;
   --t-gold: #ffc46b;
@@ -17,14 +18,21 @@
   --t-light: #f5f2f2;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   background: #0c0405;
   font-family: "Poppins", "Arial", sans-serif;
+
 }
 
 /* ============================================================
@@ -35,6 +43,8 @@ html, body {
   inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -70,26 +80,63 @@ html, body {
   will-change: transform;
   transform-style: preserve-3d;
   transition: transform 1.2s cubic-bezier(0.33, 1, 0.68, 1),
-              box-shadow 0.6s ease, filter 0.6s ease;
+    box-shadow 0.6s ease, filter 0.6s ease;
   opacity: 0;
   animation: tileIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.section.about   { grid-column: 1; grid-row: 1; animation-delay: 0.05s; }
-.section.service { grid-column: 2; grid-row: 1; animation-delay: 0.15s; }
-.section.works   { grid-column: 1; grid-row: 2; animation-delay: 0.25s; }
-.section.contact { grid-column: 2; grid-row: 2; animation-delay: 0.35s; }
+.section.about {
+  grid-column: 1;
+  grid-row: 1;
+  animation-delay: 0.05s;
+}
+
+.section.service {
+  grid-column: 2;
+  grid-row: 1;
+  animation-delay: 0.15s;
+}
+
+.section.works {
+  grid-column: 1;
+  grid-row: 2;
+  animation-delay: 0.25s;
+}
+
+.section.contact {
+  grid-column: 2;
+  grid-row: 2;
+  animation-delay: 0.35s;
+}
 
 @keyframes tileIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* each quadrant a subtly different maroon so the board has depth */
-.about   { background: linear-gradient(150deg, #3a1218, #23090d); }
-.service { background: linear-gradient(150deg, #431319, #260a0e); }
-.works   { background: linear-gradient(150deg, #4a151c, #2a0b10); }
-.contact { background: linear-gradient(150deg, #531821, #2e0c11); }
+.about {
+  background: linear-gradient(150deg, #3a1218, #23090d);
+}
+
+.service {
+  background: linear-gradient(150deg, #431319, #260a0e);
+}
+
+.works {
+  background: linear-gradient(150deg, #4a151c, #2a0b10);
+}
+
+.contact {
+  background: linear-gradient(150deg, #531821, #2e0c11);
+}
 
 /* image sits slightly muted, blooms on hover */
 .image-container {
@@ -126,7 +173,9 @@ html, body {
   mix-blend-mode: multiply;
 }
 
-.section:hover::before { opacity: 0.35; }
+.section:hover::before {
+  opacity: 0.35;
+}
 
 /* animated corner brackets that appear on hover (HUD targeting) */
 .section::after {
@@ -150,7 +199,10 @@ html, body {
   pointer-events: none;
 }
 
-.section:hover::after { opacity: 0.9; transform: scale(1); }
+.section:hover::after {
+  opacity: 0.9;
+  transform: scale(1);
+}
 
 /* label that rises on hover — reads the data-label attribute */
 .image-container::after {
@@ -181,7 +233,9 @@ html, body {
   transform: translateX(-50%) translateY(0);
 }
 
-.section.active .image-container::after { opacity: 0; }
+.section.active .image-container::after {
+  opacity: 0;
+}
 
 /* ============================================================
    Active section (expanded fullscreen)
@@ -203,15 +257,28 @@ html, body {
 }
 
 .section.active::before,
-.section.active::after { opacity: 0; }
+.section.active::after {
+  opacity: 0;
+}
 
 /* ============================================================
    Push transforms (unchanged logic, 3D-tilted)
    ============================================================ */
-.push-top-left     { transform: translate(-100%, -100%) scale(0.9) rotateY(12deg); }
-.push-top-right    { transform: translate(100%, -100%)  scale(0.9) rotateY(-12deg); }
-.push-bottom-left  { transform: translate(-100%, 100%)  scale(0.9) rotateY(12deg); }
-.push-bottom-right { transform: translate(100%, 100%)   scale(0.9) rotateY(-12deg); }
+.push-top-left {
+  transform: translate(-100%, -100%) scale(0.9) rotateY(12deg);
+}
+
+.push-top-right {
+  transform: translate(100%, -100%) scale(0.9) rotateY(-12deg);
+}
+
+.push-bottom-left {
+  transform: translate(-100%, 100%) scale(0.9) rotateY(12deg);
+}
+
+.push-bottom-right {
+  transform: translate(100%, 100%) scale(0.9) rotateY(-12deg);
+}
 
 /* ============================================================
    Center diamond + logo — glowing 3D crystal
@@ -250,8 +317,15 @@ html, body {
 }
 
 @keyframes diamondFloat {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50%      { transform: rotate(45deg) translateY(-10px); }
+
+  0%,
+  100% {
+    transform: rotate(45deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(45deg) translateY(-10px);
+  }
 }
 
 /* rotating conic glow rim around the diamond */
@@ -261,14 +335,18 @@ html, body {
   inset: -3px;
   border-radius: 26px;
   background: conic-gradient(from 0deg,
-    var(--t-rose), var(--t-gold), var(--t-rose), var(--t-gold), var(--t-rose));
+      var(--t-rose), var(--t-gold), var(--t-rose), var(--t-gold), var(--t-rose));
   z-index: -1;
   opacity: 0.55;
   filter: blur(6px);
   animation: diamondSpin 6s linear infinite;
 }
 
-@keyframes diamondSpin { to { transform: rotate(360deg); } }
+@keyframes diamondSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* pulsing halo */
 .diamond-shape::after {
@@ -282,15 +360,25 @@ html, body {
 }
 
 @keyframes haloPulse {
-  0%, 100% { opacity: 0.5; transform: scale(0.95); }
-  50%      { opacity: 0.9; transform: scale(1.08); }
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
 }
 
 .center-logo {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  transform: rotate(-45deg);   /* counter the diamond so logo is upright */
+  transform: rotate(-45deg);
+  /* counter the diamond so logo is upright */
   display: grid;
   place-items: center;
 }
@@ -299,22 +387,31 @@ html, body {
   width: 72%;
   height: 72%;
   object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
-          drop-shadow(0 0 10px rgba(255, 196, 107, 0.35));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 10px rgba(255, 196, 107, 0.35));
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease;
 }
 
 .center-logo:hover img {
   transform: scale(1.12);
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.7))
-          drop-shadow(0 0 18px rgba(255, 92, 114, 0.6));
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 18px rgba(255, 92, 114, 0.6));
 }
 
 /* Diamond push (kept, with slight scale) */
-.center-diamond.push-top-left     { transform: translate(-150%, -150%) scale(0.7); }
-.center-diamond.push-top-right    { transform: translate(50%, -150%)   scale(0.7); }
-.center-diamond.push-bottom-left  { transform: translate(-150%, 50%)   scale(0.7); }
-.center-diamond.push-bottom-right { transform: translate(50%, 50%)     scale(0.7); }
+.center-diamond.push-top-left {
+  transform: translate(-150%, -150%) scale(0.7);
+}
+
+.center-diamond.push-top-right {
+  transform: translate(50%, -150%) scale(0.7);
+}
+
+.center-diamond.push-bottom-left {
+  transform: translate(-150%, 50%) scale(0.7);
+}
+
+.center-diamond.push-bottom-right {
+  transform: translate(50%, 50%) scale(0.7);
+}
 
 /* ============================================================
    Content overlay
@@ -324,6 +421,8 @@ html, body {
   inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
   z-index: 200;
   display: flex;
   justify-content: center;
@@ -359,6 +458,7 @@ html, body {
 .content-container {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
   padding: 4rem 0.5rem 2rem;
   background: transparent;
@@ -370,11 +470,26 @@ html, body {
 }
 
 @keyframes contentRise {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 
 /* ============================================================
    BOTTOM CONTACT — glass drawer
@@ -384,7 +499,7 @@ html, body {
   bottom: 0;
   left: 0;
   width: 100%;
-  z-index: 300;
+  z-index: 500;
   transition: all 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -420,7 +535,8 @@ html, body {
 
 .bottom-contact.expanded {
   height: 90vh;
-  height: 90dvh;                 /* dvh accounts for mobile browser chrome */
+  height: 90dvh;
+  /* dvh accounts for mobile browser chrome */
   max-height: 100vh;
   max-height: 100dvh;
   background: linear-gradient(150deg, rgba(163, 43, 52, 0.96), rgba(46, 14, 19, 0.98));
@@ -428,7 +544,8 @@ html, body {
   -webkit-backdrop-filter: blur(14px);
   border-top: 1px solid rgba(255, 196, 107, 0.3);
   box-shadow: 0 -20px 60px -20px rgba(0, 0, 0, 0.8);
-  display: flex;                 /* let the scroll area fill the drawer */
+  display: flex;
+  /* let the scroll area fill the drawer */
   flex-direction: column;
 }
 
@@ -436,7 +553,8 @@ html, body {
 .bottom-contact.expanded::before {
   content: "";
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--t-rose) 40%, var(--t-gold) 60%, transparent);
@@ -445,13 +563,19 @@ html, body {
 }
 
 @keyframes bcSweep {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -100% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .contact-content {
   flex: 1;
-  min-height: 0;                 /* critical: lets the flex child actually scroll */
+  min-height: 0;
+  /* critical: lets the flex child actually scroll */
   padding: 2.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -503,9 +627,15 @@ html, body {
 }
 
 .contact-form-container,
-.contact-info-container { flex: 1; min-width: 280px; }
+.contact-info-container {
+  flex: 1;
+  min-width: 280px;
+}
 
-.contact-form { display: grid; gap: 1rem; }
+.contact-form {
+  display: grid;
+  gap: 1rem;
+}
 
 .contact-form input,
 .contact-form select,
@@ -522,7 +652,9 @@ html, body {
 }
 
 .contact-form input::placeholder,
-.contact-form textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
+.contact-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
 
 .contact-form input:focus,
 .contact-form select:focus,
@@ -532,8 +664,15 @@ html, body {
   box-shadow: 0 0 0 3px rgba(255, 196, 107, 0.18);
 }
 
-.contact-form select option { background: var(--t-maroon-deep); color: var(--t-light); }
-.contact-form textarea { min-height: 110px; resize: vertical; }
+.contact-form select option {
+  background: var(--t-maroon-deep);
+  color: var(--t-light);
+}
+
+.contact-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
 
 .contact-form button[type="submit"] {
   padding: 0.8rem;
@@ -554,7 +693,12 @@ html, body {
   box-shadow: 0 16px 32px -10px rgba(255, 196, 107, 0.85);
 }
 
-.contact-info { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; }
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
 
 .info-item {
   display: flex;
@@ -572,7 +716,9 @@ html, body {
   transform: translateX(4px);
 }
 
-.info-item p { margin: 0; }
+.info-item p {
+  margin: 0;
+}
 
 .info-item .icon {
   font-size: 1rem;
@@ -582,11 +728,18 @@ html, body {
 }
 
 @keyframes floatIcon {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-3px); }
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-3px);
+  }
 }
 
-.social-links { margin-top: 1.25rem; }
+.social-links {
+  margin-top: 1.25rem;
+}
 
 .social-links h2,
 .social-links p {
@@ -629,25 +782,60 @@ html, body {
    Responsive
    ============================================================ */
 @media (max-width: 768px) {
-  .center-diamond { width: 130px; height: 130px; }
-  .center-logo img { width: 68%; height: 68%; }
-  .content-container { padding: 3.5rem 1rem 2rem; }
-  .contactMain { flex-direction: column; gap: 1.5rem; }
-  .bottom-contact.expanded { height: 88vh; }
-  .contact-content h3 { font-size: 1.3rem; }
+  .center-diamond {
+    width: 130px;
+    height: 130px;
+  }
+
+  .center-logo img {
+    width: 68%;
+    height: 68%;
+  }
+
+  .content-container {
+    padding: 3.5rem 1rem 2rem;
+  }
+
+  .contactMain {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .bottom-contact.expanded {
+    height: 88vh;
+  }
+
+  .contact-content h3 {
+    font-size: 1.3rem;
+  }
 }
 
 /* ============================================================
    Reduced motion
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .section, .diamond-shape, .diamond-shape::before, .diamond-shape::after,
-  .info-item .icon, .bottom-contact.expanded::before {
+
+  .section,
+  .diamond-shape,
+  .diamond-shape::before,
+  .diamond-shape::after,
+  .info-item .icon,
+  .bottom-contact.expanded::before {
     animation: none;
   }
-  .section { opacity: 1; }
-  .section, .image-container, .center-logo img, .close-btn,
-  .contact-toggle, .social-links a, .social-icons a, .info-item {
+
+  .section {
+    opacity: 1;
+  }
+
+  .section,
+  .image-container,
+  .center-logo img,
+  .close-btn,
+  .contact-toggle,
+  .social-links a,
+  .social-icons a,
+  .info-item {
     transition: none;
   }
 }
@@ -661,43 +849,108 @@ html, body {
     gap: 1.5rem;
     width: 100%;
   }
+
   .contact-form-container,
-  .contact-info-container { min-width: 0; width: 100%; }
+  .contact-info-container {
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
-  .bottom-contact.expanded { height: 88vh; height: 88dvh; }
-  .contact-content { padding: 2.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom)); }
-  .contact-content h3 { font-size: 1.25rem; margin-bottom: 1.35rem; }
-  .info-item p { font-size: 0.78rem; }
+  .bottom-contact.expanded {
+    height: 92vh;
+    height: 92dvh;
+    max-height: 100dvh;
+  }
+
+  .contact-content {
+    padding: 2.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom));
+  }
+
+  .contact-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1.35rem;
+  }
+
+  .info-item p {
+    font-size: 0.78rem;
+  }
 }
 
 /* short / small phones: give the drawer more of the screen so nothing clips */
 @media (max-width: 480px) {
-  .bottom-contact.expanded { height: 92vh; height: 92dvh; }
-  .contact-content { padding-top: 2rem; }
+  .bottom-contact.expanded {
+    height: 92vh;
+    height: 92dvh;
+  }
+
+  .contact-content {
+    padding-top: 2rem;
+  }
+
   .contact-form input,
   .contact-form select,
-  .contact-form textarea { font-size: 0.88rem; padding: 0.65rem 0.75rem; }
-  .contact-form textarea { min-height: 90px; }
-  .contact-form button[type="submit"] { padding: 0.75rem; }
-  .social-links .social-icons { flex-wrap: wrap; }
-  .social-links a, .social-icons a { width: 38px; height: 38px; }
-  .close-contact { top: 10px; right: 12px; width: 34px; height: 34px; }
+  .contact-form textarea {
+    font-size: 0.88rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .contact-form textarea {
+    min-height: 90px;
+  }
+
+  .contact-form button[type="submit"] {
+    padding: 0.75rem;
+  }
+
+  .social-links .social-icons {
+    flex-wrap: wrap;
+  }
+
+  .social-links a,
+  .social-icons a {
+    width: 38px;
+    height: 38px;
+  }
+
+  .close-contact {
+    top: 10px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+  }
 }
 
 /* very small screens */
 @media (max-width: 360px) {
-  .contact-content h3 { font-size: 1.1rem; }
-  .info-item { padding: 0.4rem 0.4rem; }
+  .contact-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .info-item {
+    padding: 0.4rem 0.4rem;
+  }
 }
 
 /* short landscape phones: full height + compact spacing */
 @media (max-height: 520px) {
-  .bottom-contact.expanded { height: 100vh; height: 100dvh; }
-  .contact-content { padding-top: 1.5rem; }
-  .contact-content h3 { margin-bottom: 1rem; }
-  .contact-form { gap: 0.75rem; }
+  .bottom-contact.expanded {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .contact-content {
+    padding-top: 1.5rem;
+  }
+
+  .contact-content h3 {
+    margin-bottom: 1rem;
+  }
+
+  .contact-form {
+    gap: 0.75rem;
+  }
 }
 
 /* ============================================================
@@ -720,13 +973,18 @@ html, body {
    On phones we FREEZE the scenes: no animation, no heavy blur,
    no 3D transforms, no backdrop-filter. Desktop is untouched.
    ============================================================ */
-@media (max-width: 900px), (pointer: coarse) {
+@media (max-width: 900px),
+(pointer: coarse) {
 
   /* 1) Stop ALL animation on the fixed background scenes ------ */
-  .ab-scene, .ab-scene *,
-  .sv-scene, .sv-scene *,
-  .wk-scene, .wk-scene *,
-  .bl-scene, .bl-scene * {
+  .ab-scene,
+  .ab-scene *,
+  .sv-scene,
+  .sv-scene *,
+  .wk-scene,
+  .wk-scene *,
+  .bl-scene,
+  .bl-scene * {
     animation: none !important;
   }
 
@@ -736,25 +994,38 @@ html, body {
   .wk-scene__glow,
   .bl-scene__glow {
     filter: none !important;
-    opacity: 0.5;               /* keep a soft glow, no blur cost */
+    opacity: 0.5;
+    /* keep a soft glow, no blur cost */
   }
 
   /* 3) Remove 3D depth machinery (perspective/preserve-3d are
         costly on mobile and cause the repaint seams) ---------- */
-  .ab-scene, .sv-scene, .wk-scene, .bl-scene {
+  .ab-scene,
+  .sv-scene,
+  .wk-scene,
+  .bl-scene {
     perspective: none !important;
     transform-style: flat !important;
   }
-  .ab-scene *, .sv-scene *, .wk-scene *, .bl-scene * {
+
+  .ab-scene *,
+  .sv-scene *,
+  .wk-scene *,
+  .bl-scene * {
     transform-style: flat !important;
   }
 
   /* 4) Hide the small floating 3D solids entirely on phones
         (they add repaint work for little visual payoff) ------- */
-  .ab-shard, .sv-cube, .sv-pillar,
-  .wk-gyro, .wk-frame,
-  .bl-col, .bl-chip,
-  .ab-scene__floor, .ab-scene__ceiling,
+  .ab-shard,
+  .sv-cube,
+  .sv-pillar,
+  .wk-gyro,
+  .wk-frame,
+  .bl-col,
+  .bl-chip,
+  .ab-scene__floor,
+  .ab-scene__ceiling,
   .bl-scene__grid {
     display: none !important;
   }
@@ -772,5 +1043,11 @@ html, body {
 
 /* Extra safety for users who ask for reduced motion, any device */
 @media (prefers-reduced-motion: reduce) {
-  .ab-scene *, .sv-scene *, .wk-scene *, .bl-scene * { animation: none !important; }
+
+  .ab-scene *,
+  .sv-scene *,
+  .wk-scene *,
+  .bl-scene * {
+    animation: none !important;
+  }
 }
