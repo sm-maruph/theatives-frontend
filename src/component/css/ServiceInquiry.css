@@ -91,6 +91,41 @@
   z-index: 3;
 }
 
+.svm-field input,
+.svm-field select,
+.svm-field textarea {
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--svm-light);
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  color-scheme: dark;              /* dark native date picker */
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.svm-field textarea { resize: vertical; line-height: 1.6; }
+
+.svm-field input::placeholder,
+.svm-field textarea::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+.svm-field input:focus,
+.svm-field select:focus,
+.svm-field textarea:focus {
+  border-color: var(--svm-neon-2);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 196, 107, 0.18);
+}
+
+.svm-field select option { background: var(--svm-maroon-deep); color: var(--svm-light); }
+
+.svm-invalid { border-color: var(--svm-neon) !important; }
+
+.svm-e
 .svm-close:hover {
   transform: rotate(90deg);
   background: rgba(255, 92, 114, 0.35);
@@ -187,42 +222,7 @@
   letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.72);
 }
-
-.svm-field input,
-.svm-field select,
-.svm-field textarea {
-  width: 100%;
-  padding: 0.72rem 0.85rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(0, 0, 0, 0.22);
-  color: var(--svm-light);
-  font-size: 0.92rem;
-  font-family: inherit;
-  outline: none;
-  color-scheme: dark;              /* dark native date picker */
-  box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-}
-
-.svm-field textarea { resize: vertical; line-height: 1.6; }
-
-.svm-field input::placeholder,
-.svm-field textarea::placeholder { color: rgba(255, 255, 255, 0.35); }
-
-.svm-field input:focus,
-.svm-field select:focus,
-.svm-field textarea:focus {
-  border-color: var(--svm-neon-2);
-  background: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 0 3px rgba(255, 196, 107, 0.18);
-}
-
-.svm-field select option { background: var(--svm-maroon-deep); color: var(--svm-light); }
-
-.svm-invalid { border-color: var(--svm-neon) !important; }
-
-.svm-err {
+.rr {
   display: block;
   margin-top: 5px;
   font-size: 0.74rem;
