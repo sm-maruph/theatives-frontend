@@ -166,29 +166,34 @@
 }
 
 /* orbiting conic light — only a 1px rim shows through */
-.ab-container::before {
-  content: "";
-  position: absolute;
-  inset: -140%;
-  z-index: 0;
-  background: conic-gradient(
-    from 0deg, transparent 0deg,
-    rgba(255, 92, 114, 0.6) 34deg,
-    rgba(255, 196, 107, 0.5) 62deg,
-    transparent 96deg, transparent 360deg);
-  animation: ab-orbit 9s linear infinite;
-}
-
-@keyframes ab-orbit { to { transform: rotate(360deg); } }
-
+.ab-container::before,
 .ab-container::after {
   content: "";
   position: absolute;
-  inset: 1px;
-  z-index: 1;
-  border-radius: 19px;
-  background: linear-gradient(140deg, var(--ab-maroon-lift) 0%, var(--ab-maroon) 45%, var(--ab-maroon-deep) 100%);
+  z-index: 4;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  opacity: 0.75;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.ab-container::before {
+  top: 14px; left: 14px;
+  border-top: 2px solid var(--ab-neon);
+  border-left: 2px solid var(--ab-neon);
+  border-radius: 6px 0 0 0;
+}
+
+.ab-container::after {
+  bottom: 14px; right: 14px;
+  border-bottom: 2px solid var(--ab-neon-2);
+  border-right: 2px solid var(--ab-neon-2);
+  border-radius: 0 0 6px 0;
+}
+
+.ab-container:hover::before { opacity: 1; transform: translate(-4px, -4px); }
+.ab-container:hover::after  { opacity: 1; transform: translate(4px, 4px); }
 
 .ab-container > * { position: relative; z-index: 2; }
 
@@ -222,18 +227,20 @@
   position: absolute;
   inset: 0;
   z-index: 3;
-  background: linear-gradient(180deg, transparent 0%,
-    rgba(255, 92, 114, 0.16) 47%, rgba(255, 255, 255, 0.22) 50%,
-    rgba(255, 196, 107, 0.14) 53%, transparent 100%);
-  transform: translateY(-100%);
-  animation: ab-scan 7s ease-in-out infinite;
+  background: linear-gradient(100deg, transparent 38%,
+    rgba(255, 196, 107, 0.20) 48%, rgba(255, 255, 255, 0.24) 50%,
+    rgba(255, 92, 114, 0.18) 52%, transparent 62%);
+  transform: translateX(-110%);
+  animation: ab-sweepLight 6.5s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes ab-scan {
-  0%, 62% { transform: translateY(-100%); }
-  100%    { transform: translateY(100%); }
+@keyframes ab-sweepLight {
+  0%, 60% { transform: translateX(-110%); }
+  100%    { transform: translateX(110%); }
 }
+  
+
 
 /* HUD bracket — top-left */
 .ab-image::before {
@@ -655,96 +662,3 @@
 
   .ab-container:hover .ab-image img { transform: scale(1.01); }
 }
-
-/* ============================================================
-   PRODUCTION ANTI-FLICKER — layer isolation
-   Fixes text "blinking" in the built/deployed bundle. The
-   rotating conic rim + blurred aurora are heavy animated
-   layers; without explicit layer promotion the text gets
-   repainted every frame and flickers. These rules put the
-   animated backgrounds on their own GPU layers and the text
-   content on its own, so they stop repainting each other.
-   ============================================================ */
-
-/* promote the text columns to their own compositor layer */
-.ab-body,
-.ab-image {
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/* the text block sits above the container's rotating rim, isolated */
-.ab-details {
-  position: relative;
-  z-index: 2;
-  transform: translateZ(0);
-}
-
-/* pin the animated background layers to their own layers so they
-   paint once and only transform (no per-frame repaint of siblings) */
-.ab-container::before,
-.ab-scene__aurora,
-.ab-scene__floor,
-.ab-scene__ceiling,
-.ab-scene__shards,
-.ab-shard {
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-/* the whole scene is its own isolated stacking/paint context */
-.ab-scene {
-  isolation: isolate;
-  contain: strict;
-  will-change: transform;
-}
-
-/* Safety net: once the entrance animation has run, guarantee the
-   text is visible even if the bundle re-orders / re-triggers it.
-   (The animation still plays; this just prevents a stuck-invisible
-   or flicker-to-zero state in production.) */
-.ab-details p {
-  animation-fill-mode: both;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* keep as-is — animation runs */
-}
-
-/* If flicker persists on low-end GPUs, this static fallback keeps
-   the text solid by not starting it fully transparent. */
-@supports (contain: strict) {
-  .ab-details p { opacity: 0.94; }
-  .ab-details p { animation-name: ab-fadeUpSafe; }
-}
-
-@keyframes ab-fadeUpSafe {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 0.94; transform: translateY(0); }
-}
-
-/* ============================================================
-   FLICKER FIX — replace the rotating conic rim with a static
-   gradient border (Services has no rotating rim and doesn't
-   blink; this makes About behave the same).
-   ============================================================ */
-.ab-container::before,
-.ab-container::after { display: none !important; }
-
-.ab-container {
-  border: 1px solid transparent !important;
-  background:
-    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
-    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
-}
-
-/* ============================================================
-   FLICKER FIX v2 — stop the animated scanline over the hero
-   image and drop backdrop-filter from the scene layer.
-   (Services has neither near its hero and stays stable.)
-   ============================================================ */
-.ab-image::after { animation: none !important; display: none !important; }
-.ab-shard { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-.ab-scene__aurora { animation: none !important; }   /* keep the glow, stop the blurred layer moving */

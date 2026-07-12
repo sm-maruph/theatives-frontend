@@ -5,7 +5,7 @@ import ServiceInquiryModal from "./ServiceInquiryModal";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_MICROSERVICES = [
-  { id: 1, title: "Video Editing",      description: "Cuts, colour, and sound polished for every platform.", image_path: "https://placehold.co/120x120/5c141a/ffc46b?text=Video" },
+  { id: 1, title: "Video Editing",      description: "Cuts, colour, and sound polished for every platform.", image_path: "https://thumbs.dreamstime.com/b/movie-film-editor-vector-logo-design-video-editing-logo-concept-play-button-scissor-video-editing-icon-vector-logo-design-252350982.jpg" },
   { id: 2, title: "Environment Design", description: "Believable 3D worlds and set dressing for games and film.", image_path: "https://placehold.co/120x120/5c141a/ff5c72?text=Env" },
   { id: 3, title: "Logo Design",        description: "Distinctive marks that carry a brand at any size.", image_path: "https://placehold.co/120x120/5c141a/ffc46b?text=Logo" },
   { id: 4, title: "Social Templates",   description: "Ready-to-use post kits matched to your brand system.", image_path: "https://placehold.co/120x120/5c141a/ff5c72?text=Social" },

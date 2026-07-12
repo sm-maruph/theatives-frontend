@@ -3,13 +3,13 @@ import BlogBg from "../../assets/images/blog.png";
 
 const BlogContainer = () => {
   return (
-    <div className="bl-container">
+    <div className="sv-container">
       <div className="bl-image">
         <img src={BlogBg} alt="Our creative team working together" />
       </div>
 
       <div className="bl-body">
-        <div className="bl-details">
+        <div className="sv-details">
           <p>
             Theatives is a next-generation multimedia design agency that blends
             creativity, technology, and storytelling to deliver innovative

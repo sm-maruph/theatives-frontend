@@ -73,15 +73,12 @@
   background-image:
     radial-gradient(circle at 50% 50%, rgba(255, 92, 114, 0.28) 1.5px, transparent 1.6px);
   background-size: 46px 46px;
-  animation: bl-flow 8s linear infinite;
   mask-image: linear-gradient(to top, #000 0%, transparent 74%);
   -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 74%);
 }
 
-@keyframes bl-flow {
-  from { background-position: 0 0; }
   to   { background-position: 0 46px; }
-}
+
 
 /* --- rising light columns (data streams) --- */
 .bl-scene__columns { position: absolute; inset: 0; transform-style: preserve-3d; }
@@ -293,30 +290,4 @@
   .job-card { opacity: 1; transform: none; animation: none; }
   .job-card, .apply-button { transition: none; }
   .job-card:hover { transform: none; }
-}
-
-/* ============================================================
-   FLICKER FIX v2 — stop the blurred aurora from animating
-   ============================================================ */
-.bl-scene__glow { animation: none !important; }
-.bl-chip { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-
-/* ============================================================
-   FLICKER FIX v3 — isolate the scene + stop the one animation
-   that can't be GPU-composited (background-position on the
-   radial-gradient grid repaints every frame → flicker).
-   ============================================================ */
-.bl-scene {
-  isolation: isolate;
-  contain: strict;
-  will-change: transform;
-}
-
-.bl-scene__grid { animation: none !important; }   /* was bl-flow — expensive repaint */
-
-.bl-col,
-.bl-chip {
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
 }

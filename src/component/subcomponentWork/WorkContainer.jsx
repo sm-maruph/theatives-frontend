@@ -3,13 +3,13 @@ import workBg from "../../assets/images/work.png";
 
 const WorkContainer = () => {
   return (
-    <div className="wk-container">
+    <div className="sv-container">
       <div className="wk-image">
         <img src={workBg} alt="Our creative team working together" />
       </div>
 
       <div className="wk-body">
-        <div className="wk-details">
+        <div className="sv-details">
           <p>
             Theatives is a next-generation multimedia design agency that blends
             creativity, technology, and storytelling to deliver innovative

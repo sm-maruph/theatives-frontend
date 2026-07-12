@@ -1,13 +1,16 @@
 /* ============================================================
-   BLOG HERO  →  src/components/subcomponentBlog/css/BlogContainer.css
-   Self-contained maroon hero (vars redefined so it never
-   depends on another page's stylesheet).
+   BLOG HERO — modeled 1:1 on the stable Services hero.
+   →  src/components/subcomponentBlog/css/BlogContainer.css
+   Static corner brackets · NO rotating rim · NO contain hacks.
    ============================================================ */
 
 .bl-container {
-  --bl-neon:   #ff5c72;
-  --bl-neon-2: #ffc46b;
-  --bl-light:  #f5f2f2;
+  --bl-maroon:      #871f27;
+  --bl-maroon-deep: #5c141a;
+  --bl-maroon-lift: #a32b34;
+  --bl-neon:        #ff5c72;
+  --bl-neon-2:      #ffc46b;
+  --bl-light:       #f5f2f2;
 
   position: relative;
   display: flex;
@@ -16,43 +19,50 @@
   border-radius: 20px;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.10),
-              0 30px 70px -28px rgba(0,0,0,0.85),
-              inset 0 1px 0 rgba(255,255,255,0.09);
+  background: linear-gradient(140deg,
+    var(--bl-maroon-lift) 0%, var(--bl-maroon) 45%, var(--bl-maroon-deep) 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.10),
+    0 30px 70px -28px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
   opacity: 0;
-  animation: bl-heroIn 0.95s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  animation: bl-riseIn 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
 }
 
-@keyframes bl-heroIn {
+@keyframes bl-riseIn {
   from { opacity: 0; transform: translateY(28px) scale(0.985); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* orbiting conic rim */
-.bl-container::before {
-  content: "";
-  position: absolute;
-  inset: -140%;
-  z-index: 0;
-  background: conic-gradient(from 0deg, transparent 0deg,
-    rgba(255,92,114,0.6) 34deg, rgba(255,196,107,0.5) 62deg,
-    transparent 96deg, transparent 360deg);
-  animation: bl-orbit 9s linear infinite;
-}
-
-@keyframes bl-orbit { to { transform: rotate(360deg); } }
-
+/* static corner brackets */
+.bl-container::before,
 .bl-container::after {
   content: "";
   position: absolute;
-  inset: 1px;
-  z-index: 1;
-  border-radius: 19px;
-  background: linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%);
+  z-index: 4;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  opacity: 0.75;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.bl-container > * { position: relative; z-index: 2; }
+.bl-container::before {
+  top: 14px; left: 14px;
+  border-top: 2px solid var(--bl-neon);
+  border-left: 2px solid var(--bl-neon);
+  border-radius: 6px 0 0 0;
+}
+
+.bl-container::after {
+  bottom: 14px; right: 14px;
+  border-bottom: 2px solid var(--bl-neon-2);
+  border-right: 2px solid var(--bl-neon-2);
+  border-radius: 0 0 6px 0;
+}
+
+.bl-container:hover::before { opacity: 1; transform: translate(-4px, -4px); }
+.bl-container:hover::after  { opacity: 1; transform: translate(4px, 4px); }
 
 .bl-image {
   position: relative;
@@ -69,7 +79,7 @@
   object-fit: cover;
   filter: saturate(0.88) contrast(1.05) brightness(0.95);
   transform: scale(1.01);
-  transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter 0.7s ease;
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s ease;
 }
 
 .bl-container:hover .bl-image img {
@@ -77,40 +87,24 @@
   filter: saturate(1.05) contrast(1.02) brightness(1);
 }
 
-/* scanline */
+/* horizontal transform sweep (GPU-cheap, like Services) */
 .bl-image::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 3;
-  background: linear-gradient(180deg, transparent 0%,
-    rgba(255,92,114,0.16) 47%, rgba(255,255,255,0.22) 50%,
-    rgba(255,196,107,0.14) 53%, transparent 100%);
-  transform: translateY(-100%);
-  animation: bl-scan 7s ease-in-out infinite;
+  background: linear-gradient(100deg, transparent 38%,
+    rgba(255, 196, 107, 0.20) 48%, rgba(255, 255, 255, 0.24) 50%,
+    rgba(255, 92, 114, 0.18) 52%, transparent 62%);
+  transform: translateX(-110%);
+  animation: bl-sweepLight 6.5s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes bl-scan {
-  0%, 62% { transform: translateY(-100%); }
-  100%    { transform: translateY(100%); }
+@keyframes bl-sweepLight {
+  0%, 60% { transform: translateX(-110%); }
+  100%    { transform: translateX(110%); }
 }
-
-/* HUD brackets */
-.bl-image::before {
-  content: "";
-  position: absolute;
-  top: 14px; left: 14px;
-  z-index: 4;
-  width: 26px; height: 26px;
-  border-top: 2px solid var(--bl-neon);
-  border-left: 2px solid var(--bl-neon);
-  border-radius: 6px 0 0 0;
-  opacity: 0.75;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
-}
-
-.bl-container:hover .bl-image::before { opacity: 1; transform: translate(-4px,-4px); }
 
 .bl-body {
   position: relative;
@@ -129,25 +123,10 @@
   inset: 0;
   z-index: 0;
   background: repeating-linear-gradient(to bottom,
-    rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px,
+    rgba(255, 255, 255, 0.028) 0px, rgba(255, 255, 255, 0.028) 1px,
     transparent 1px, transparent 4px);
   pointer-events: none;
 }
-
-.bl-body::before {
-  content: "";
-  position: absolute;
-  bottom: 14px; right: 14px;
-  z-index: 4;
-  width: 26px; height: 26px;
-  border-bottom: 2px solid var(--bl-neon-2);
-  border-right: 2px solid var(--bl-neon-2);
-  border-radius: 0 0 6px 0;
-  opacity: 0.75;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
-}
-
-.bl-container:hover .bl-body::before { opacity: 1; transform: translate(4px,4px); }
 
 .bl-body > * { position: relative; z-index: 1; }
 
@@ -161,8 +140,8 @@
   font-size: clamp(0.9rem, 1.05vw, 1.05rem);
   color: var(--bl-light);
   opacity: 0;
-  animation: bl-fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.3);
+  animation: bl-fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
 }
 
 .bl-details p:nth-child(2) { animation-delay: 0.58s; }
@@ -173,7 +152,6 @@
   to   { opacity: 0.94; transform: translateY(0); }
 }
 
-/* square bullet (About=diamond, Services=hex, Works=ring, Blog=square) */
 .bl-details p::before {
   content: "";
   position: absolute;
@@ -184,20 +162,22 @@
   border-radius: 2px;
   background: linear-gradient(135deg, var(--bl-neon), var(--bl-neon-2));
   animation: bl-pulse 3.2s ease-in-out infinite;
-  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .bl-details p:nth-child(2)::before { animation-delay: 0.4s; }
 .bl-details p:nth-child(3)::before { animation-delay: 0.8s; }
 
 @keyframes bl-pulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(255,92,114,0.5); }
-  50%      { box-shadow: 0 0 14px rgba(255,196,107,0.85); }
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 92, 114, 0.5); }
+  50%      { box-shadow: 0 0 14px rgba(255, 196, 107, 0.85); }
 }
 
 .bl-details p:hover::before { transform: rotate(45deg) scale(1.25); }
 
-/* responsive */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 900px) {
   .bl-container { flex-direction: column; }
   .bl-image { flex: none; width: 100%; height: clamp(240px, 42vw, 360px); }
@@ -207,48 +187,26 @@
 
 @media (max-width: 640px) {
   .bl-container { border-radius: 16px; }
-  .bl-image::before, .bl-body::before { width: 20px; height: 20px; }
+  .bl-container::before, .bl-container::after { width: 20px; height: 20px; }
   .bl-image { height: clamp(200px, 48vw, 280px); }
   .bl-body { padding: 1.4rem 1rem 1.6rem; }
   .bl-details p { padding-left: 1.45rem; margin-bottom: 0.95rem; }
 }
 
+@media (max-height: 500px) and (orientation: landscape) {
+  .bl-container { flex-direction: row; }
+  .bl-image { height: auto; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
+  .bl-image::after, .bl-details p::before { animation: none; }
   .bl-container, .bl-details p { opacity: 1; animation: none; transform: none; }
   .bl-details p { opacity: 0.94; }
-  .bl-container::before, .bl-image::after, .bl-details p::before { animation: none; }
   .bl-image::after { display: none; }
-  .bl-container, .bl-image img, .bl-image::before, .bl-body::before, .bl-details p::before { transition: none; }
+  .bl-container, .bl-image img, .bl-details p::before,
+  .bl-container::before, .bl-container::after { transition: none; }
   .bl-container:hover .bl-image img { transform: scale(1.01); }
 }
-
-/* ============================================================
-   FLICKER FIX — static gradient border instead of rotating rim
-   ============================================================ */
-.bl-container::before,
-.bl-container::after { display: none !important; }
-
-.bl-container {
-  border: 1px solid transparent !important;
-  background:
-    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
-    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
-}
-
-/* ============================================================
-   FLICKER FIX v2 — stop the animated scanline over the hero
-   ============================================================ */
-.bl-image::after { animation: none !important; display: none !important; }
-
-/* ============================================================
-   FLICKER FIX v3 — layer isolation for the blog hero
-   ============================================================ */
-.bl-body,
-.bl-image,
-.bl-details {
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.bl-details { position: relative; z-index: 2; }

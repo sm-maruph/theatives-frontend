@@ -174,8 +174,8 @@
   border-radius: 20px;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(140deg,
-    var(--sv-maroon-lift) 0%, var(--sv-maroon) 45%, var(--sv-maroon-deep) 100%);
+  /* background: linear-gradient(140deg,
+    var(--sv-maroon-lift) 0%, var(--sv-maroon) 45%, var(--sv-maroon-deep) 100%); */
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.10),
     0 30px 70px -28px rgba(0, 0, 0, 0.85),

@@ -5,10 +5,10 @@ import ServiceInquiryModal from "./ServiceInquiryModal";
 
 // ---- DUMMY DATA (remove when backend is ready) ----
 const DUMMY_SERVICES = [
-  { id: 1, title: "Web Development",  description: "Responsive, high-converting websites designed and built end to end.", image_path: "https://placehold.co/120x120/871f27/ffc46b?text=Web" },
-  { id: 2, title: "Graphics Design",  description: "Logos, guidelines, and complete visual systems that make brands unforgettable.", image_path: "https://placehold.co/120x120/871f27/ff5c72?text=Design" },
-  { id: 3, title: "Game Development", description: "Immersive game worlds, mechanics, and interactive experiences.", image_path: "https://placehold.co/120x120/871f27/ffc46b?text=Game" },
-  { id: 4, title: "App Development",  description: "Native and cross-platform apps built for performance and scale.", image_path: "https://placehold.co/120x120/871f27/ff5c72?text=App" },
+  { id: 1, title: "Web Development",  description: "Responsive, high-converting websites designed and built end to end.", image_path: "https://img.icons8.com/color/1200/code.jpg" },
+  { id: 2, title: "Graphics Design",  description: "Logos, guidelines, and complete visual systems that make brands unforgettable.", image_path: "https://i.pinimg.com/736x/cf/e8/9b/cfe89b81d77a4eed574eee4bd7aa677d.jpg" },
+  { id: 3, title: "Game Development", description: "Immersive game worlds, mechanics, and interactive experiences.", image_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHs7jgbh7NwtQjYyxXfVgSNtb9oYHadkk_RLlZExw5vw&s=10" },
+  { id: 4, title: "App Development",  description: "Native and cross-platform apps built for performance and scale.", image_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5FyTDzo5B_bK8W6JAwKQqGkLYWRqIwWY_zRsMKK8JkA&s=10" },
 ];
 // ---------------------------------------------------
 

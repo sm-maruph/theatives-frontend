@@ -1,8 +1,8 @@
 /* ============================================================
-   WORKS PAGE  →  src/components/css/Works.css
-   Imported by BOTH Works.jsx (./css/Works.css) and
-   WorkContainer.jsx (../css/Works.css) — one file, everything.
-   Namespaced .wk-* · maroon / rose / gold · responsive.
+   WORKS PAGE — modeled 1:1 on the stable Services CSS.
+   Namespaced .wk-* · maroon/rose/gold · NO rotating rim,
+   NO contain/will-change hacks. Imported by Works.jsx
+   (./css/Works.css) and WorkContainer.jsx (../css/Works.css).
    ============================================================ */
 
 .works-page {
@@ -20,6 +20,7 @@
   padding: clamp(0.5rem, 2vw, 1rem);
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: clamp(2rem, 5vw, 4rem);
   isolation: isolate;
   overflow-x: clip;
@@ -81,7 +82,6 @@
   inset: 0;
   border-radius: 50%;
   border: 1px solid rgba(255, 92, 114, 0.4);
-  box-shadow: 0 0 22px rgba(255, 92, 114, 0.12), inset 0 0 22px rgba(255, 196, 107, 0.06);
 }
 
 .wk-ring:nth-child(1) { transform: rotateX(72deg); border-color: rgba(255, 92, 114, 0.42); }
@@ -95,7 +95,6 @@
   border: 1px solid rgba(255, 196, 107, 0.3);
   border-radius: 10px;
   background: linear-gradient(135deg, rgba(255, 92, 114, 0.08), rgba(255, 196, 107, 0.03));
-  backdrop-filter: blur(2px);
   animation: wk-float 20s ease-in-out infinite;
 }
 
@@ -117,16 +116,17 @@
 }
 
 /* ============================================================
-   Section title — rose flanked
+   Section title
    ============================================================ */
 .wk-title,
 .works-page .sectionTitle {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   width: 100%;
-  color: var(--wk-neon, #ff5c72);
-  margin: 0 0 3vh;
+  color: var(--wk-neon);
+  margin: 0 0 2.25rem;
   font-size: clamp(1.15rem, 2.6vw, 1.6rem);
   font-weight: 700;
 }
@@ -136,23 +136,18 @@
 .works-page .sectionTitle::before,
 .works-page .sectionTitle::after {
   content: "";
-  display: inline-block;
-  width: clamp(20px, 15vw, 100px);
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--wk-neon, #ff5c72), transparent);
-  margin: 0 10px;
+  width: clamp(24px, 12vw, 110px);
+  background: linear-gradient(90deg, transparent, var(--wk-neon), transparent);
   flex-shrink: 1;
 }
 
 /* ============================================================
-   HERO PANEL (.wk-container) — vars redefined so it's
-   self-sufficient even outside .works-page
+   HERO PANEL — matches .sv-container exactly (static brackets)
    ============================================================ */
-.wk-container {
-  --wk-neon:   #ff5c72;
-  --wk-neon-2: #ffc46b;
-  --wk-light:  #f5f2f2;
+.wk-hero { width: 100%; }
 
+.wk-container {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -160,45 +155,51 @@
   border-radius: 20px;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.10),
-              0 30px 70px -28px rgba(0,0,0,0.85),
-              inset 0 1px 0 rgba(255,255,255,0.09);
+  background: linear-gradient(140deg,
+    var(--wk-maroon-lift) 0%, var(--wk-maroon) 45%, var(--wk-maroon-deep) 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.10),
+    0 30px 70px -28px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
   opacity: 0;
-  animation: wk-heroIn 0.95s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  animation: wk-riseIn 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
 }
 
-@keyframes wk-heroIn {
+@keyframes wk-riseIn {
   from { opacity: 0; transform: translateY(28px) scale(0.985); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* orbiting conic rim */
-.wk-container::before {
-  content: "";
-  position: absolute;
-  inset: -140%;
-  z-index: 0;
-  background: conic-gradient(from 0deg, transparent 0deg,
-    rgba(255,92,114,0.6) 34deg, rgba(255,196,107,0.5) 62deg,
-    transparent 96deg, transparent 360deg);
-  animation: wk-orbit 9s linear infinite;
-}
-
-@keyframes wk-orbit { to { transform: rotate(360deg); } }
-
+/* static corner brackets — NO rotating conic rim */
+.wk-container::before,
 .wk-container::after {
   content: "";
   position: absolute;
-  inset: 1px;
-  z-index: 1;
-  border-radius: 19px;
-  background: linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%);
+  z-index: 4;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  opacity: 0.75;
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.wk-container > * { position: relative; z-index: 2; }
+.wk-container::before {
+  top: 14px; left: 14px;
+  border-top: 2px solid var(--wk-neon);
+  border-left: 2px solid var(--wk-neon);
+  border-radius: 6px 0 0 0;
+}
 
-/* image side */
+.wk-container::after {
+  bottom: 14px; right: 14px;
+  border-bottom: 2px solid var(--wk-neon-2);
+  border-right: 2px solid var(--wk-neon-2);
+  border-radius: 0 0 6px 0;
+}
+
+.wk-container:hover::before { opacity: 1; transform: translate(-4px, -4px); }
+.wk-container:hover::after  { opacity: 1; transform: translate(4px, 4px); }
+
 .wk-image {
   position: relative;
   flex: 1 1 50%;
@@ -214,7 +215,7 @@
   object-fit: cover;
   filter: saturate(0.88) contrast(1.05) brightness(0.95);
   transform: scale(1.01);
-  transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter 0.7s ease;
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s ease;
 }
 
 .wk-container:hover .wk-image img {
@@ -222,17 +223,17 @@
   filter: saturate(1.05) contrast(1.02) brightness(1);
 }
 
-/* diagonal light sweep */
+/* horizontal transform sweep — same GPU-cheap kind Services uses */
 .wk-image::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 3;
-  background: linear-gradient(115deg, transparent 40%,
-    rgba(255,196,107,0.18) 48%, rgba(255,255,255,0.22) 50%,
-    rgba(255,92,114,0.16) 52%, transparent 60%);
+  background: linear-gradient(100deg, transparent 38%,
+    rgba(255, 196, 107, 0.20) 48%, rgba(255, 255, 255, 0.24) 50%,
+    rgba(255, 92, 114, 0.18) 52%, transparent 62%);
   transform: translateX(-110%);
-  animation: wk-sweepLight 7s ease-in-out infinite;
+  animation: wk-sweepLight 6.5s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -241,23 +242,6 @@
   100%    { transform: translateX(110%); }
 }
 
-/* HUD bracket top-left */
-.wk-image::before {
-  content: "";
-  position: absolute;
-  top: 14px; left: 14px;
-  z-index: 4;
-  width: 26px; height: 26px;
-  border-top: 2px solid var(--wk-neon);
-  border-left: 2px solid var(--wk-neon);
-  border-radius: 6px 0 0 0;
-  opacity: 0.75;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
-}
-
-.wk-container:hover .wk-image::before { opacity: 1; transform: translate(-4px,-4px); }
-
-/* text side */
 .wk-body {
   position: relative;
   flex: 1 1 50%;
@@ -275,25 +259,10 @@
   inset: 0;
   z-index: 0;
   background: repeating-linear-gradient(to bottom,
-    rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px,
+    rgba(255, 255, 255, 0.028) 0px, rgba(255, 255, 255, 0.028) 1px,
     transparent 1px, transparent 4px);
   pointer-events: none;
 }
-
-.wk-body::before {
-  content: "";
-  position: absolute;
-  bottom: 14px; right: 14px;
-  z-index: 4;
-  width: 26px; height: 26px;
-  border-bottom: 2px solid var(--wk-neon-2);
-  border-right: 2px solid var(--wk-neon-2);
-  border-radius: 0 0 6px 0;
-  opacity: 0.75;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
-}
-
-.wk-container:hover .wk-body::before { opacity: 1; transform: translate(4px,4px); }
 
 .wk-body > * { position: relative; z-index: 1; }
 
@@ -307,8 +276,8 @@
   font-size: clamp(0.9rem, 1.05vw, 1.05rem);
   color: var(--wk-light);
   opacity: 0;
-  animation: wk-fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.3);
+  animation: wk-fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
 }
 
 .wk-details p:nth-child(2) { animation-delay: 0.58s; }
@@ -319,7 +288,6 @@
   to   { opacity: 0.94; transform: translateY(0); }
 }
 
-/* ring bullet */
 .wk-details p::before {
   content: "";
   position: absolute;
@@ -333,37 +301,31 @@
     linear-gradient(#5c141a, #5c141a) padding-box,
     linear-gradient(135deg, var(--wk-neon), var(--wk-neon-2)) border-box;
   animation: wk-pulse 3.2s ease-in-out infinite;
-  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .wk-details p:nth-child(2)::before { animation-delay: 0.4s; }
 .wk-details p:nth-child(3)::before { animation-delay: 0.8s; }
 
 @keyframes wk-pulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(255,92,114,0.5); }
-  50%      { box-shadow: 0 0 14px rgba(255,196,107,0.85); }
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 92, 114, 0.5); }
+  50%      { box-shadow: 0 0 14px rgba(255, 196, 107, 0.85); }
 }
 
 .wk-details p:hover::before { transform: scale(1.3); }
 
 /* ============================================================
-   RESPONSIVE  (this is the part that was missing)
+   RESPONSIVE
    ============================================================ */
-@media (min-width: 1441px) {
-  .wk-container { max-height: 540px; }
-}
+@media (min-width: 1441px) { .wk-container { max-height: 540px; } }
 
-@media (max-width: 1024px) {
-  .wk-container { border-radius: 18px; }
-}
+@media (max-width: 1024px) { .wk-container { border-radius: 18px; } }
 
-/* stack the hero — same behaviour as About / Services / Blog */
 @media (max-width: 900px) {
   .wk-container { flex-direction: column; }
   .wk-image { flex: none; width: 100%; height: clamp(240px, 42vw, 360px); }
   .wk-image img { height: 100%; }
   .wk-body { flex: none; padding: 1.85rem 1.35rem 2.1rem; }
-
   .wk-gyro:nth-child(3) { display: none; }
   .wk-frame:nth-child(3) { display: none; }
   .wk-scene { perspective: 750px; }
@@ -372,7 +334,7 @@
 @media (max-width: 640px) {
   .works-page { gap: 2.25rem; padding: 0.5rem 0.4rem; }
   .wk-container { border-radius: 16px; }
-  .wk-image::before, .wk-body::before { width: 20px; height: 20px; }
+  .wk-container::before, .wk-container::after { width: 20px; height: 20px; }
   .wk-image { height: clamp(200px, 48vw, 280px); }
   .wk-body { padding: 1.4rem 1rem 1.6rem; }
   .wk-details p { padding-left: 1.45rem; margin-bottom: 0.95rem; line-height: 1.72; }
@@ -395,34 +357,13 @@
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .wk-scene__glow, .wk-gyro, .wk-frame,
-  .wk-container::before, .wk-image::after,
-  .wk-details p::before { animation: none; }
+  .wk-image::after, .wk-details p::before { animation: none; }
 
   .wk-container, .wk-details p { opacity: 1; animation: none; transform: none; }
   .wk-details p { opacity: 0.94; }
   .wk-image::after { display: none; }
 
   .wk-container, .wk-image img, .wk-details p::before,
-  .wk-image::before, .wk-body::before { transition: none; }
+  .wk-container::before, .wk-container::after { transition: none; }
   .wk-container:hover .wk-image img { transform: scale(1.01); }
 }
-
-/* ============================================================
-   FLICKER FIX — static gradient border instead of rotating rim
-   ============================================================ */
-.wk-container::before,
-.wk-container::after { display: none !important; }
-
-.wk-container {
-  border: 1px solid transparent !important;
-  background:
-    linear-gradient(140deg, #a32b34 0%, #871f27 45%, #5c141a 100%) padding-box,
-    linear-gradient(135deg, #ff5c72, #ffc46b) border-box !important;
-}
-
-/* ============================================================
-   FLICKER FIX v2 — stop animated scanline + scene backdrop-filter
-   ============================================================ */
-.wk-image::after { animation: none !important; display: none !important; }
-.wk-frame { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-.wk-scene__glow { animation: none !important; }
