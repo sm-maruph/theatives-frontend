@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../src/app.css";
+import "../App.css";
 import { FaTimes } from "react-icons/fa";
 import About from "../component/About";
 import Services from "../component/Services";
