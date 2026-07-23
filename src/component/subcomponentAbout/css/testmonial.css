@@ -1,0 +1,164 @@
+/* ============================================================
+   TESTIMONIALS — maroon / rose / gold theme
+   Same class names, so TestimonialSlider.jsx needs no changes.
+   ============================================================ */
+
+.thirdsection {
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0;
+}
+
+/* ---------- Section title — identical to .secondSection .sectionTitle ---------- */
+.thirdsection .sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #ff5c72;
+  margin-bottom: 3vh;
+}
+
+.thirdsection .sectionTitle::before,
+.thirdsection .sectionTitle::after {
+  content: "";
+  display: inline-block;
+  width: clamp(20px, 15vw, 100px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff5c72, transparent);
+  margin: 0 10px;
+  flex-shrink: 1;
+}
+
+/* ---------- Slide ---------- */
+.testimonial-slide {
+  display: flex !important;
+  min-height: 380px;
+  width: min(92%, 1000px);
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -26px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- Left: the quote ---------- */
+.left-panel {
+  flex: 1 1 65%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  color: #f5f2f2;
+  background: linear-gradient(150deg, #a32b34 0%, #871f27 55%, #5c141a 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* faint CRT scan bars */
+.left-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: repeating-linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.028) 0px, rgba(255, 255, 255, 0.028) 1px,
+    transparent 1px, transparent 4px);
+  pointer-events: none;
+}
+
+.left-panel > * { position: relative; z-index: 1; }
+
+.left-panel p {
+  margin: 0;
+  line-height: 1.75;
+  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  font-weight: 300;
+}
+
+.quote-mark,
+.quote-mark-bottom {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: bold;
+  color: #ffc46b;
+  text-shadow: 0 0 16px rgba(255, 196, 107, 0.5);
+  display: flex;
+}
+
+.quote-mark { justify-content: flex-start; }
+.quote-mark-bottom { justify-content: flex-end; }
+
+/* ---------- Right: the reviewer ---------- */
+.right-panel {
+  flex: 1 1 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(1.5rem, 4vw, 2rem) 1rem;
+  color: #f5f2f2;
+  background:
+    linear-gradient(150deg, rgba(92, 20, 26, 0.92), rgba(43, 13, 16, 0.96));
+  border-left: 2px solid rgba(255, 196, 107, 0.35);
+}
+
+.reviewer-img {
+  width: clamp(80px, 12vw, 120px);
+  height: clamp(80px, 12vw, 120px);
+  border-radius: 12px;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#5c141a, #5c141a) padding-box,
+    linear-gradient(135deg, #ff5c72, #ffc46b) border-box;
+  box-shadow: 0 10px 26px -10px rgba(255, 92, 114, 0.6);
+}
+
+.right-panel h4 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ff5c72;
+}
+
+.right-panel p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* ---------- Slick dots ---------- */
+.slick-dots li button:before {
+  font-size: 10px;
+  color: #ff5c72;
+  opacity: 0.35;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #ffc46b;
+  opacity: 1;
+}
+
+/* ---------- Responsive: stack on mobile ---------- */
+@media (max-width: 768px) {
+  .testimonial-slide {
+    flex-direction: column;
+    min-height: 0;
+    width: 94%;
+  }
+  .left-panel { flex: none; padding: 1.5rem 1.25rem; }
+  .left-panel p { font-size: 0.95rem; }
+  .right-panel {
+    flex: none;
+    border-left: none;
+    border-top: 2px solid rgba(255, 196, 107, 0.35);
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .left-panel::after { display: none; }
+}

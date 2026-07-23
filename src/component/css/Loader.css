@@ -1,0 +1,297 @@
+/* ============================================================
+   THEATIVES LOADER — holographic 3D core
+   Gyroscope rings + energy orb + orbiting nodes + HUD scan.
+   Namespaced .tl-* · maroon / rose / gold · futuristic.
+   ============================================================ */
+
+.tl-loader-wrapper {
+  --tl-rose: #ff5c72;
+  --tl-gold: #ffc46b;
+  --tl-ink:  #2b0d10;
+
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  z-index: 99999;
+  overflow: hidden;
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, #2e0e13 0%, #170609 60%, #0c0405 100%);
+  perspective: 900px;
+}
+
+/* faint tech grid + breathing aurora behind the core */
+.tl-loader-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 92, 114, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 92, 114, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 20%, transparent 75%);
+}
+
+.tl-loader-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(28% 32% at 42% 44%, rgba(255, 92, 114, 0.28), transparent 70%),
+    radial-gradient(26% 30% at 60% 54%, rgba(255, 196, 107, 0.20), transparent 70%);
+  filter: blur(60px);
+  animation: tl-breathe 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes tl-breathe {
+  from { transform: scale(1);    opacity: 0.75; }
+  to   { transform: scale(1.14); opacity: 1; }
+}
+
+/* ---------- The 3D core ---------- */
+/* relative stage that holds the core, hud & logo, and reserves
+   real space in the flex column so the wordmark sits below it */
+.tl-stage {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+}
+
+.tl-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  transform: translate(-50%, -50%) rotateX(-22deg);
+  transform-style: preserve-3d;
+  animation: tl-coreSpin 14s linear infinite;
+}
+
+@keyframes tl-coreSpin {
+  from { transform: translate(-50%, -50%) rotateX(-22deg) rotateY(0deg); }
+  to   { transform: translate(-50%, -50%) rotateX(-22deg) rotateY(360deg); }
+}
+
+/* three gyroscope rings on different axes */
+.tl-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+}
+
+.tl-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: 0 0 18px rgba(255, 92, 114, 0.25), inset 0 0 18px rgba(255, 196, 107, 0.12);
+}
+
+.tl-ring:nth-child(1) {
+  transform: rotateY(0deg) rotateX(70deg);
+  animation: tl-r1 4s linear infinite;
+}
+.tl-ring:nth-child(1)::before {
+  border-top-color: var(--tl-rose);
+  border-right-color: var(--tl-rose);
+}
+
+.tl-ring:nth-child(2) {
+  transform: rotateY(60deg) rotateX(70deg);
+  animation: tl-r2 3.2s linear infinite;
+}
+.tl-ring:nth-child(2)::before {
+  border-top-color: var(--tl-gold);
+  border-left-color: var(--tl-gold);
+}
+
+.tl-ring:nth-child(3) {
+  transform: rotateY(120deg) rotateX(70deg);
+  animation: tl-r3 5s linear infinite;
+}
+.tl-ring:nth-child(3)::before {
+  border-bottom-color: var(--tl-rose);
+  border-left-color: var(--tl-gold);
+}
+
+@keyframes tl-r1 { to { transform: rotateY(0deg)   rotateX(70deg) rotateZ(360deg); } }
+@keyframes tl-r2 { to { transform: rotateY(60deg)  rotateX(70deg) rotateZ(-360deg); } }
+@keyframes tl-r3 { to { transform: rotateY(120deg) rotateX(70deg) rotateZ(360deg); } }
+
+/* logo at the centre — upright, gently pulsing, glowing halo */
+.tl-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92px;
+  height: 92px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  z-index: 5;
+  animation: tl-logoPulse 2.2s ease-in-out infinite;
+}
+
+/* soft glow disc behind the logo */
+.tl-logo::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 92, 114, 0.45), rgba(255, 196, 107, 0.16) 55%, transparent 72%);
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.tl-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 10px rgba(255, 196, 107, 0.4));
+}
+
+@keyframes tl-logoPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.07); }
+}
+
+/* two energy nodes orbiting the core on the ring plane */
+.tl-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  transform: translate(-50%, -50%) rotateX(70deg);
+  transform-style: preserve-3d;
+  animation: tl-orbit 3.2s linear infinite;
+}
+
+.tl-node:nth-child(5) { animation-duration: 4.4s; animation-direction: reverse; }
+
+.tl-node::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, var(--tl-gold) 45%, transparent 72%);
+  box-shadow: 0 0 12px rgba(255, 196, 107, 0.9);
+}
+
+.tl-node:nth-child(5)::after {
+  background: radial-gradient(circle, #fff, var(--tl-rose) 45%, transparent 72%);
+  box-shadow: 0 0 12px rgba(255, 92, 114, 0.9);
+}
+
+@keyframes tl-orbit {
+  to { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(360deg); }
+}
+
+/* flat HUD scan ring sitting under the core (billboard, not 3D) */
+.tl-hud {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 196, 107, 0.35);
+  animation: tl-hudSpin 8s linear infinite;
+}
+
+.tl-hud::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 92, 114, 0.2);
+}
+
+/* rotating conic sweep over the HUD */
+.tl-hud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    rgba(255, 92, 114, 0.35) 0deg, transparent 60deg, transparent 360deg);
+  mask: radial-gradient(circle, transparent 62%, #000 63%, #000 100%);
+  -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%, #000 100%);
+  animation: tl-sweep 2.4s linear infinite;
+}
+
+@keyframes tl-hudSpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes tl-sweep   { to { transform: rotate(360deg); } }
+
+/* ---------- Wordmark ---------- */
+.tl-loader-text {
+  position: relative;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--tl-rose), var(--tl-gold), var(--tl-rose));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: tl-shine 3s linear infinite;
+}
+
+@keyframes tl-shine { to { background-position: 200% center; } }
+
+.tl-loader-text::after {
+  content: "";
+  position: absolute;
+  margin-left: 4px;
+  animation: tl-dots 1.5s steps(1, end) infinite;
+}
+
+@keyframes tl-dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .tl-loader-wrapper::after,
+  .tl-core, .tl-ring, .tl-orb, .tl-node, .tl-hud,
+  .tl-hud::after, .tl-loader-text, .tl-loader-text::after { animation: none; }
+  .tl-orb { transform: translate(-50%, -50%); }
+  .tl-node { display: none; }
+  .tl-loader-text {
+    background: none;
+    color: var(--tl-gold);
+    -webkit-text-fill-color: var(--tl-gold);
+  }
+}
+
+@media (max-width: 480px) {
+  .tl-stage { width: 210px; height: 210px; }
+  .tl-core { transform: translate(-50%, -50%) scale(0.82) rotateX(-22deg); }
+  .tl-hud { width: 200px; height: 200px; }
+  .tl-logo { width: 78px; height: 78px; }
+}

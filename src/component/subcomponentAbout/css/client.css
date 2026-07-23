@@ -1,0 +1,143 @@
+/* ============================================================
+   CLIENTS SECTION — maroon / rose / gold (no white)
+   Wrapper: .clients-section (renamed off .sectionAboutFour,
+   which belongs to Gallery.css).
+   Section title matches the Member section exactly.
+   ============================================================ */
+
+.clients-section {
+  padding: clamp(2rem, 5vw, 3rem) 0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ---------- Section title — identical to .secondSection .sectionTitle ---------- */
+.clients-section .sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #ff5c72;
+  margin-bottom: 3vh;
+}
+
+.clients-section .sectionTitle::before,
+.clients-section .sectionTitle::after {
+  content: "";
+  display: inline-block;
+  width: clamp(20px, 15vw, 100px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff5c72, transparent);
+  margin: 0 10px;
+  flex-shrink: 1;
+}
+
+/* keep .client-title in sync too, in case it's used elsewhere */
+.clients-section .client-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: #ff5c72;
+  margin-bottom: 3vh;
+}
+
+.clients-section .client-title::before,
+.clients-section .client-title::after {
+  content: "";
+  display: inline-block;
+  width: clamp(20px, 15vw, 100px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff5c72, transparent);
+  margin: 0 10px;
+  flex-shrink: 1;
+}
+
+/* ---------- Grid ---------- */
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  justify-items: center;
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ---------- Card ---------- */
+.client-logo {
+  width: 100%;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+  background: linear-gradient(150deg, rgba(163, 43, 52, 0.5), rgba(92, 20, 26, 0.62));
+  border: 1px solid rgba(255, 196, 107, 0.16);
+  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s ease, border-color 0.35s ease;
+}
+
+.client-logo:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 196, 107, 0.5);
+  box-shadow: 0 22px 40px -18px rgba(0, 0, 0, 0.8),
+              0 0 0 1px rgba(255, 92, 114, 0.4);
+}
+
+/* logo sits on a light chip so coloured logos stay readable */
+.client-logo img {
+  width: 100%;
+  max-width: 170px;
+  max-height: 90px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #ffffff;
+  padding: 0.55rem 0.7rem;
+  transition: transform 0.3s ease;
+}
+
+.client-logo:hover img { transform: scale(1.06); }
+
+.client-logo p,
+.client-logo .client-name {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffc46b;
+}
+
+/* ---------- FIX: modal client name showing dark ---------- */
+.ab-modal-name {
+  color: #ffffff !important;
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 768px) {
+  .clients-section { padding: 3rem 1.5rem; }
+  .clients-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+  }
+  .client-logo img { max-width: 160px; max-height: 90px; }
+}
+
+@media (max-width: 480px) {
+  .clients-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .client-logo { padding: 0.75rem; }
+  .client-logo img { max-height: 70px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-logo, .client-logo img { transition: none; }
+  .client-logo:hover { transform: none; }
+  .client-logo:hover img { transform: none; }
+}

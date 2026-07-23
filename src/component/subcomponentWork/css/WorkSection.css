@@ -1,0 +1,326 @@
+/* ============================================================
+   WORKS — 3D rotating video carousel + centred video modal
+   →  src/components/subcomponentWork/css/WorkSection.css
+   Middle image kept (.model). Click a card → centre modal.
+   Maroon / rose / gold theme, responsive.
+   ============================================================ */
+
+.banner {
+  --card-w: 185px;
+  --card-h: 245px;
+  --radius: 380px;
+  --rose: #ff5c72;
+  --gold: #ffc46b;
+
+  position: relative;
+  width: 100%;
+  height: 62vh;
+  min-height: 440px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* floor glow under the ring */
+.banner::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  width: min(70%, 640px);
+  height: 90px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center,
+    rgba(255, 92, 114, 0.35), rgba(255, 196, 107, 0.12) 45%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Rotating ring ---------- */
+.slider {
+  position: absolute;
+  top: 12%;
+  left: calc(50% - (var(--card-w) / 2));
+  width: var(--card-w);
+  height: var(--card-h);
+  transform-style: preserve-3d;
+  animation: autoRun 30s linear infinite;
+  z-index: 2;
+}
+
+@keyframes autoRun {
+  from { transform: perspective(1300px) rotateX(-13deg) rotateY(0deg); }
+  to   { transform: perspective(1300px) rotateX(-13deg) rotateY(360deg); }
+}
+
+.slider.paused { animation-play-state: paused; }
+
+/* ---------- Cards on the ring ---------- */
+.slider .item {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(var(--angle)) translateZ(var(--radius));
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  background: linear-gradient(160deg, rgba(163, 43, 52, 0.6), rgba(92, 20, 26, 0.72));
+  border: 1px solid rgba(255, 196, 107, 0.28);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.85),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.slider .item:hover {
+  border-color: rgba(255, 196, 107, 0.6);
+  box-shadow: 0 22px 46px -16px rgba(0, 0, 0, 0.9),
+              0 0 26px -6px rgba(255, 92, 114, 0.55);
+}
+
+.slider .item::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  z-index: 4;
+  background: linear-gradient(90deg, transparent, var(--rose) 40%, var(--gold) 60%, transparent);
+  background-size: 220% 100%;
+  animation: wsSweep 4.5s linear infinite;
+}
+
+@keyframes wsSweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* thumbnail */
+.video-placeholder {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  background: #2b0d10;
+}
+
+.video-thumbnail { position: relative; width: 100%; height: 100%; }
+
+.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85) brightness(0.9);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+}
+
+.slider .item:hover .video-thumbnail img {
+  transform: scale(1.08);
+  filter: saturate(1.05) brightness(1);
+}
+
+.video-thumbnail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(43, 13, 16, 0.55), transparent 55%);
+  pointer-events: none;
+}
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1rem;
+  color: #2b0d10;
+  background: linear-gradient(135deg, var(--rose), var(--gold));
+  box-shadow: 0 8px 20px -6px rgba(255, 92, 114, 0.7);
+  z-index: 3;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slider .item:hover .play-icon { transform: translate(-50%, -50%) scale(1.05); }
+
+/* title bar */
+.slider .item h3 {
+  margin: 0;
+  padding: 0.7rem 0.6rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f5f2f2;
+  background: rgba(43, 13, 16, 0.55);
+  border-top: 1px solid rgba(255, 196, 107, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   MIDDLE IMAGE — the .model centrepiece (kept)
+   ============================================================ */
+.model {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(120px, 20vw, 220px);
+  aspect-ratio: 1 / 1;
+  z-index: 1;                 /* front cards can pass over it → depth */
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+/* glow halo behind the image */
+.model::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 92, 114, 0.35), rgba(255, 196, 107, 0.12) 55%, transparent 72%);
+  filter: blur(10px);
+}
+
+.model img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  padding: 12%;
+  background: rgba(43, 13, 16, 0.35);
+  border: 1px solid rgba(255, 196, 107, 0.4);
+  box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.7);
+  animation: modelFloat 5s ease-in-out infinite;
+}
+
+@keyframes modelFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* ============================================================
+   CENTRED VIDEO MODAL
+   ============================================================ */
+.work-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(20, 5, 8, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: wmFade 0.3s ease-out;
+}
+
+@keyframes wmFade { from { opacity: 0; } to { opacity: 1; } }
+
+.work-modal {
+  position: relative;
+  width: min(92vw, 900px);
+  padding: clamp(0.9rem, 2vw, 1.4rem);
+  border-radius: 16px;
+  background: linear-gradient(150deg, #a32b34 0%, #871f27 52%, #5c141a 100%);
+  border: 1px solid rgba(255, 196, 107, 0.28);
+  box-shadow: 0 30px 80px -26px rgba(0, 0, 0, 0.85),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: wmIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes wmIn {
+  from { opacity: 0; transform: translateY(22px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* 16:9 responsive video frame */
+.work-modal-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.7);
+}
+
+.work-modal-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.work-modal-title {
+  margin: 0.9rem 0 0.2rem;
+  text-align: center;
+  color: #f5f2f2;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-weight: 700;
+}
+
+.work-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #2b0d10;
+  background: linear-gradient(135deg, var(--rose, #ff5c72), var(--gold, #ffc46b));
+  box-shadow: 0 8px 20px -6px rgba(255, 92, 114, 0.8);
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+
+.work-modal-close:hover { transform: rotate(90deg); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .banner { --card-w: 160px; --card-h: 215px; --radius: 300px; height: 54vh; min-height: 400px; }
+}
+
+@media (max-width: 600px) {
+  .banner { --card-w: 132px; --card-h: 180px; --radius: 210px; height: 48vh; min-height: 340px; }
+  .play-icon { width: 42px; height: 42px; font-size: 0.85rem; }
+  .slider .item h3 { font-size: 0.72rem; padding: 0.5rem 0.4rem; }
+  .work-modal-close { top: -10px; right: -10px; width: 34px; height: 34px; font-size: 1.2rem; }
+}
+
+@media (max-width: 380px) {
+  .banner { --card-w: 116px; --card-h: 158px; --radius: 172px; }
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .slider { animation: none; transform: perspective(1300px) rotateX(-13deg); }
+  .slider .item::before,
+  .model img { animation: none; }
+  .video-thumbnail img,
+  .play-icon,
+  .work-modal-close { transition: none; }
+  .slider .item:hover .video-thumbnail img { transform: none; }
+  .work-modal-overlay, .work-modal { animation: none; }
+}

@@ -1,0 +1,388 @@
+/* ============================================================
+   BLOG LIST + MODAL — namespaced .bl-* (no collisions)
+   →  src/components/subcomponentBlog/css/BlogList.css
+   Maroon / rose / gold. Modal classes are bl-modal-* so they
+   never clash with ShowcaseWork's sw-modal-* or anything else.
+   ============================================================ */
+
+/* ---------- Category filter ---------- */
+.blog-categories {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.category-btn {
+  padding: 0.5rem 1.1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 196, 107, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-btn:hover { border-color: rgba(255, 196, 107, 0.6); }
+
+.category-btn.active {
+  color: #2b0d10;
+  border-color: transparent;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
+  box-shadow: 0 8px 20px -8px rgba(255, 92, 114, 0.7);
+}
+
+/* ---------- List ---------- */
+.blogs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.blog-card-home {
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+  background: linear-gradient(150deg, rgba(163, 43, 52, 0.5), rgba(92, 20, 26, 0.66));
+  border: 1px solid rgba(255, 196, 107, 0.16);
+  box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.75);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.blog-card-home:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 196, 107, 0.45);
+  box-shadow: 0 24px 44px -18px rgba(0, 0, 0, 0.85),
+              0 0 0 1px rgba(255, 92, 114, 0.4);
+}
+
+.blog-card-inner { display: flex; min-height: 240px; }
+
+.blog-image {
+  flex: 0 0 40%;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 0.5s ease;
+}
+
+.blog-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(43,13,16,0.15), rgba(92,20,26,0.55));
+}
+
+.blog-content {
+  flex: 1;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-header h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-align: start;
+  letter-spacing: 0.01em;
+}
+
+.blog-header h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* meta row — the JSX nests <p> tags, so scope loosely */
+.blog-card-home .blog-date {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin: 0;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.blog-summary {
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.6;
+  margin: 0.5rem 0 1.5rem;
+  flex-grow: 1;
+}
+
+.blog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.blog-category {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffc46b;
+  background: rgba(255, 196, 107, 0.14);
+  border: 1px solid rgba(255, 196, 107, 0.35);
+}
+
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  color: #2b0d10;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
+  box-shadow: 0 8px 20px -8px rgba(255, 92, 114, 0.7);
+  transition: transform 0.3s ease, gap 0.2s ease, box-shadow 0.3s ease;
+}
+
+.read-more:hover {
+  transform: translateY(-2px);
+  gap: 0.5rem;
+  box-shadow: 0 14px 26px -10px rgba(255, 196, 107, 0.8);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   BLOG MODAL — namespaced .bl-modal-*
+   ============================================================ */
+.bl-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  background: rgba(20, 5, 8, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.bl-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  color: #f5f2f2;
+  background: linear-gradient(150deg, #a32b34 0%, #871f27 52%, #5c141a 100%);
+  border: 1px solid rgba(255, 196, 107, 0.28);
+  box-shadow: 0 28px 80px -26px rgba(0, 0, 0, 0.85),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.bl-modal::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, transparent, #ff5c72 38%, #ffc46b 62%, transparent);
+  background-size: 220% 100%;
+  animation: blSweep 4.5s linear infinite;
+  z-index: 2;
+}
+
+@keyframes blSweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.bl-modal-image {
+  width: 100%;
+  height: 260px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid rgba(255, 196, 107, 0.25);
+}
+
+.bl-modal-video {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+  background: #000;
+}
+
+.bl-modal-content { padding: clamp(1.3rem, 3vw, 2rem); }
+
+.bl-modal-header h2 {
+  font-size: clamp(1.35rem, 3.4vw, 1.7rem);
+  margin: 0 0 0.6rem;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.4);
+}
+
+.bl-modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.bl-modal-author { color: #ffc46b; }
+
+.bl-modal-category {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  background: rgba(255, 196, 107, 0.14);
+  color: #ffc46b;
+  border: 1px solid rgba(255, 196, 107, 0.35);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.bl-modal-body {
+  margin-top: 1.25rem;
+  padding: clamp(1.1rem, 2.5vw, 1.6rem);
+  border-radius: 12px;
+  background: rgba(20, 6, 9, 0.5);
+  border: 1px solid rgba(255, 196, 107, 0.14);
+}
+
+.bl-modal-body p {
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.bl-modal-body ul,
+.bl-modal-body ol { margin: 0 0 1rem 1.5rem; padding-left: 0.5rem; }
+
+.bl-modal-body li {
+  margin: 0 0 0.5rem 0.5rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bl-modal-body li::marker { color: #ffc46b; }
+
+.bl-modal-body h3 {
+  color: #ffc46b;
+  font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+  font-weight: 700;
+  margin: 1.6rem 0 0.6rem;
+}
+
+.bl-modal-body h3:first-child { margin-top: 0; }
+
+.bl-modal-body img,
+.bl-modal-body video {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 196, 107, 0.2);
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.7);
+}
+
+.bl-modal-footer {
+  margin-top: 1.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bl-modal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #2b0d10;
+  background: linear-gradient(135deg, #ff5c72, #ffc46b);
+  box-shadow: 0 10px 26px -10px rgba(255, 92, 114, 0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.bl-modal-back:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 16px 32px -10px rgba(255, 196, 107, 0.85);
+}
+
+.bl-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f2f2;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 3;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.bl-modal-close:hover {
+  transform: rotate(90deg);
+  background: rgba(255, 92, 114, 0.4);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .blog-card-inner { flex-direction: column; }
+  .blog-image { flex: none; width: 100%; height: 190px; }
+  .blog-content { padding: 1.35rem; }
+  .blog-categories { flex-wrap: wrap; }
+  .blog-footer { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .read-more { justify-content: center; }
+  .bl-modal-content { padding: 1.2rem; }
+  .bl-modal-header h2 { font-size: 1.25rem; }
+  .bl-modal-image { height: 190px; }
+  .bl-modal-footer { justify-content: stretch; }
+  .bl-modal-back { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-card-home, .bl-modal, .bl-modal::before { animation: none; opacity: 1; transform: none; }
+  .blog-card-home, .read-more, .bl-modal-back, .bl-modal-close, .category-btn { transition: none; }
+  .blog-card-home:hover { transform: none; }
+}
