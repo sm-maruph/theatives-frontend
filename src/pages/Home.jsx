@@ -188,6 +188,14 @@ function Home() {
     if (valid.includes(path)) setActiveSection(path);
   }, [location.pathname]);
 
+  /* flag the body while a section is open so the Contact button
+     can dock into a corner instead of sitting centre-stage */
+  useEffect(() => {
+    if (activeSection) document.body.classList.add("section-active");
+    else document.body.classList.remove("section-active");
+    return () => document.body.classList.remove("section-active");
+  }, [activeSection]);
+
   const handleSectionClick = (section) => {
     if (isAnimating || activeSection) return;
     setIsAnimating(true);
