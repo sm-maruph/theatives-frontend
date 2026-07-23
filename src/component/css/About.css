@@ -151,7 +151,7 @@
   border-radius: 20px;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(140deg, var(--ab-maroon-lift) 0%, var(--ab-maroon) 45%, var(--ab-maroon-deep) 100%);
+  
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.10),
     0 30px 70px -28px rgba(0, 0, 0, 0.85),
@@ -271,6 +271,7 @@
   align-items: center;
   justify-content: center;
   padding: clamp(1.5rem, 3vw, 3rem);
+  background: linear-gradient(140deg, var(--ab-maroon-lift) 0%, var(--ab-maroon) 45%, var(--ab-maroon-deep) 100%);
 }
 
 /* CRT scan bars */

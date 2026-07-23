@@ -810,79 +810,85 @@ body.section-active .contact-toggle:hover {
 
 
 /* ============================================================
-   MOBILE: STATIC 3D SCENES for the section pages
-   (About · Services · Works · News/Blog)
+   MOBILE RENDER FIX  —  append to the END of src/App.css
    ------------------------------------------------------------
-   Goal: on phones the backgrounds LOOK exactly the same — same
-   depth, same shapes, same glow — they just don't move. Desktop
-   is untouched and keeps every animation.
+   Fixes the BLINKING on About / Services / Works / News.
 
-   ⚠ REPLACE the older `mobile-perf-fix.css` block with this one.
-   That block hid the floating solids and set perspective:none,
-   which flattened the scenes. This keeps them 3D, only frozen.
-
-   Does NOT affect the home page (.stage / .panel).
+   ROOT CAUSE
+   Each page renders a full-viewport `position: fixed` scene
+   (.ab-scene / .sv-scene / .wk-scene / .bl-scene, z-index:-1)
+   but that scene lives INSIDE `.content-container`, which is a
+   scrolling box (`overflow-y:auto` + `-webkit-overflow-scrolling:
+   touch`). A fixed element inside a scrolling ancestor has to be
+   re-rasterised by mobile WebKit/Blink on every scroll frame —
+   that re-raster is the blink. Desktop composites it once and
+   caches it, which is why PC looks fine.
    ============================================================ */
 
+/* ---- 1) Kill the deprecated momentum-scroll flag ------------
+   `-webkit-overflow-scrolling: touch` puts the scroller on a
+   legacy path that breaks position:fixed descendants. It has
+   been a no-op on modern iOS since 13 and is the single biggest
+   contributor to fixed-layer flicker. */
+.content-container,
+.contact-content,
+.svm-modal,
+.bl-modal,
+.sw-modal,
+.modal-content {
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* ---- 2) Give each scene its own compositor layer ------------
+   Once promoted, the scene is a static texture the GPU reuses
+   while the container scrolls, instead of repainting per frame.
+   `contain: paint` walls its repaints off from the page. */
+.ab-scene,
+.sv-scene,
+.wk-scene,
+.bl-scene {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  contain: paint;
+}
+
+/* ---- 3) Mobile-only paint budget --------------------------- */
 @media (max-width: 900px), (pointer: coarse) {
 
-  /* ---- 1) Freeze every animation inside the four scenes ---- */
-  .ab-scene, .ab-scene *,
-  .sv-scene, .sv-scene *,
-  .wk-scene, .wk-scene *,
-  .bl-scene, .bl-scene * {
-    animation: none !important;
-  }
-
-  /* ---- 2) Keep the scenes VISIBLE (undo the old display:none) ---- */
-  .ab-shard,
-  .sv-cube, .sv-pillar,
-  .wk-gyro, .wk-frame,
-  .bl-col, .bl-chip,
-  .ab-scene__floor, .ab-scene__ceiling,
-  .bl-scene__grid,
-  .ab-scene__shards, .sv-scene__solids, .sv-scene__pillars,
-  .wk-scene__gyros, .wk-scene__frames,
-  .bl-scene__columns, .bl-scene__chips {
-    display: block !important;
-  }
-
-  /* ---- 3) Restore real 3D depth (undo perspective:none / flat) ---- */
-  .ab-scene { perspective: 900px !important; }
-  .sv-scene { perspective: 800px !important; }
-  .wk-scene { perspective: 750px !important; }
-  .bl-scene { perspective: 700px !important; }
-
-  .ab-scene__shards, .sv-scene__solids, .sv-scene__pillars,
-  .wk-scene__gyros, .wk-scene__frames,
-  .bl-scene__columns, .bl-scene__chips,
-  .sv-cube, .sv-pillar, .wk-gyro, .bl-chip {
-    transform-style: preserve-3d !important;
-  }
-
-  /* ---- 4) Park the solids at a pleasing frozen angle, so they
-            read as 3D objects rather than flat face-on shapes ---- */
-  .sv-cube:nth-child(1) { transform: translateZ(-260px) rotateX(22deg)  rotateY(30deg)  !important; }
-  .sv-cube:nth-child(2) { transform: translateZ(-140px) rotateX(-18deg) rotateY(42deg)  !important; }
-  .sv-cube:nth-child(3) { transform: translateZ(-440px) rotateX(30deg)  rotateY(-24deg) !important; }
-
-  .wk-gyro:nth-child(1) { transform: translateZ(-320px) scale(0.9)  rotateX(28deg) rotateY(20deg)  !important; }
-  .wk-gyro:nth-child(2) { transform: translateZ(-180px) scale(1.15) rotateX(-22deg) rotateY(38deg) !important; }
-  .wk-gyro:nth-child(3) { transform: translateZ(-460px) scale(0.7)  rotateX(34deg) rotateY(-18deg) !important; }
-
-  /* ---- 5) Glow layers: keep the colour wash, no motion ---- */
+  /* 3a. The aurora layers blur a FULL-SCREEN element at 60–64px.
+         That is the most expensive single paint in the app.
+         A smaller radius looks nearly identical at phone size. */
   .ab-scene__aurora,
   .sv-scene__glow,
   .wk-scene__glow,
   .bl-scene__glow {
-    opacity: 0.85 !important;
-    transform: none !important;
+    filter: blur(22px) !important;
   }
 
-  /* ---- 6) backdrop-filter stays OFF on touch (it was the
-            confirmed cause of the repaint seam) ---- */
-  .ab-shard, .sv-cube span, .wk-frame, .bl-chip {
+  /* 3b. backdrop-filter over a moving scene = the split-tone
+         seam you photographed. Off everywhere on touch. */
+  .modal-overlay, .modal-content,
+  .svm-overlay, .svm-modal,
+  .bl-modal-overlay, .bl-modal,
+  .sw-modal-overlay, .sw-modal,
+  .work-modal-overlay, .work-modal,
+  .blog-modal-overlay, .blog-modal,
+  .ab-modal-overlay, .client-modal-overlay,
+  .blog-card-home, .job-card, .sv-card, .sv-card--micro,
+  .microService-card, .gallery-card,
+  .ab-shard, .sv-cube span, .wk-frame, .bl-chip,
+  .bottom-contact.expanded, .panel {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+
+  /* 3c. Cards that relied on the blur need a solid fill so they
+         don't turn into flat transparent boxes without it. */
+  .blog-card-home,
+  .job-card {
+    background: linear-gradient(150deg,
+      rgba(163, 43, 52, 0.55), rgba(92, 20, 26, 0.7)) !important;
   }
 }

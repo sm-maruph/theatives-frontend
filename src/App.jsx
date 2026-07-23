@@ -7,31 +7,15 @@ import Layout from "./component/Layout";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "./App.css"; // Import global styles
 
-/* Admin screens are code-split. They pull in xlsx / jspdf /
-   jspdf-autotable / html2canvas (~1.4 MB) which public visitors
-   never need — Vite now emits those as separate chunks that only
-   download when someone actually opens an /admin route. */
+/* Admin screens are code-split: they pull in xlsx / jspdf /
+   html2canvas (~1 MB) that public visitors never need. */
 const AdminPanel     = lazy(() => import("./pages/AdminPanel"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
-/* lightweight fallback while an admin chunk downloads.
-   Swap for your <Loader /> if you'd rather reuse it. */
 const ChunkFallback = () => (
-  <div
-    style={{
-      minHeight: "100vh",
-      display: "grid",
-      placeItems: "center",
-      background: "#070404",
-      color: "#F5E9EA",
-      fontFamily: "'JetBrains Mono', monospace",
-      letterSpacing: "0.18em",
-      fontSize: "0.8rem",
-      textTransform: "uppercase",
-    }}
-  >
-    Loading…
-  </div>
+  <div style={{ minHeight: "100vh", display: "grid", placeItems: "center",
+    background: "#070404", color: "#F5E9EA", fontFamily: "monospace",
+    letterSpacing: "0.18em", fontSize: "0.8rem" }}>LOADING…</div>
 );
 
 function App() {
@@ -47,15 +31,8 @@ function App() {
           <Route path="/contact" element={<Home />} />
         </Route>
 
-        {/* Admin Routes — lazily loaded */}
-        <Route
-          path="/admin"
-          element={
-            <Suspense fallback={<ChunkFallback />}>
-              <AdminPanel />
-            </Suspense>
-          }
-        />
+        {/* Admin Routes */}
+        <Route path="/admin" element={<Suspense fallback={<ChunkFallback />}><AdminPanel /></Suspense>} />
         <Route
           path="/admin/dashboard"
           element={
