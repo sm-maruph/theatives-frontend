@@ -31,3 +31,9 @@ export const getTransactions = () => call("get", "/transactions");
 export const createTransaction = (transaction) => call("post", "/transactions", transaction);
 export const updateTransaction = (id, changes) => call("patch", `/transactions/${id}`, changes);
 export const deleteTransaction = (id) => call("delete", `/transactions/${id}`);
+
+export const getPayees = () => call("get", "/payees");
+export const createPayee = (person) => call("post", "/payees", person);
+export const getProjectPayables = () => call("get", "/payables");
+export const createProjectPayable = (payable) => call("post", "/payables", payable);
+export const recordProjectPayablePayment = (id, payment) => call("post", `/payables/${id}/payments`, payment);

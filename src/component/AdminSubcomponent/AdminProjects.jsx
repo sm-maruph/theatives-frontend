@@ -4,6 +4,10 @@ import {
   getProjectCategories, createProjectCategory, deleteProjectCategory,
 } from "../../adminServices/AdminProjectsApi";
 import {
+  getFinanceCategories, getTransactions, createTransaction, getPayees, createPayee,
+  getProjectPayables, createProjectPayable, recordProjectPayablePayment,
+} from "../../adminServices/FinanceApi";
+import {
   LayoutDashboard, FolderKanban, BellRing, Users2, Tag,
   Plus, Trash2, Pencil, Server, Globe, ArrowUpCircle, TrendingUp,
   CircleCheck, Clock, Search, X, FileSpreadsheet, FileText, Eye, EyeOff,
@@ -81,6 +85,7 @@ export default function AdminProjects() {
       const [projectRows, categoryRows] = await Promise.all([getProjects(), getProjectCategories()]);
       setProjects(projectRows);
       setCategories(categoryRows);
+      setViewing((current) => current ? projectRows.find((item) => String(item.id) === String(current.id)) || current : null);
     } catch (error) {
       window.alert(error.message);
     } finally {
@@ -261,6 +266,7 @@ export default function AdminProjects() {
     { key: "projects", label: "Projects", icon: FolderKanban },
     { key: "alerts", label: "Renewals & Upgrades", icon: BellRing, badge: upcoming.length },
     { key: "clients", label: "Clients", icon: Users2 },
+    { key: "payables", label: "People & payables", icon: Users2 },
     { key: "categories", label: "Categories", icon: Tag },
   ];
 
@@ -515,11 +521,13 @@ export default function AdminProjects() {
         </div>
       )}
 
+      {tab === "payables" && <PayablesPanel projects={projects} />}
+
       {modal === "project" && (
         <ProjectModal categories={categories} initial={editing}
           onClose={() => { setModal(null); setEditing(null); }} onSave={saveProject} />
       )}
-      {viewing && <ProjectDetailsModal project={viewing} onClose={() => setViewing(null)} />}
+      {viewing && <ProjectDetailsModal project={viewing} onClose={() => setViewing(null)} onRefresh={refreshData} />}
       </div>
     </div>
   );
@@ -724,7 +732,39 @@ function ProjectModal({ categories, initial, onClose, onSave }) {
   );
 }
 
-function ProjectDetailsModal({ project, onClose }) {
+function localDateTimeValue() {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 16);
+}
+
+function ProjectDetailsModal({ project, onClose, onRefresh }) {
+  const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [entry, setEntry] = useState({ transaction_type: "expense", title: "", amount: "", transaction_at: localDateTimeValue(), category_id: "", notes: "" });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const load = useCallback(async () => {
+    const [allTransactions, allCategories] = await Promise.all([getTransactions(), getFinanceCategories()]);
+    setTransactions(allTransactions.filter((item) => String(item.project_id) === String(project.id)));
+    setCategories(allCategories);
+  }, [project.id]);
+  useEffect(() => { load().catch((e) => setError(e.message)); }, [load]);
+  const availableCategories = categories.filter((item) => item.transaction_type === entry.transaction_type);
+  const addEntry = async (event) => {
+    event.preventDefault();
+    setSaving(true); setError("");
+    try {
+      if (!entry.title.trim() || Number(entry.amount) <= 0) throw new Error("Enter a title and a positive amount.");
+      await createTransaction({ transaction_type: entry.transaction_type, transaction_date: entry.transaction_at.slice(0, 10),
+        transaction_at: new Date(entry.transaction_at).toISOString(), amount: Number(entry.amount), currency: "BDT",
+        category_id: entry.category_id || null, project_id: project.id, party_name: entry.transaction_type === "income" ? project.clientName : null,
+        description: entry.title.trim(), notes: entry.notes || null });
+      setEntry((previous) => ({ ...previous, title: "", amount: "", notes: "", transaction_at: localDateTimeValue() }));
+      await load(); await onRefresh();
+    } catch (e) { setError(e.message); }
+    finally { setSaving(false); }
+  };
   const details = [
     ["Project name", project.name],
     ["Type", project.kind === "micro" ? "Micro-service" : "Service"],
@@ -789,6 +829,42 @@ function ProjectDetailsModal({ project, onClose }) {
           ))}
         </div>
 
+        <GroupHead>Add a cost or client payment</GroupHead>
+        <form onSubmit={addEntry} className="ap-card" style={{ padding: 14, marginBottom: 18 }}>
+          {error && <div role="alert" style={{ color: "#F87171", fontSize: 13, marginBottom: 10 }}>{error}</div>}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))", gap: 9 }}>
+            <select style={field} value={entry.transaction_type} onChange={(e) => setEntry({ ...entry, transaction_type: e.target.value, category_id: "" })}>
+              <option value="expense">Project cost</option><option value="income">Client payment</option>
+            </select>
+            <input style={field} required placeholder={entry.transaction_type === "income" ? "Payment installment" : "Developer cost"}
+              value={entry.title} onChange={(e) => setEntry({ ...entry, title: e.target.value })} />
+            <input style={field} type="number" min="0.01" step="0.01" required placeholder="Amount (BDT)"
+              value={entry.amount} onChange={(e) => setEntry({ ...entry, amount: e.target.value })} />
+            <input style={field} type="datetime-local" required value={entry.transaction_at}
+              onChange={(e) => setEntry({ ...entry, transaction_at: e.target.value })} />
+            <select style={field} value={entry.category_id} onChange={(e) => setEntry({ ...entry, category_id: e.target.value })}>
+              <option value="">Select category</option>{availableCategories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+            </select>
+            <input style={field} placeholder="Notes (optional)" value={entry.notes} onChange={(e) => setEntry({ ...entry, notes: e.target.value })} />
+          </div>
+          <button className="ap-btn" disabled={saving} style={{ marginTop: 10, background: C.primary, color: "white", border: 0, borderRadius: 8, padding: "9px 15px", fontWeight: 600 }}>
+            {saving ? "Saving…" : entry.transaction_type === "income" ? "Add received payment" : "Add project cost"}
+          </button>
+        </form>
+
+        <GroupHead>Project cost and payment history</GroupHead>
+        <div className="ap-card" style={{ overflowX: "auto", marginBottom: 22 }}>
+          <table><thead><tr><th>Type</th><th>Title</th><th>Date and time</th><th>Category</th><th>Amount</th></tr></thead>
+            <tbody>{transactions.map((item) => <tr key={item.id}>
+              <td><Pill color={item.transaction_type === "income" ? "#34D399" : "#FBBF24"} bg={item.transaction_type === "income" ? "rgba(52,211,153,.14)" : "rgba(251,191,36,.14)"}>{item.transaction_type === "income" ? "Received" : "Cost"}</Pill></td>
+              <td>{item.description || item.category || "Transaction"}</td>
+              <td>{item.transaction_at ? new Date(item.transaction_at).toLocaleString() : fmtDate(item.transaction_date)}</td>
+              <td>{item.category || "—"}</td><td style={{ fontWeight: 700 }}>{taka(item.amount)}</td>
+            </tr>)}
+            {!transactions.length && <tr><td colSpan={5} style={{ textAlign: "center", color: C.muted }}>No project payments or costs recorded yet.</td></tr>}</tbody>
+          </table>
+        </div>
+
         <GroupHead>Project and client details</GroupHead>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
           {details.map(([label, value]) => (
@@ -805,4 +881,75 @@ function ProjectDetailsModal({ project, onClose }) {
     </div>
   );
 }
+
+function PayablesPanel({ projects }) {
+  const [people, setPeople] = useState([]);
+  const [items, setItems] = useState([]);
+  const [personForm, setPersonForm] = useState({ name: "", email: "", phone: "" });
+  const [payableForm, setPayableForm] = useState({ payee_id: "", project_id: "", title: "", amount_due: "", due_date: "" });
+  const [payment, setPayment] = useState({ id: null, amount: "", transaction_at: localDateTimeValue() });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const refresh = useCallback(async () => {
+    const [p, obligations] = await Promise.all([getPayees(), getProjectPayables()]);
+    setPeople(p); setItems(obligations);
+  }, []);
+  useEffect(() => { refresh().catch((e) => setError(e.message)); }, [refresh]);
+  const run = async (action) => { setBusy(true); setError(""); try { await action(); await refresh(); }
+    catch (e) { setError(e.message); } finally { setBusy(false); } };
+  const submitPerson = (e) => { e.preventDefault(); run(async () => {
+    await createPayee(personForm); setPersonForm({ name: "", email: "", phone: "" });
+  }); };
+  const submitPayable = (e) => { e.preventDefault(); run(async () => {
+    await createProjectPayable({ ...payableForm, amount_due: Number(payableForm.amount_due), due_date: payableForm.due_date || null });
+    setPayableForm({ ...payableForm, title: "", amount_due: "", due_date: "" });
+  }); };
+  const submitPayment = (e) => { e.preventDefault(); run(async () => {
+    await recordProjectPayablePayment(payment.id, { amount: Number(payment.amount), transaction_date: payment.transaction_at.slice(0, 10), transaction_at: new Date(payment.transaction_at).toISOString() });
+    setPayment({ id: null, amount: "", transaction_at: localDateTimeValue() });
+  }); };
+  return <div style={{ display: "grid", gap: 16 }}>
+    {error && <div role="alert" style={{ color: "#F87171", padding: 12 }}>{error}</div>}
+    <div className="ap-card" style={{ padding: 16 }}>
+      <SectionHead icon={Users2} title="People and total outstanding" note="A person’s balance includes assignments across every project." />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10, paddingTop: 14 }}>
+        {people.map((person) => <div className="ap-card" key={person.id} style={{ padding: 13 }}>
+          <div style={{ fontWeight: 700 }}>{person.name}</div><div style={{ color: C.muted, fontSize: 12 }}>{person.email || person.phone || ""}</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, fontSize: 12 }}><span>Owed {taka(person.total_amount_due)}</span><span>Paid {taka(person.total_paid)}</span></div>
+          <div style={{ color: person.outstanding_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700, marginTop: 5 }}>Outstanding {taka(person.outstanding_balance)} · {person.payable_count} project assignment(s)</div>
+        </div>)}
+        {!people.length && <div style={{ color: C.muted, padding: 8 }}>Add a person to start tracking payables.</div>}
+      </div>
+    </div>
+    <div className="ap-card" style={{ padding: 16 }}>
+      <SectionHead icon={Users2} title="Add a person or project payable" />
+      <form onSubmit={submitPerson} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8, paddingTop: 14 }}>
+        <input style={field} required placeholder="Person name" value={personForm.name} onChange={(e) => setPersonForm({ ...personForm, name: e.target.value })} />
+        <input style={field} type="email" placeholder="Email (optional)" value={personForm.email} onChange={(e) => setPersonForm({ ...personForm, email: e.target.value })} />
+        <input style={field} placeholder="Phone (optional)" value={personForm.phone} onChange={(e) => setPersonForm({ ...personForm, phone: e.target.value })} />
+        <button className="ap-btn" disabled={busy} style={formButton}>Add person</button>
+      </form>
+      <form onSubmit={submitPayable} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8, paddingTop: 10 }}>
+        <select required style={field} value={payableForm.payee_id} onChange={(e) => setPayableForm({ ...payableForm, payee_id: e.target.value })}><option value="">Select person</option>{people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+        <select required style={field} value={payableForm.project_id} onChange={(e) => setPayableForm({ ...payableForm, project_id: e.target.value })}><option value="">Select project</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+        <input required style={field} placeholder="Work or payable title" value={payableForm.title} onChange={(e) => setPayableForm({ ...payableForm, title: e.target.value })} />
+        <input required type="number" min="0.01" step="0.01" style={field} placeholder="Amount due" value={payableForm.amount_due} onChange={(e) => setPayableForm({ ...payableForm, amount_due: e.target.value })} />
+        <input type="date" style={field} value={payableForm.due_date} onChange={(e) => setPayableForm({ ...payableForm, due_date: e.target.value })} />
+        <button className="ap-btn" disabled={busy} style={formButton}>Assign payable</button>
+      </form>
+    </div>
+    {payment.id && <form className="ap-card" onSubmit={submitPayment} style={{ padding: 14, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+      <strong style={{ marginRight: 8 }}>Record payment</strong><input required type="number" min="0.01" step="0.01" style={{ ...field, width: 150, margin: 0 }} placeholder="Amount" value={payment.amount} onChange={(e) => setPayment({ ...payment, amount: e.target.value })} />
+      <input required type="datetime-local" style={{ ...field, width: 210, margin: 0 }} value={payment.transaction_at} onChange={(e) => setPayment({ ...payment, transaction_at: e.target.value })} />
+      <button className="ap-btn" disabled={busy} style={formButton}>Save payment</button><button type="button" className="ap-btn" onClick={() => setPayment({ id: null, amount: "", transaction_at: localDateTimeValue() })} style={secondaryButton}>Cancel</button>
+    </form>}
+    <div className="ap-card" style={{ overflowX: "auto" }}><table><thead><tr><th>Person</th><th>Project</th><th>Work</th><th>Owed</th><th>Paid</th><th>Remaining</th><th></th></tr></thead>
+      <tbody>{items.map((item) => <tr key={item.id}><td>{item.payee_name}</td><td>{item.project_name}</td><td>{item.title}</td><td>{taka(item.amount_due)}</td><td>{taka(item.paid_amount)}</td><td style={{ color: item.remaining_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700 }}>{taka(item.remaining_balance)}</td>
+        <td>{item.remaining_balance > 0 && <button className="ap-btn" onClick={() => setPayment({ id: item.id, amount: "", transaction_at: localDateTimeValue() })} style={secondaryButton}>Record payment</button>}</td></tr>)}
+        {!items.length && <tr><td colSpan={7} style={{ textAlign: "center", color: C.muted }}>No project payables yet.</td></tr>}</tbody></table></div>
+  </div>;
+}
+
+const formButton = { background: C.primary, color: "white", border: 0, borderRadius: 8, padding: "9px 13px", fontWeight: 600 };
+const secondaryButton = { background: C.primarySoft, color: C.primaryText, border: `1px solid ${C.border}`, borderRadius: 8, padding: "7px 10px", fontWeight: 600 };
 
