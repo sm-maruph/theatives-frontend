@@ -1,6 +1,6 @@
 // App.jsx
 import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import ProtectedRoute from "./component/ProtectedRoute ";
 import Layout from "./component/Layout";
@@ -43,6 +43,9 @@ function App() {
             </Suspense>
           }
         />
+
+        {/* Keep direct /index.html visits and unknown paths from rendering blank. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
