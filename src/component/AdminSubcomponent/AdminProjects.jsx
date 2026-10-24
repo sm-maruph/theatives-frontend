@@ -67,6 +67,7 @@ const C = {
 export default function AdminProjects() {
   const [categories, setCategories] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [payablesOutstanding, setPayablesOutstanding] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [tab, setTab] = useState("overview");
@@ -82,9 +83,10 @@ export default function AdminProjects() {
   const refreshData = useCallback(async () => {
     setLoading(true);
     try {
-      const [projectRows, categoryRows] = await Promise.all([getProjects(), getProjectCategories()]);
+      const [projectRows, categoryRows, peopleRows] = await Promise.all([getProjects(), getProjectCategories(), getPayees()]);
       setProjects(projectRows);
       setCategories(categoryRows);
+      setPayablesOutstanding(peopleRows.reduce((sum, person) => sum + (Number(person.outstanding_balance) || 0), 0));
       setViewing((current) => current ? projectRows.find((item) => String(item.id) === String(current.id)) || current : null);
     } catch (error) {
       window.alert(error.message);
@@ -100,7 +102,10 @@ export default function AdminProjects() {
     const completed = projects.filter((p) => p.status === "Completed").length;
     const earnings = projects.reduce((s, p) => s + (Number(p.finalPrice) || 0), 0);
     const collected = projects.reduce((s, p) => s + (Number(p.amountPaid) || 0), 0);
-    return { active, completed, earnings, collected, outstanding: earnings - collected };
+    const costs = projects.reduce((sum, project) => sum + (Number(project.totalProjectExpenses) || 0), 0);
+    const profit = projects.reduce((sum, project) => sum + (Number(project.profit) || 0), 0);
+    const cashExpenses = projects.reduce((sum, project) => sum + ((Number(project.amountPaid) || 0) - (Number(project.cashProfit) || 0)), 0);
+    return { active, completed, earnings, collected, costs, cashExpenses, profit, outstanding: Math.max(0, earnings - collected) };
   }, [projects]);
 
   const alerts = useMemo(() => {
@@ -311,10 +316,15 @@ export default function AdminProjects() {
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 14, marginBottom: 22 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 22 }}>
         <Kpi icon={FolderKanban} tint="#A5B4FC" label="Active projects" value={kpis.active} sub={`${kpis.completed} completed`} />
-        <Kpi icon={CircleCheck} tint="#34D399" label="Total earnings" value={taka(kpis.earnings)} sub={`${taka(kpis.collected)} collected`} />
-        <Kpi icon={TrendingUp} tint="#F87171" label="Outstanding" value={taka(kpis.outstanding)} sub="unpaid balance" />
+        <Kpi icon={CircleCheck} tint="#34D399" label="Agreed revenue" value={taka(kpis.earnings)} sub="total project fees" />
+        <Kpi icon={CircleCheck} tint="#34D399" label="Client payments received" value={taka(kpis.collected)} sub="cash collected" />
+        <Kpi icon={TrendingUp} tint="#FBBF24" label="Client balance to collect" value={taka(kpis.outstanding)} sub="agreed fees less received" />
+        <Kpi icon={TrendingUp} tint="#F87171" label="Project costs" value={taka(kpis.costs)} sub="including assigned payables" />
+        <Kpi icon={TrendingUp} tint="#F87171" label="Costs paid" value={taka(kpis.cashExpenses)} sub="cash paid to people and vendors" />
+        <Kpi icon={CircleCheck} tint="#34D399" label="Estimated project profit" value={taka(kpis.profit)} sub="agreed fees less costs" />
+        <Kpi icon={Users2} tint="#C084FC" label="People payable balance" value={taka(payablesOutstanding)} sub="unpaid across all projects" />
         <Kpi icon={BellRing} tint="#FBBF24" label="Alerts <= 30 days" value={upcoming.length} sub="renewals + upgrades" />
       </div>
 
@@ -521,7 +531,7 @@ export default function AdminProjects() {
         </div>
       )}
 
-      {tab === "payables" && <PayablesPanel projects={projects} />}
+      {tab === "payables" && <PayablesPanel projects={projects} onRefresh={refreshData} />}
 
       {modal === "project" && (
         <ProjectModal categories={categories} initial={editing}
@@ -796,6 +806,7 @@ function ProjectDetailsModal({ project, onClose, onRefresh }) {
     ["Received cash", project.amountPaid],
     ["Accounts receivable", project.accountsReceivable],
     ["Project expenses", project.totalProjectExpenses],
+    ["Costs paid", (Number(project.amountPaid) || 0) - (Number(project.cashProfit) || 0)],
     [project.profitLabel || "Current project profit", project.profit],
   ];
 
@@ -882,7 +893,7 @@ function ProjectDetailsModal({ project, onClose, onRefresh }) {
   );
 }
 
-function PayablesPanel({ projects }) {
+function PayablesPanel({ projects, onRefresh }) {
   const [people, setPeople] = useState([]);
   const [items, setItems] = useState([]);
   const [personForm, setPersonForm] = useState({ name: "", email: "", phone: "" });
@@ -895,7 +906,7 @@ function PayablesPanel({ projects }) {
     setPeople(p); setItems(obligations);
   }, []);
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, [refresh]);
-  const run = async (action) => { setBusy(true); setError(""); try { await action(); await refresh(); }
+  const run = async (action) => { setBusy(true); setError(""); try { await action(); await refresh(); await onRefresh(); }
     catch (e) { setError(e.message); } finally { setBusy(false); } };
   const submitPerson = (e) => { e.preventDefault(); run(async () => {
     await createPayee(personForm); setPersonForm({ name: "", email: "", phone: "" });
