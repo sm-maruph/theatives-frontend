@@ -13,7 +13,7 @@ const DUMMY_BLOGS = [
     created_at: "2025-06-10T09:00:00Z",
     views: 1240,
     sections: [
-      { type: "image", content: "https://placehold.co/800x450/871f27/ffc46b?text=Design+Trends" },
+      { type: "image", content: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOzoTqC3IxMSGOUrpXT4Q7gJFS3YM1MJK9B2GIlY6M07D_jyjqEcKcJpMW&s=10" },
       { type: "paragraph", content: "The design world is shifting fast this year. From bold typography to immersive motion, here's what we're seeing shape brands in 2025 and beyond." },
       { type: "heading", content: "Bold & Expressive" },
       { type: "list", content: ["Oversized type", "Kinetic layouts", "Rich gradients"] },
@@ -82,9 +82,12 @@ export default function Blogs() {
     const onKey = (e) => e.key === "Escape" && setSelectedBlog(null);
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+      document.body.classList.add("modal-open");        // ← add
+
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      document.body.classList.remove("modal-open");     // ← remove
     };
   }, [selectedBlog]);
 

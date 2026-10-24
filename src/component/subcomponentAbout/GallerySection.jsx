@@ -25,6 +25,21 @@ function GallerySection() {
     loadGallerys();
   }, []);
 
+  // hide the section overlay's .close-btn while this modal is open,
+  // and lock page scroll; cleanup runs on close AND on unmount
+  useEffect(() => {
+    if (!selectedItem) return;
+    const onKey = (e) => e.key === "Escape" && setSelectedItem(null);
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    document.body.classList.add("modal-open");
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      document.body.classList.remove("modal-open");
+    };
+  }, [selectedItem]);
+
   const loadGallerys = async () => {
     setLoading(true);
     try {
@@ -73,7 +88,6 @@ function GallerySection() {
               />
             )}
 
-            {/* caption rises on hover; hidden behind the scrim at rest */}
             <div className="gallery-caption">
               <h3>{gallery.title}</h3>
               <p>{gallery.description}</p>

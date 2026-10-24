@@ -1,3 +1,8 @@
+# Environment files can contain credentials. Keep only the safe template tracked.
+.env
+.env.*
+!.env.example
+
 # Logs
 logs
 *.log

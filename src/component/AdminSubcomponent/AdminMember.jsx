@@ -5,10 +5,10 @@ import {
   createMember,
   updateMember,
   deleteMember,
+  uploadMemberImage,
 } from "../../adminServices/AdminMembersApi";
 import { getFullUrl } from '../../utils/apiUrl';
 import imageCompression from "browser-image-compression";
-import { supabase } from './supabaseClient'; // your supabase.js
 
 const AdminMember = () => {
   const [members, setMembers] = useState([]);
@@ -73,19 +73,8 @@ const AdminMember = () => {
         fileType: "image/webp",
       });
 
-      const fileName = `members/${Date.now()}_${compressedFile.name.split('.')[0]}.webp`;
-
-      const { data, error } = await supabase.storage
-        .from("your-bucket-name") // replace with your bucket
-        .upload(fileName, compressedFile, { contentType: "image/webp" });
-
-      if (error) throw error;
-
-      const { publicUrl } = supabase.storage
-        .from("your-bucket-name")
-        .getPublicUrl(fileName);
-
-      return publicUrl;
+      const response = await uploadMemberImage(compressedFile);
+      return response.filePath;
     } catch (err) {
       console.error("Supabase upload error:", err);
       throw err;

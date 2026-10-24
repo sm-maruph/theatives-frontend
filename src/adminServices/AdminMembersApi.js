@@ -60,6 +60,8 @@ export const deleteMember = async (id) => {
 
 export const uploadMemberImage = async (file) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Your admin session has expired. Please sign in again.');
     const formData = new FormData();
     formData.append('file', file);
 
@@ -67,7 +69,10 @@ export const uploadMemberImage = async (file) => {
       getFullUrl(`${BASE_PATH}/member-upload`),
       formData,
       {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 

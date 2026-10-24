@@ -1,4 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import {
+  getProjects, createProject, updateProject, deleteProject,
+  getProjectCategories, createProjectCategory, deleteProjectCategory,
+} from "../../adminServices/AdminProjectsApi";
 import {
   LayoutDashboard, FolderKanban, BellRing, Users2, Tag,
   Plus, Trash2, Pencil, Server, Globe, ArrowUpCircle, TrendingUp,
@@ -9,81 +13,25 @@ import {
  * AdminProjects — dark-themed project-management module for Theatives.
  * Matches the admin dashboard palette (#16213E / #1e293b / #6366f1 / #E94560).
  *
- * Runs on MOCK DATA. Every source is marked "WIRE API HERE".
+ * Project and category data is loaded from the authenticated Express API.
  * Export deps (loaded lazily on click):
  *   npm install xlsx jspdf jspdf-autotable lucide-react
  */
 
-const TODAY = new Date("2026-07-08");
-
-const INITIAL_CATEGORIES = [
-  { id: 1, name: "Web Development", kind: "service" },
-  { id: 2, name: "Graphics Design", kind: "service" },
-  { id: 3, name: "Game Development", kind: "service" },
-  { id: 4, name: "App Development", kind: "service" },
-  { id: 5, name: "Video Editing", kind: "micro" },
-  { id: 6, name: "Environment Design", kind: "micro" },
-  { id: 7, name: "Logo Design", kind: "micro" },
-];
+const TODAY = new Date();
+const TODAY_ISO = [TODAY.getFullYear(), String(TODAY.getMonth() + 1).padStart(2, "0"), String(TODAY.getDate()).padStart(2, "0")].join("-");
 
 const blankProject = () => ({
   name: "", category: "Web Development", kind: "service",
   clientName: "", clientEmail: "", clientEmailPassword: "", clientPhone: "",
   clientOtherInfo: "", requirements: "",
   finalPrice: "", amountPaid: "", status: "Active",
-  startDate: "2026-07-08", deliveryDate: "",
+  startDate: TODAY_ISO, deliveryDate: "",
   domain: "", domainRegistrar: "", domainCost: "", domainRenewal: "",
   hostProvider: "", hostCost: "", hostRenewal: "",
   nextUpgrade: "", nextUpgradeInfo: "", upgradeCost: "",
-  notes: "", updatedAt: "2026-07-08", updateCount: 0,
+  notes: "", updatedAt: TODAY_ISO, updateCount: 0,
 });
-
-const INITIAL_PROJECTS = [
-  {
-    id: 1, name: "Nimbus Corporate Site", category: "Web Development", kind: "service",
-    clientName: "Nimbus Studio", clientEmail: "sarah@nimbus.co", clientEmailPassword: "•••••••",
-    clientPhone: "+8801711000001", clientOtherInfo: "Prefers WhatsApp", requirements: "5-page corporate site + blog",
-    finalPrice: 180000, amountPaid: 180000, status: "Active",
-    startDate: "2025-11-02", deliveryDate: "2025-12-15",
-    domain: "nimbus.co", domainRegistrar: "Namecheap", domainCost: 1400, domainRenewal: "2026-11-02",
-    hostProvider: "Namecheap", hostCost: 9000, hostRenewal: "2026-07-15",
-    nextUpgrade: "2026-07-20", nextUpgradeInfo: "Move to VPS plan", upgradeCost: 12000,
-    notes: "", updatedAt: "2026-06-10", updateCount: 3,
-  },
-  {
-    id: 2, name: "BrightPixel Store", category: "App Development", kind: "service",
-    clientName: "BrightPixel", clientEmail: "david@brightpixel.io", clientEmailPassword: "•••••••",
-    clientPhone: "+8801711000002", clientOtherInfo: "", requirements: "E-commerce web app with payments",
-    finalPrice: 420000, amountPaid: 300000, status: "Active",
-    startDate: "2026-01-20", deliveryDate: "2026-04-30",
-    domain: "brightpixel.io", domainRegistrar: "GoDaddy", domainCost: 3200, domainRenewal: "2027-01-20",
-    hostProvider: "Vercel", hostCost: 24000, hostRenewal: "2026-07-11",
-    nextUpgrade: "", nextUpgradeInfo: "", upgradeCost: "",
-    notes: "Balance due on delivery", updatedAt: "2026-06-28", updateCount: 5,
-  },
-  {
-    id: 3, name: "Verdant Landing", category: "Graphics Design", kind: "service",
-    clientName: "Verdant Co.", clientEmail: "priya@verdant.com", clientEmailPassword: "•••••••",
-    clientPhone: "+8801711000003", clientOtherInfo: "", requirements: "Landing page + brand kit",
-    finalPrice: 95000, amountPaid: 95000, status: "Completed",
-    startDate: "2025-08-14", deliveryDate: "2025-09-20",
-    domain: "verdant.com", domainRegistrar: "Hostinger", domainCost: 1600, domainRenewal: "2026-07-22",
-    hostProvider: "Hostinger", hostCost: 7000, hostRenewal: "2026-08-14",
-    nextUpgrade: "", nextUpgradeInfo: "", upgradeCost: "",
-    notes: "", updatedAt: "2025-09-20", updateCount: 2,
-  },
-  {
-    id: 4, name: "Skyline Promo Reel", category: "Video Editing", kind: "micro",
-    clientName: "Cloudline", clientEmail: "rafiq@cloudline.app", clientEmailPassword: "•••••••",
-    clientPhone: "+8801711000004", clientOtherInfo: "Urgent turnaround", requirements: "60s promo video",
-    finalPrice: 35000, amountPaid: 35000, status: "Active",
-    startDate: "2026-06-25", deliveryDate: "2026-07-14",
-    domain: "", domainRegistrar: "", domainCost: "", domainRenewal: "",
-    hostProvider: "", hostCost: "", hostRenewal: "",
-    nextUpgrade: "", nextUpgradeInfo: "", upgradeCost: "",
-    notes: "", updatedAt: "2026-07-01", updateCount: 1,
-  },
-];
 
 const taka = (n) => "৳" + Number(n || 0).toLocaleString("en-IN");
 const daysUntil = (d) => (!d ? Infinity : Math.ceil((new Date(d) - TODAY) / 86400000));
@@ -113,8 +61,9 @@ const C = {
 };
 
 export default function AdminProjects() {
-  const [categories, setCategories] = useState(INITIAL_CATEGORIES); // WIRE API HERE
-  const [projects, setProjects] = useState(INITIAL_PROJECTS);       // WIRE API HERE
+  const [categories, setCategories] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [tab, setTab] = useState("overview");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -124,6 +73,21 @@ export default function AdminProjects() {
   const [selected, setSelected] = useState(new Set());
   const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
+
+  const refreshData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [projectRows, categoryRows] = await Promise.all([getProjects(), getProjectCategories()]);
+      setProjects(projectRows);
+      setCategories(categoryRows);
+    } catch (error) {
+      window.alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { refreshData(); }, [refreshData]);
 
   const kpis = useMemo(() => {
     const active = projects.filter((p) => p.status === "Active").length;
@@ -178,19 +142,25 @@ export default function AdminProjects() {
     return [...list].sort(sorters[sortBy]);
   }, [projects, statusFilter, kindFilter, query, sortBy]);
 
-  const saveProject = (data) => {
-    if (editing) {
-      setProjects((prev) => prev.map((p) => p.id === editing.id
-        ? { ...p, ...data, updatedAt: "2026-07-08", updateCount: (p.updateCount || 0) + 1 } : p));
-    } else {
-      setProjects((prev) => [...prev, { ...data, id: Date.now(), updatedAt: "2026-07-08", updateCount: 0 }]);
+  const saveProject = async (data) => {
+    try {
+      if (editing) await updateProject(editing.id, data);
+      else await createProject(data);
+      setModal(null); setEditing(null);
+      await refreshData();
+    } catch (error) {
+      window.alert(error.message);
     }
-    setModal(null); setEditing(null);
   };
-  const deleteProject = (id) => {
+  const removeProject = async (id) => {
     if (!window.confirm("Delete this project?")) return;
-    setProjects((p) => p.filter((x) => x.id !== id));
-    setSelected((s) => { const n = new Set(s); n.delete(id); return n; });
+    try {
+      await deleteProject(id);
+      setSelected((s) => { const n = new Set(s); n.delete(id); return n; });
+      await refreshData();
+    } catch (error) {
+      window.alert(error.message);
+    }
   };
 
   const toggleSel = (id) => setSelected((s) => {
@@ -317,6 +287,8 @@ export default function AdminProjects() {
         .ap-scope div::-webkit-scrollbar-thumb{background:${C.surfaceAlt};border-radius:8px;}
       `}</style>
       <div className="ap-scope">
+
+      {loading && <div style={{ color: C.muted, marginBottom: 12 }}>Loading saved projects…</div>}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22, flexWrap: "wrap", gap: 12 }}>
         <div>
@@ -462,7 +434,7 @@ export default function AdminProjects() {
                       <td><div style={{ display: "flex", gap: 2 }}>
                         <IconBtn title="Client memo (PDF)" onClick={() => generateMemo(p)}><FileText size={15} color={C.muted} /></IconBtn>
                         <IconBtn title="Edit" onClick={() => { setEditing(p); setModal("project"); }}><Pencil size={15} color={C.primaryText} /></IconBtn>
-                        <IconBtn title="Delete" onClick={() => deleteProject(p.id)}><Trash2 size={15} color="#F87171" /></IconBtn>
+                        <IconBtn title="Delete" onClick={() => removeProject(p.id)}><Trash2 size={15} color="#F87171" /></IconBtn>
                       </div></td>
                     </tr>
                   );
@@ -529,8 +501,14 @@ export default function AdminProjects() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           {["service", "micro"].map((kind) => (
             <CategoryCard key={kind} kind={kind} items={catName(kind)}
-              onAdd={(name) => setCategories((c) => [...c, { id: Date.now(), name, kind }])}
-              onDelete={(id) => setCategories((c) => c.filter((x) => x.id !== id))} />
+              onAdd={async (name) => {
+                try { await createProjectCategory(name, kind); await refreshData(); }
+                catch (error) { window.alert(error.message); }
+              }}
+              onDelete={async (id) => {
+                try { await deleteProjectCategory(id); await refreshData(); }
+                catch (error) { window.alert(error.message); }
+              }} />
           ))}
         </div>
       )}
@@ -742,3 +720,4 @@ function ProjectModal({ categories, initial, onClose, onSave }) {
     </div>
   );
 }
+

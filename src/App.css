@@ -455,6 +455,14 @@ body {
   box-shadow: 0 12px 26px -8px rgba(255, 196, 107, 0.9);
 }
 
+
+body.modal-open .close-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+ 
+
 .content-container {
   width: 100vw;
   height: 100vh;
