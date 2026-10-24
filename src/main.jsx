@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Import Bootstrap CSS and JS
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // optional for modals, dropdowns
+// bootstrap JS removed — no data-bs-* components in use
 
 import App from './App.jsx';
 

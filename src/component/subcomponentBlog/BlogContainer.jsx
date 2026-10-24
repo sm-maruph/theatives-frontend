@@ -3,7 +3,7 @@ import BlogBg from "../../assets/images/blog.png";
 
 const BlogContainer = () => {
   return (
-    <div className="sv-container">
+    <div className="bl-container">
       <div className="bl-image">
         <img src={BlogBg} alt="Our creative team working together" />
       </div>
