@@ -73,6 +73,7 @@ export default function AdminProjects() {
   const [selected, setSelected] = useState(new Set());
   const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
+  const [viewing, setViewing] = useState(null);
 
   const refreshData = useCallback(async () => {
     setLoading(true);
@@ -432,6 +433,7 @@ export default function AdminProjects() {
                       <td><StatusPill status={p.status} /></td>
                       <td style={{ fontSize: 12, color: C.muted }}>{fmtDate(p.updatedAt)}<div style={{ fontSize: 11 }}>x{p.updateCount}</div></td>
                       <td><div style={{ display: "flex", gap: 2 }}>
+                        <IconBtn title="View project details" onClick={() => setViewing(p)}><Eye size={15} color={C.primaryText} /></IconBtn>
                         <IconBtn title="Client memo (PDF)" onClick={() => generateMemo(p)}><FileText size={15} color={C.muted} /></IconBtn>
                         <IconBtn title="Edit" onClick={() => { setEditing(p); setModal("project"); }}><Pencil size={15} color={C.primaryText} /></IconBtn>
                         <IconBtn title="Delete" onClick={() => removeProject(p.id)}><Trash2 size={15} color="#F87171" /></IconBtn>
@@ -517,6 +519,7 @@ export default function AdminProjects() {
         <ProjectModal categories={categories} initial={editing}
           onClose={() => { setModal(null); setEditing(null); }} onSave={saveProject} />
       )}
+      {viewing && <ProjectDetailsModal project={viewing} onClose={() => setViewing(null)} />}
       </div>
     </div>
   );
@@ -716,6 +719,88 @@ function ProjectModal({ categories, initial, onClose, onSave }) {
           padding: "12px", borderRadius: 10, fontWeight: 600, fontSize: 14, marginTop: 8 }}>
           {initial ? "Save changes" : "Create project"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ProjectDetailsModal({ project, onClose }) {
+  const details = [
+    ["Project name", project.name],
+    ["Type", project.kind === "micro" ? "Micro-service" : "Service"],
+    ["Category", project.category],
+    ["Status", project.status],
+    ["Start date", project.startDate && fmtDate(project.startDate)],
+    ["Delivery date", project.deliveryDate && fmtDate(project.deliveryDate)],
+    ["Client", project.clientName],
+    ["Client email", project.clientEmail],
+    ["Client phone", project.clientPhone],
+    ["Other client information", project.clientOtherInfo],
+    ["Requirements", project.requirements],
+    ["Domain", project.domain],
+    ["Domain registrar", project.domainRegistrar],
+    ["Domain cost", project.domainCost != null ? taka(project.domainCost) : ""],
+    ["Domain renewal", project.domainRenewal && fmtDate(project.domainRenewal)],
+    ["Hosting provider", project.hostProvider],
+    ["Hosting cost", project.hostCost != null ? taka(project.hostCost) : ""],
+    ["Hosting renewal", project.hostRenewal && fmtDate(project.hostRenewal)],
+    ["Next upgrade", project.nextUpgrade && fmtDate(project.nextUpgrade)],
+    ["Upgrade details", project.nextUpgradeInfo],
+    ["Upgrade cost", project.upgradeCost != null ? taka(project.upgradeCost) : ""],
+    ["Notes", project.notes],
+  ].filter(([, value]) => value !== undefined && value !== null && value !== "");
+
+  const financials = [
+    ["Agreed fee", project.finalPrice],
+    ["Invoiced", project.invoicedValue],
+    ["Received cash", project.amountPaid],
+    ["Accounts receivable", project.accountsReceivable],
+    ["Project expenses", project.totalProjectExpenses],
+    [project.profitLabel || "Current project profit", project.profit],
+  ];
+
+  return (
+    <div className="ap-scope" onClick={onClose} style={{ position: "fixed", inset: 0,
+      background: "rgba(6,10,24,.7)", display: "grid", placeItems: "center", padding: 20, zIndex: 60 }}>
+      <div className="ap-card" role="dialog" aria-modal="true" aria-labelledby="project-details-title"
+        onClick={(event) => event.stopPropagation()}
+        style={{ width: "100%", maxWidth: 760, maxHeight: "90vh", overflowY: "auto", padding: 24, color: C.ink }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 20 }}>
+          <div>
+            <h2 id="project-details-title" style={{ margin: 0, fontSize: 21, color: C.ink }}>{project.name}</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+              <Pill color={project.kind === "micro" ? "#C084FC" : C.primaryText}
+                bg={project.kind === "micro" ? "rgba(192,132,252,.16)" : C.primarySoft}>{project.category}</Pill>
+              <StatusPill status={project.status} />
+            </div>
+          </div>
+          <IconBtn title="Close details" onClick={onClose}><X size={18} color={C.muted} /></IconBtn>
+        </div>
+
+        <GroupHead>Project finances</GroupHead>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(165px,1fr))", gap: 10, marginBottom: 22 }}>
+          {financials.map(([label, amount]) => (
+            <div key={label} className="ap-card" style={{ padding: 13 }}>
+              <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 6 }}>{label}</div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: label === project.profitLabel ? "#34D399" : C.ink }}>
+                {taka(amount)}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <GroupHead>Project and client details</GroupHead>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
+          {details.map(([label, value]) => (
+            <div key={label} className="ap-card" style={{ padding: 12 }}>
+              <div style={{ fontSize: 11, color: C.muted, marginBottom: 5 }}>{label}</div>
+              <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{value}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 16, textAlign: "right", fontSize: 11, color: C.muted }}>
+          Updated {project.updatedAt ? fmtDate(project.updatedAt) : "—"} · {project.updateCount || 0} update(s)
+        </div>
       </div>
     </div>
   );
