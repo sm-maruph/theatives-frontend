@@ -5,14 +5,6 @@ import { getFullUrl } from "../utils/apiUrl";
 const BASE_PATH = "/api/auth/login";
 import './css/AdminPanel.css';
 
-// ⚠️ DEV LOGIN — set to false when your real backend is ready.
-const DEV_LOGIN = true;
-const DEV_USER = "admin";
-const DEV_PASS = "admin123";
-// Same structurally-valid dummy JWT used in ProtectedRoute.
-const DUMMY_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6OTk5OTk5OTk5OX0.dev-dummy-signature";
-
 function AdminPanel() {
   const [formData, setFormData] = useState({
     username: '',
@@ -35,28 +27,14 @@ function AdminPanel() {
     setError('');
     setIsLoading(true);
 
-    // ---- DEV LOGIN (delete this block when backend is ready) ----
-    if (DEV_LOGIN) {
-      await new Promise((r) => setTimeout(r, 400)); // mimic a network call
-      if (formData.username === DEV_USER && formData.password === DEV_PASS) {
-        localStorage.setItem('token', DUMMY_TOKEN);
-        setIsLoading(false);
-        navigate('/admin/dashboard');
-      } else {
-        setError('Invalid username or password');
-        setIsLoading(false);
-      }
-      return;
-    }
-
-    // ---- REAL BACKEND (uncomment when ready) ----
     try {
       const res = await axios.post(getFullUrl(BASE_PATH), formData);
+      if (!res.data?.token) throw new Error('The server did not return a login token.');
       localStorage.setItem('token', res.data.token);
       navigate('/admin/dashboard');
     } catch (err) {
-      // backend sends { error: '...' } so read err.response.data.error
-      setError(err.response?.data?.error || 'Invalid username or password');
+      localStorage.removeItem('token');
+      setError(err.response?.data?.error || err.message || 'Invalid username or password');
     } finally {
       setIsLoading(false);
     }
@@ -75,6 +53,7 @@ function AdminPanel() {
             id="username"
             name="username"
             type="text"
+            autoComplete="username"
             placeholder="Enter your username"
             value={formData.username}
             onChange={handleChange}
@@ -88,6 +67,7 @@ function AdminPanel() {
             id="password"
             name="password"
             type="password"
+            autoComplete="current-password"
             placeholder="Enter your password"
             value={formData.password}
             onChange={handleChange}
