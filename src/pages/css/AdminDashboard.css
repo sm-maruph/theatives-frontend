@@ -9,7 +9,8 @@
 /* Base Styles */
 .admin-app {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
   min-width: 100vw;
   font-family: 'Inter', sans-serif;
   color: var(--text-color);
@@ -137,6 +138,7 @@
 /* Main Content Styles */
 .main-content {
   flex-grow: 1;
+  min-height: 0;
   background: var(--light-bg);
   display: flex;
   flex-direction: column;
@@ -177,8 +179,10 @@
 }
 
 .content-area {
-  padding: 2rem;
-  flex-grow: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   margin: 0;
 }
 

@@ -38,6 +38,8 @@ const blankProject = () => ({
 });
 
 const taka = (n) => "৳" + Number(n || 0).toLocaleString("en-IN");
+const WORK_OPTIONS = ["Website design", "Website development", "Mobile app development", "Graphic design", "Branding", "Marketing", "Digital marketing", "Social media marketing", "SEO", "Content writing", "Video editing", "Quality assurance", "Project management", "Other"];
+const ROLE_OPTIONS = ["Developer", "Graphics designer", "UI/UX designer", "Marketing", "Marketing team", "Content writer", "SEO specialist", "Video editor", "QA tester", "Project manager", "Other"];
 const daysUntil = (d) => (!d ? Infinity : Math.ceil((new Date(d) - TODAY) / 86400000));
 const fmtDate = (d) => (!d ? "—" : new Date(d).toLocaleDateString("en-GB",
   { day: "2-digit", month: "short", year: "numeric" }));
@@ -281,6 +283,8 @@ export default function AdminProjects() {
       <style>{`
         .ap-scope *{box-sizing:border-box;}
         .ap-card{background:${C.surface};border:1px solid ${C.border};border-radius:14px;}
+        .ap-clickable:hover{border-color:${C.primary};}
+        .ap-scope tr[style*="cursor: pointer"]:hover{background:rgba(99,102,241,.10);}
         .ap-tab{transition:all .15s ease;} .ap-tab:hover{background:${C.primarySoft};}
         .ap-row:hover{background:rgba(255,255,255,0.03);}
         .ap-btn{transition:all .15s ease;cursor:pointer;} .ap-btn:hover{filter:brightness(1.12);}
@@ -569,9 +573,11 @@ function Kpi({ icon: Icon, tint, label, value, sub }) {
     </div>
   );
 }
-function SectionHead({ icon: Icon, title, note }) {
+function SectionHead({ icon: Icon, title, note, onClick }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "15px 16px 13px", borderBottom: `1px solid ${C.border}` }}>
+    <div onClick={onClick} role={onClick ? "button" : undefined} tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => e.key === "Enter" && onClick() : undefined}
+      style={{ display: "flex", alignItems: "center", gap: 9, padding: "15px 16px 13px", borderBottom: `1px solid ${C.border}`, cursor: onClick ? "pointer" : undefined }}>
       <Icon size={17} color={C.primaryText} />
       <div><div style={{ fontWeight: 700, fontSize: 14.5, color: C.ink }}>{title}</div>
         {note && <div style={{ fontSize: 12, color: C.muted }}>{note}</div>}</div>
@@ -896,14 +902,17 @@ function ProjectDetailsModal({ project, onClose, onRefresh }) {
 function PayablesPanel({ projects, onRefresh }) {
   const [people, setPeople] = useState([]);
   const [items, setItems] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [personForm, setPersonForm] = useState({ name: "", email: "", phone: "" });
-  const [payableForm, setPayableForm] = useState({ payee_id: "", project_id: "", title: "", amount_due: "", due_date: "" });
+  const [payableForm, setPayableForm] = useState({ payee_id: "", project_id: "", title: "", titleOther: "", role: "", roleOther: "", amount_due: "", due_date: "" });
   const [payment, setPayment] = useState({ id: null, amount: "", transaction_at: localDateTimeValue() });
+  const [detail, setDetail] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const refresh = useCallback(async () => {
-    const [p, obligations] = await Promise.all([getPayees(), getProjectPayables()]);
+    const [p, obligations, transactions] = await Promise.all([getPayees(), getProjectPayables(), getTransactions()]);
     setPeople(p); setItems(obligations);
+    setPayments(transactions.filter((t) => t.payable_id != null && t.transaction_type === "expense"));
   }, []);
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, [refresh]);
   const run = async (action) => { setBusy(true); setError(""); try { await action(); await refresh(); await onRefresh(); }
@@ -912,28 +921,107 @@ function PayablesPanel({ projects, onRefresh }) {
     await createPayee(personForm); setPersonForm({ name: "", email: "", phone: "" });
   }); };
   const submitPayable = (e) => { e.preventDefault(); run(async () => {
-    await createProjectPayable({ ...payableForm, amount_due: Number(payableForm.amount_due), due_date: payableForm.due_date || null });
-    setPayableForm({ ...payableForm, title: "", amount_due: "", due_date: "" });
+    const title = payableForm.title === "Other" ? payableForm.titleOther.trim() : payableForm.title;
+    const role = payableForm.role === "Other" ? payableForm.roleOther.trim() : payableForm.role;
+    await createProjectPayable({ ...payableForm, title, role, amount_due: Number(payableForm.amount_due), due_date: payableForm.due_date || null });
+    setPayableForm((current) => ({ ...current, title: "", titleOther: "", role: "", roleOther: "", amount_due: "", due_date: "" }));
   }); };
   const submitPayment = (e) => { e.preventDefault(); run(async () => {
     await recordProjectPayablePayment(payment.id, { amount: Number(payment.amount), transaction_date: payment.transaction_at.slice(0, 10), transaction_at: new Date(payment.transaction_at).toISOString() });
     setPayment({ id: null, amount: "", transaction_at: localDateTimeValue() });
   }); };
+  const grandTotals = items.reduce((totals, item) => ({
+    due: totals.due + Number(item.amount_due || 0),
+    paid: totals.paid + Number(item.paid_amount || 0),
+    remaining: totals.remaining + Number(item.remaining_balance || 0),
+  }), { due: 0, paid: 0, remaining: 0 });
+  const projectFinance = projects.map((project) => {
+    const assignments = items.filter((item) => String(item.project_id) === String(project.id));
+    const allocated = assignments.reduce((sum, item) => sum + Number(item.amount_due || 0), 0);
+    const paid = assignments.reduce((sum, item) => sum + Number(item.paid_amount || 0), 0);
+    const fee = Number(project.finalPrice || 0);
+    const clientPaid = Number(project.amountPaid || 0);
+    return { ...project, allocated, teamPaid: paid, teamRemaining: assignments.reduce((sum, item) => sum + Number(item.remaining_balance || 0), 0),
+      clientPaid, clientRemaining: Math.max(0, fee - clientPaid), companyShare: fee - allocated,
+      projectCosts: Number(project.totalProjectExpenses || 0), netProfit: Number(project.profit || 0),
+      cashAfterTeam: clientPaid - paid };
+  });
+  const roleTotals = Object.values(items.reduce((groups, item) => {
+    const role = (item.role || "Unspecified role/team").trim();
+    if (!groups[role]) groups[role] = { role, due: 0, paid: 0, remaining: 0, projects: new Set() };
+    groups[role].due += Number(item.amount_due || 0);
+    groups[role].paid += Number(item.paid_amount || 0);
+    groups[role].remaining += Number(item.remaining_balance || 0);
+    groups[role].projects.add(String(item.project_id));
+    return groups;
+  }, {})).sort((a, b) => b.due - a.due);
+  const totalRevenue = projects.reduce((sum, project) => sum + Number(project.finalPrice || 0), 0);
+  const totalClientReceived = projects.reduce((sum, project) => sum + Number(project.amountPaid || 0), 0);
+  const companyShare = totalRevenue - grandTotals.due;
+  const cashAfterTeam = totalClientReceived - grandTotals.paid;
+  const totalProjectCosts = projects.reduce((sum, project) => sum + Number(project.totalProjectExpenses || 0), 0);
+  const totalProjectProfit = projects.reduce((sum, project) => sum + Number(project.profit || 0), 0);
+  const detailItems = detail?.type === "project"
+    ? items.filter((item) => String(item.project_id) === String(detail.record.id))
+    : detail?.type === "role"
+      ? items.filter((item) => (item.role || "Unspecified role/team") === detail.record.role)
+      : detail?.type === "person"
+        ? items.filter((item) => String(item.payee_id) === String(detail.record.id))
+        : detail?.type === "cost" ? [detail.record]
+          : detail?.type === "costs" ? items : [];
+  const detailProject = detail?.type === "project" ? detail.record : null;
   return <div style={{ display: "grid", gap: 16 }}>
     {error && <div role="alert" style={{ color: "#F87171", padding: 12 }}>{error}</div>}
+    <div className="ap-card ap-clickable" onClick={() => setDetail({ type: "summary", record: null })} style={{ padding: 16, cursor: "pointer" }}>
+      <SectionHead icon={TrendingUp} title="Theatives finance summary" note="Theatives’ share is project fees minus team allocations. Net project profit also accounts for other tracked project costs." onClick={() => setDetail({ type: "summary", record: null })} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8, paddingTop: 12 }}>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Total project fees</div><strong>{taka(totalRevenue)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Client money received</div><strong>{taka(totalClientReceived)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Allocated to people/teams</div><strong>{taka(grandTotals.due)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Paid to people/teams</div><strong>{taka(grandTotals.paid)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Still payable to people</div><strong style={{ color: "#FBBF24" }}>{taka(grandTotals.remaining)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Theatives’ share (before other costs)</div><strong style={{ color: companyShare >= 0 ? "#34D399" : "#F87171" }}>{taka(companyShare)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Tracked project costs</div><strong>{taka(totalProjectCosts)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: totalProjectProfit >= 0 ? "#34D399" : "#F87171", fontSize: 12 }}>Net project profit</div><strong style={{ color: totalProjectProfit >= 0 ? "#34D399" : "#F87171" }}>{taka(totalProjectProfit)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Cash after team payments</div><strong>{taka(cashAfterTeam)}</strong></div>
+        <div className="ap-card" style={{ padding: 11 }}><div style={{ color: C.muted, fontSize: 12 }}>Still to collect from clients</div><strong style={{ color: "#FBBF24" }}>{taka(projectFinance.reduce((sum, p) => sum + p.clientRemaining, 0))}</strong></div>
+      </div>
+    </div>
+    <div className="ap-card" style={{ overflowX: "auto" }}>
+      <SectionHead icon={FolderKanban} title="Project distribution" note="Compare each project’s client fee, team allocation, payments, and Theatives’ share." onClick={() => setDetail({ type: "summary", record: null })} />
+      <table><thead><tr><th>Project</th><th>Client fee</th><th>Client received</th><th>Client balance</th><th>Team allocation</th><th>Paid to team</th><th>Team balance</th><th>Theatives’ share</th><th>Tracked costs</th><th>Net profit</th></tr></thead>
+        <tbody>{projectFinance.map((project) => <tr key={project.id} onClick={() => setDetail({ type: "project", record: project })} style={{ cursor: "pointer" }}><td style={{ fontWeight: 600 }}>{project.name}</td><td>{taka(project.finalPrice)}</td><td>{taka(project.clientPaid)}</td><td>{taka(project.clientRemaining)}</td><td>{taka(project.allocated)}</td><td>{taka(project.teamPaid)}</td><td style={{ color: project.teamRemaining > 0 ? "#FBBF24" : "#34D399", fontWeight: 700 }}>{taka(project.teamRemaining)}</td><td style={{ color: project.companyShare >= 0 ? "#34D399" : "#F87171", fontWeight: 700 }}>{taka(project.companyShare)}</td><td>{taka(project.projectCosts)}</td><td style={{ color: project.netProfit >= 0 ? "#34D399" : "#F87171", fontWeight: 700 }}>{taka(project.netProfit)}</td></tr>)}
+          {!projectFinance.length && <tr><td colSpan={10} style={{ textAlign: "center", color: C.muted }}>Add projects to see the distribution.</td></tr>}
+          <tr onClick={() => setDetail({ type: "summary", record: null })} style={{ fontWeight: 700, background: C.surfaceAlt, cursor: "pointer" }}><td>Grand total</td><td>{taka(totalRevenue)}</td><td>{taka(totalClientReceived)}</td><td>{taka(projectFinance.reduce((sum, p) => sum + p.clientRemaining, 0))}</td><td>{taka(grandTotals.due)}</td><td>{taka(grandTotals.paid)}</td><td>{taka(grandTotals.remaining)}</td><td>{taka(companyShare)}</td><td>{taka(totalProjectCosts)}</td><td>{taka(totalProjectProfit)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div className="ap-card" style={{ overflowX: "auto" }}>
+      <SectionHead icon={Users2} title="Totals by role or team" note="Use the role/team field when assigning a payable to group similar work across projects." onClick={() => setDetail({ type: "roles", record: null })} />
+      <table><thead><tr><th>Role/team</th><th>Projects</th><th>Total allocated</th><th>Total paid</th><th>Still payable</th></tr></thead>
+        <tbody>{roleTotals.map((group) => <tr key={group.role} onClick={() => setDetail({ type: "role", record: group })} style={{ cursor: "pointer" }}><td style={{ fontWeight: 600 }}>{group.role}</td><td>{group.projects.size}</td><td>{taka(group.due)}</td><td>{taka(group.paid)}</td><td style={{ color: group.remaining > 0 ? "#FBBF24" : "#34D399", fontWeight: 700 }}>{taka(group.remaining)}</td></tr>)}
+          {!roleTotals.length && <tr><td colSpan={5} style={{ textAlign: "center", color: C.muted }}>Assign a role/team payable to see totals.</td></tr>}
+        </tbody>
+      </table>
+    </div>
     <div className="ap-card" style={{ padding: 16 }}>
-      <SectionHead icon={Users2} title="People and total outstanding" note="A person’s balance includes assignments across every project." />
+      <SectionHead icon={Users2} title="People totals across all projects" note="Each person’s total due, paid, and remaining adds up their assigned project cost items." onClick={() => setDetail({ type: "people", record: null })} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 8, marginTop: 12 }}>
+        <div className="ap-card" style={{ padding: 10 }}><div style={{ color: C.muted, fontSize: 12 }}>Grand total due</div><strong>{taka(grandTotals.due)}</strong></div>
+        <div className="ap-card" style={{ padding: 10 }}><div style={{ color: C.muted, fontSize: 12 }}>Grand total paid</div><strong>{taka(grandTotals.paid)}</strong></div>
+        <div className="ap-card" style={{ padding: 10 }}><div style={{ color: C.muted, fontSize: 12 }}>Grand total remaining</div><strong style={{ color: grandTotals.remaining > 0 ? "#FBBF24" : "#34D399" }}>{taka(grandTotals.remaining)}</strong></div>
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10, paddingTop: 14 }}>
-        {people.map((person) => <div className="ap-card" key={person.id} style={{ padding: 13 }}>
+        {people.map((person) => <div className="ap-card ap-clickable" key={person.id} role="button" tabIndex={0} onClick={() => setDetail({ type: "person", record: person })} onKeyDown={(e) => e.key === "Enter" && setDetail({ type: "person", record: person })} style={{ padding: 13, cursor: "pointer" }}>
           <div style={{ fontWeight: 700 }}>{person.name}</div><div style={{ color: C.muted, fontSize: 12 }}>{person.email || person.phone || ""}</div>
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, fontSize: 12 }}><span>Owed {taka(person.total_amount_due)}</span><span>Paid {taka(person.total_paid)}</span></div>
-          <div style={{ color: person.outstanding_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700, marginTop: 5 }}>Outstanding {taka(person.outstanding_balance)} · {person.payable_count} project assignment(s)</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, fontSize: 12 }}><span>Total due {taka(person.total_amount_due)}</span><span>Total paid {taka(person.total_paid)}</span></div>
+          <div style={{ color: person.outstanding_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700, marginTop: 5 }}>Needs to be paid {taka(person.outstanding_balance)} · {person.payable_count} project assignment(s)</div>
         </div>)}
         {!people.length && <div style={{ color: C.muted, padding: 8 }}>Add a person to start tracking payables.</div>}
       </div>
     </div>
     <div className="ap-card" style={{ padding: 16 }}>
-      <SectionHead icon={Users2} title="Add a person or project payable" />
+      <SectionHead icon={Users2} title="Add a person or assign a project cost" note="Each cost item needs a project, work, role/team, assigned person, and amount." />
       <form onSubmit={submitPerson} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8, paddingTop: 14 }}>
         <input style={field} required placeholder="Person name" value={personForm.name} onChange={(e) => setPersonForm({ ...personForm, name: e.target.value })} />
         <input style={field} type="email" placeholder="Email (optional)" value={personForm.email} onChange={(e) => setPersonForm({ ...personForm, email: e.target.value })} />
@@ -941,9 +1029,12 @@ function PayablesPanel({ projects, onRefresh }) {
         <button className="ap-btn" disabled={busy} style={formButton}>Add person</button>
       </form>
       <form onSubmit={submitPayable} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8, paddingTop: 10 }}>
-        <select required style={field} value={payableForm.payee_id} onChange={(e) => setPayableForm({ ...payableForm, payee_id: e.target.value })}><option value="">Select person</option>{people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <select required style={field} value={payableForm.project_id} onChange={(e) => setPayableForm({ ...payableForm, project_id: e.target.value })}><option value="">Select project</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
-        <input required style={field} placeholder="Work or payable title" value={payableForm.title} onChange={(e) => setPayableForm({ ...payableForm, title: e.target.value })} />
+        <select required style={field} value={payableForm.title} onChange={(e) => setPayableForm({ ...payableForm, title: e.target.value, titleOther: "" })}><option value="">Select work</option>{WORK_OPTIONS.map((work) => <option key={work} value={work}>{work === "Other" ? "Other work…" : work}</option>)}</select>
+        {payableForm.title === "Other" && <input required style={field} placeholder="Enter work name" value={payableForm.titleOther} onChange={(e) => setPayableForm({ ...payableForm, titleOther: e.target.value })} />}
+        <select required style={field} value={payableForm.role} onChange={(e) => setPayableForm({ ...payableForm, role: e.target.value, roleOther: "" })}><option value="">Select role/team</option>{ROLE_OPTIONS.map((role) => <option key={role} value={role}>{role === "Other" ? "Other role/team…" : role}</option>)}</select>
+        {payableForm.role === "Other" && <input required style={field} placeholder="Enter role or team" value={payableForm.roleOther} onChange={(e) => setPayableForm({ ...payableForm, roleOther: e.target.value })} />}
+        <select required style={field} value={payableForm.payee_id} onChange={(e) => setPayableForm({ ...payableForm, payee_id: e.target.value })}><option value="">Assign person</option>{people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <input required type="number" min="0.01" step="0.01" style={field} placeholder="Amount due" value={payableForm.amount_due} onChange={(e) => setPayableForm({ ...payableForm, amount_due: e.target.value })} />
         <input type="date" style={field} value={payableForm.due_date} onChange={(e) => setPayableForm({ ...payableForm, due_date: e.target.value })} />
         <button className="ap-btn" disabled={busy} style={formButton}>Assign payable</button>
@@ -954,11 +1045,33 @@ function PayablesPanel({ projects, onRefresh }) {
       <input required type="datetime-local" style={{ ...field, width: 210, margin: 0 }} value={payment.transaction_at} onChange={(e) => setPayment({ ...payment, transaction_at: e.target.value })} />
       <button className="ap-btn" disabled={busy} style={formButton}>Save payment</button><button type="button" className="ap-btn" onClick={() => setPayment({ id: null, amount: "", transaction_at: localDateTimeValue() })} style={secondaryButton}>Cancel</button>
     </form>}
-    <div className="ap-card" style={{ overflowX: "auto" }}><table><thead><tr><th>Person</th><th>Project</th><th>Work</th><th>Owed</th><th>Paid</th><th>Remaining</th><th></th></tr></thead>
-      <tbody>{items.map((item) => <tr key={item.id}><td>{item.payee_name}</td><td>{item.project_name}</td><td>{item.title}</td><td>{taka(item.amount_due)}</td><td>{taka(item.paid_amount)}</td><td style={{ color: item.remaining_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700 }}>{taka(item.remaining_balance)}</td>
-        <td>{item.remaining_balance > 0 && <button className="ap-btn" onClick={() => setPayment({ id: item.id, amount: "", transaction_at: localDateTimeValue() })} style={secondaryButton}>Record payment</button>}</td></tr>)}
-        {!items.length && <tr><td colSpan={7} style={{ textAlign: "center", color: C.muted }}>No project payables yet.</td></tr>}</tbody></table></div>
+    <div className="ap-card" style={{ overflowX: "auto" }}>
+      <SectionHead icon={FolderKanban} title="Project cost breakdown and payments" note="Every row is one assigned piece of work. Payments reduce that row, the project balance, and the person’s grand total." onClick={() => setDetail({ type: "costs", record: null })} />
+      <table><thead><tr><th>Project</th><th>Work</th><th>Role/team</th><th>Assigned person</th><th>Amount assigned</th><th>Amount paid</th><th>Project balance to pay</th><th>Payment history (date &amp; time)</th><th></th></tr></thead>
+      <tbody>{items.map((item) => <tr key={item.id} onClick={() => setDetail({ type: "cost", record: item })} style={{ cursor: "pointer" }}><td>{item.project_name}</td><td>{item.title}</td><td>{item.role || "—"}</td><td>{item.payee_name}</td><td>{taka(item.amount_due)}</td><td>{taka(item.paid_amount)}</td><td style={{ color: item.remaining_balance > 0 ? "#FBBF24" : "#34D399", fontWeight: 700 }}>{taka(item.remaining_balance)}</td>
+        <td style={{ minWidth: 190 }}>{payments.filter((p) => Number(p.payable_id) === Number(item.id)).length ? payments.filter((p) => Number(p.payable_id) === Number(item.id)).map((p) => <div key={p.id} style={{ fontSize: 12, marginBottom: 4 }}>{taka(p.amount)} · {new Date(p.transaction_at || p.transaction_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</div>) : <span style={{ color: C.muted, fontSize: 12 }}>No payments yet</span>}</td>
+        <td>{item.remaining_balance > 0 && <button className="ap-btn" onClick={(e) => { e.stopPropagation(); setPayment({ id: item.id, amount: "", transaction_at: localDateTimeValue() }); }} style={secondaryButton}>Record payment</button>}</td></tr>)}
+        {!items.length && <tr><td colSpan={9} style={{ textAlign: "center", color: C.muted }}>No project cost items yet. Assign work above to begin tracking costs.</td></tr>}</tbody></table></div>
+    {detail && <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(3,8,20,.78)", display: "grid", placeItems: "center", padding: 18 }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="payable-detail-title" onClick={(e) => e.stopPropagation()} style={{ width: "min(760px, 100%)", maxHeight: "85vh", overflowY: "auto", background: C.bg, color: C.ink, border: `1px solid ${C.border}`, borderRadius: 16, padding: 20, boxShadow: "0 24px 80px rgba(0,0,0,.45)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 14 }}><h2 id="payable-detail-title" style={{ margin: 0, fontSize: 19 }}>{detail.type === "summary" ? "Company finance details" : detail.type === "project" ? detail.record.name : detail.type === "role" ? `${detail.record.role} totals` : detail.type === "person" ? `${detail.record.name} totals` : detail.type === "roles" ? "Role and team totals" : detail.type === "people" ? "People totals" : detail.type === "costs" ? "All project cost items" : "Project cost item"}</h2><button className="ap-btn" aria-label="Close details" onClick={() => setDetail(null)} style={secondaryButton}>Close</button></div>
+        {detail.type === "summary" && <div style={{ display: "grid", gap: 8 }}><DetailLine label="Total project fees" value={taka(totalRevenue)} /><DetailLine label="Client money received" value={taka(totalClientReceived)} /><DetailLine label="Allocated to people/teams" value={taka(grandTotals.due)} /><DetailLine label="Paid to people/teams" value={taka(grandTotals.paid)} /><DetailLine label="Still payable to people" value={taka(grandTotals.remaining)} /><DetailLine label="Theatives’ share before other costs" value={taka(companyShare)} /><DetailLine label="Tracked project costs" value={taka(totalProjectCosts)} /><DetailLine label="Net project profit" value={taka(totalProjectProfit)} /><DetailLine label="Cash after team payments" value={taka(cashAfterTeam)} />{projectFinance.map((project) => <DetailLine key={project.id} label={project.name} value={`Fee ${taka(project.finalPrice)} · Team balance ${taka(project.teamRemaining)} · Net profit ${taka(project.netProfit)}`} />)}</div>}
+        {detail.type === "roles" && <div style={{ display: "grid", gap: 8 }}>{roleTotals.map((group) => <DetailLine key={group.role} label={`${group.role} · ${group.projects.size} project(s)`} value={`Assigned ${taka(group.due)} · Paid ${taka(group.paid)} · Remaining ${taka(group.remaining)}`} />)}</div>}
+        {detail.type === "people" && <div style={{ display: "grid", gap: 8 }}>{people.map((person) => <DetailLine key={person.id} label={person.name} value={`Due ${taka(person.total_amount_due)} · Paid ${taka(person.total_paid)} · Remaining ${taka(person.outstanding_balance)}`} />)}</div>}
+        {detail.type !== "summary" && <>
+          {detailProject && <div style={{ display: "grid", gap: 8, marginBottom: 14 }}><DetailLine label="Client fee" value={taka(detailProject.finalPrice)} /><DetailLine label="Received from client" value={taka(detailProject.clientPaid)} /><DetailLine label="Client balance" value={taka(detailProject.clientRemaining)} /><DetailLine label="Team allocation" value={taka(detailProject.allocated)} /><DetailLine label="Paid to team" value={taka(detailProject.teamPaid)} /><DetailLine label="Still payable" value={taka(detailProject.teamRemaining)} /><DetailLine label="Theatives’ share" value={taka(detailProject.companyShare)} /><DetailLine label="Net project profit" value={taka(detailProject.netProfit)} /></div>}
+          {detail.type === "person" && <div style={{ display: "grid", gap: 8, marginBottom: 14 }}><DetailLine label="Total due" value={taka(detail.record.total_amount_due)} /><DetailLine label="Total paid" value={taka(detail.record.total_paid)} /><DetailLine label="Still payable" value={taka(detail.record.outstanding_balance)} /></div>}
+          {detail.type === "role" && <div style={{ display: "grid", gap: 8, marginBottom: 14 }}><DetailLine label="Total allocated" value={taka(detail.record.due)} /><DetailLine label="Total paid" value={taka(detail.record.paid)} /><DetailLine label="Still payable" value={taka(detail.record.remaining)} /></div>}
+          <div style={{ display: "grid", gap: 8 }}>{detailItems.map((item) => <div key={item.id} className="ap-card" style={{ padding: 12 }}><div style={{ fontWeight: 700 }}>{item.project_name} · {item.title}</div><div style={{ color: C.muted, fontSize: 13, marginTop: 3 }}>{item.role || "Role not set"} · {item.payee_name}</div><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(120px,1fr))", gap: 8, marginTop: 10 }}><DetailLine label="Assigned" value={taka(item.amount_due)} /><DetailLine label="Paid" value={taka(item.paid_amount)} /><DetailLine label="Remaining" value={taka(item.remaining_balance)} /></div>{payments.filter((p) => Number(p.payable_id) === Number(item.id)).map((p) => <div key={p.id} style={{ color: C.muted, fontSize: 12, marginTop: 8 }}>Payment {taka(p.amount)} · {new Date(p.transaction_at || p.transaction_date).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</div>)}</div>)}
+            {!detailItems.length && <div style={{ color: C.muted }}>No assigned cost items yet.</div>}</div>
+        </>}
+      </div>
+    </div>}
   </div>;
+}
+
+function DetailLine({ label, value }) {
+  return <div style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "9px 11px", borderRadius: 8, background: C.surface }}><span style={{ color: C.muted }}>{label}</span><strong style={{ textAlign: "right" }}>{value}</strong></div>;
 }
 
 const formButton = { background: C.primary, color: "white", border: 0, borderRadius: 8, padding: "9px 13px", fontWeight: 600 };
