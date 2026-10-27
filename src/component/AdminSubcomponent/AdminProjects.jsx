@@ -46,24 +46,24 @@ const fmtDate = (d) => (!d ? "—" : new Date(d).toLocaleDateString("en-GB",
 
 const urgency = (days) => {
   if (days === Infinity) return null;
-  if (days < 0) return { label: "Overdue", color: "#F87171", bg: "rgba(248,113,113,.16)" };
-  if (days <= 7) return { label: `${days}d left`, color: "#F87171", bg: "rgba(248,113,113,.16)" };
-  if (days <= 30) return { label: `${days}d left`, color: "#FBBF24", bg: "rgba(251,191,36,.16)" };
-  return { label: `${days}d left`, color: "#34D399", bg: "rgba(52,211,153,.16)" };
+  if (days < 0) return { label: "Overdue", color: "#871F27", bg: "#FFF0F1" };
+  if (days <= 7) return { label: `${days}d left`, color: "#871F27", bg: "#FFF0F1" };
+  if (days <= 30) return { label: `${days}d left`, color: "#946200", bg: "#FFF7DB" };
+  return { label: `${days}d left`, color: "#087A55", bg: "#E8F7F0" };
 };
 
-// Dark palette derived from AdminDashboard.css
+// Light palette aligned with the admin shell.
 const C = {
-  bg: "#16213E",          // page (matches --light-bg)
-  surface: "#1E2A47",     // cards
-  surfaceAlt: "#26324F",  // inputs / hover / search
-  border: "rgba(255,255,255,0.09)",
-  ink: "#E8ECF4",
-  muted: "#94A3B8",
-  primary: "#6366F1",     // buttons (matches dashboard cards)
-  primaryText: "#A5B4FC", // accent text/icons on dark
-  primarySoft: "rgba(99,102,241,0.16)",
-  accent: "#E94560",
+  bg: "#F5F7FB",
+  surface: "#FFFFFF",
+  surfaceAlt: "#F8F9FC",
+  border: "#E5E9F0",
+  ink: "#202B3C",
+  muted: "#778397",
+  primary: "#871F27",
+  primaryText: "#871F27",
+  primarySoft: "#FFF0F1",
+  accent: "#FF3355",
 };
 
 export default function AdminProjects() {
@@ -278,29 +278,32 @@ export default function AdminProjects() {
   ];
 
   return (
-    <div style={{ background: C.bg, height: "100%", overflowY: "auto", padding: 24, color: C.ink,
+    <div style={{ background: "transparent", minHeight: "100%", overflowY: "visible", padding: 0, color: C.ink,
       fontFamily: "'Inter', system-ui, sans-serif", boxSizing: "border-box" }}>
       <style>{`
         .ap-scope *{box-sizing:border-box;}
-        .ap-card{background:${C.surface};border:1px solid ${C.border};border-radius:14px;}
+        .ap-scope .ap-card{background:${C.surface};border:1px solid ${C.border};border-radius:12px;box-shadow:0 2px 5px rgba(26,39,61,.025);}
         .ap-clickable:hover{border-color:${C.primary};}
-        .ap-scope tr[style*="cursor: pointer"]:hover{background:rgba(99,102,241,.10);}
+        .ap-scope tr[style*="cursor: pointer"]:hover{background:rgba(135,31,39,.055);}
         .ap-tab{transition:all .15s ease;} .ap-tab:hover{background:${C.primarySoft};}
-        .ap-row:hover{background:rgba(255,255,255,0.03);}
+        .ap-row:hover{background:#F8F9FC;}
         .ap-btn{transition:all .15s ease;cursor:pointer;} .ap-btn:hover{filter:brightness(1.12);}
         .ap-ico:hover{background:${C.primarySoft};}
-        table{border-collapse:collapse;width:100%;}
-        th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:${C.muted};
+        .ap-scope table{border-collapse:collapse;width:100%;}
+        .ap-scope th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:${C.muted};
            text-align:left;padding:11px 12px;font-weight:600;}
-        td{padding:12px;font-size:13px;border-top:1px solid ${C.border};vertical-align:middle;color:${C.ink};}
+        .ap-scope td{padding:12px;font-size:13px;border-top:1px solid ${C.border};vertical-align:middle;color:${C.ink};}
         .ap-scope input,.ap-scope select,.ap-scope textarea{
-          font-family:inherit;color:${C.ink};background:${C.surfaceAlt};color-scheme:dark;}
+          font-family:inherit;color:${C.ink};background:${C.surface};color-scheme:light;border-color:${C.border};}
         .ap-scope input::placeholder,.ap-scope textarea::placeholder{color:${C.muted};}
         .ap-scope input[type=checkbox]{accent-color:${C.primary};width:15px;height:15px;cursor:pointer;}
         .ap-scope::-webkit-scrollbar{width:10px;}
         .ap-scope::-webkit-scrollbar-thumb{background:${C.surfaceAlt};border-radius:8px;}
         .ap-scope div::-webkit-scrollbar{height:8px;}
         .ap-scope div::-webkit-scrollbar-thumb{background:${C.surfaceAlt};border-radius:8px;}
+        @media(max-width:900px){.ap-overview-grid{grid-template-columns:1fr!important;}}
+        @media(max-width:600px){.ap-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}.ap-scope .ap-card{border-radius:10px;}}
+        @media(max-width:400px){.ap-kpi-grid{grid-template-columns:1fr!important;}}
       `}</style>
       <div className="ap-scope">
 
@@ -320,7 +323,7 @@ export default function AdminProjects() {
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 22 }}>
+      <div className="ap-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 22 }}>
         <Kpi icon={FolderKanban} tint="#A5B4FC" label="Active projects" value={kpis.active} sub={`${kpis.completed} completed`} />
         <Kpi icon={CircleCheck} tint="#34D399" label="Agreed revenue" value={taka(kpis.earnings)} sub="total project fees" />
         <Kpi icon={CircleCheck} tint="#34D399" label="Client payments received" value={taka(kpis.collected)} sub="cash collected" />
@@ -349,7 +352,7 @@ export default function AdminProjects() {
       </div>
 
       {tab === "overview" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }}>
+        <div className="ap-overview-grid" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }}>
           <div className="ap-card" style={{ overflow: "hidden" }}>
             <SectionHead icon={BellRing} title="Next renewals & upgrades" note="Soonest first" />
             <table>

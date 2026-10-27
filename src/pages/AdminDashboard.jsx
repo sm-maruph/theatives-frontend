@@ -276,16 +276,17 @@ function AdminDashboard() {
           </h2>
           <button
             className="sidebar-toggle"
+            type="button"
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {sidebarOpen ? "◄" : "►"}
+            {sidebarOpen ? "‹" : "›"}
           </button>
         </div>
 
         <div className="sidebar-container">
           <nav className="sidebar-nav">
-            <nav className="sidebar-nav">
-
               <NavItem
                 icon={<FiGrid />}
                 label="Dashboard"
@@ -370,7 +371,6 @@ function AdminDashboard() {
             active={activeComponent === "news"}
             onClick={() => setActiveComponent("news")}
           /> */}
-            </nav>
           </nav>
         </div>
 
